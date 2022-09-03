@@ -10,10 +10,13 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
+import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple,
@@ -53,16 +56,25 @@ fun PurpleMusicTheme(
         else -> LightColorScheme
     }
     val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
-        }
-    }
+//    if (!view.isInEditMode) {
+//        SideEffect {
+//            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
+//            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+//        }
+//    }
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content
     )
+
+    val uiController = rememberSystemUiController()
+
+    if (darkTheme){
+        uiController.setSystemBarsColor(Color.Black)
+    }else{
+        uiController.setSystemBarsColor(Color.White)
+    }
+
 }
