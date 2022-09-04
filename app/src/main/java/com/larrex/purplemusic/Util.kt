@@ -15,6 +15,9 @@ class Util {
             @Composable get() =
                 if (isSystemInDarkTheme()) Color.Black else Color.White
 
+        val TextColor
+        @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black
+
         val BottomBarLabelSelected
             @Composable get() =
                 if (isSystemInDarkTheme())
@@ -28,6 +31,8 @@ class Util {
                     Color.Gray
                 else
                     Color.Gray
+
+
 
     }
 

@@ -7,8 +7,12 @@
         <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_album_selected.xml" value="0.1" />
         <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_favourite.xml" value="0.129" />
         <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_favourite_selected.xml" value="0.129" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_forward.xml" value="0.1" />
         <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_music.xml" value="0.1" />
         <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_music_selected.xml" value="0.129" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_pause.xml" value="0.122" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_play.xml" value="0.1" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_rewind.xml" value="0.1" />
         <entry key="..\:/Users/user/AndroidStudioProjects/PurpleMusic/app/src/main/res/drawable/ic_search.xml" value="0.129" />
       </map>
     </option>

@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun FavouriteScreen() {
+
     Box(modifier = Modifier.background(Color.Blue).fillMaxSize()){}
 
 }
