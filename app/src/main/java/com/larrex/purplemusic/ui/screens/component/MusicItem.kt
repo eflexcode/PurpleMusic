@@ -26,26 +26,31 @@ import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
+import com.larrex.purplemusic.domain.model.SongItem
+import java.io.File
 
 
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
 
-    MusicItem {
-
-    }
+//    MusicItem {
+//
+//    }
 
 }
 
 @Composable
-fun MusicItem(onClicked: () -> Unit) {
-//   val article: Article = Article("","Compose brings a simple and performant way of creating scrolling lists, with fewer lines of code than RecyclerView. Learn how lazy layouts enable adding content on demand, how to use Lazy ","","","https://firebasestorage.googleapis.com/v0/b/liked-a0f31.appspot.com/o/displayImages%2Fgallery%2F1614217903012jpg?alt=media&token=e2b1e9c8-8e6b-4e6e-a8fd-e65221385125","","", Source("",""))
+fun MusicItem(onClicked: () -> Unit, songItem: SongItem) {
+
+    val painter = rememberImagePainter(data = songItem.songCoverImageUri)
+
     Row(
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxWidth()
             .padding(start = 0.dp)
+            .size(65.dp)
             .toggleable(value = true, onValueChange = {
                 onClicked()
             }),
@@ -53,39 +58,33 @@ fun MusicItem(onClicked: () -> Unit) {
         horizontalArrangement = Arrangement.Center
     ) {
 
-        Card(
-
-            modifier = Modifier
-                .padding(top = 5.dp, end = 5.dp, start = 5.dp, bottom = 5.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .size(60.dp)
-        ) {
-
             Image(
-                painter = painterResource(id = R.drawable.music_test_image2),
+                painter = painter,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
+                    .padding(top = 7.dp, end = 5.dp, start = 15.dp, bottom = 7.dp)
+                    .clip(RoundedCornerShape(3.dp))
+                    .size(45.dp)
             )
 
 
-        }
-
-        Column(modifier = Modifier.weight(2f)) {
+        Column(modifier = Modifier
+            .weight(2f)
+            .padding(end = 15.dp, start = 5.dp)) {
             Text(
-                text = "Crazy things",
-                fontSize = 18.sp,
+                text = songItem.songName,
+                fontSize = 15.sp,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Normal,
                 maxLines = 1,
-                color = Util.TextColor ,
+                color = Util.TextColor,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(end = 5.dp, start = 5.dp)
             )
 
             Text(
-                text = "Tems",
+                text = songItem.artistName,
                 fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -95,7 +94,6 @@ fun MusicItem(onClicked: () -> Unit) {
                 modifier = Modifier.padding(end = 5.dp, start = 5.dp),
                 color = Color.Gray
             )
-
 
         }
 

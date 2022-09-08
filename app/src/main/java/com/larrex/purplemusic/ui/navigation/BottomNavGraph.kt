@@ -1,5 +1,6 @@
 package com.larrex.purplemusic.ui.navigation
 
+import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
@@ -12,12 +13,12 @@ import com.larrex.purplemusic.ui.screens.MusicScreen
 import com.larrex.purplemusic.ui.screens.SearchScreen
 
 @Composable
-fun BottomNavGraph(navController: NavHostController) {
+fun BottomNavGraph(navController: NavHostController, application: Application) {
 
     NavHost(navController = navController, startDestination = BottomBarScreens.MusicScreen.route) {
 
         composable(route = BottomBarScreens.MusicScreen.route) {
-            MusicScreen()
+            MusicScreen(application)
         }
         composable(route = BottomBarScreens.FavouriteScreen.route) {
             FavouriteScreen()

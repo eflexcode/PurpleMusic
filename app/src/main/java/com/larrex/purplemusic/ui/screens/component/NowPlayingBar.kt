@@ -29,88 +29,88 @@ import com.larrex.purplemusic.Util
 @Composable
 fun NowPlayingBar(onClicked: () -> Unit) {
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(65.dp)
-        .toggleable(value = true, onValueChange = {
-            onClicked()
-        })
-        .background(Util.BottomBarBackground), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(65.dp)
+            .toggleable(value = true, onValueChange = {
+                onClicked()
+            })
+            .background(Util.BottomBarBackground), contentAlignment = Alignment.Center
+    ) {
 
 
-            Row(
+        Row(
+            modifier = Modifier
+                .background(Util.BottomBarBackground)
+                .fillMaxWidth()
+                .padding(start = 0.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.music_test_image2),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .background(Util.BottomBarBackground)
-                    .fillMaxWidth()
-                    .padding(start = 0.dp)
+                    .padding(top = 5.dp, end = 5.dp, start = 10.dp, bottom = 5.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .size(45.dp)
+            )
 
-                ,
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
+            Column(modifier = Modifier.weight(2f)) {
+                Text(
+                    text = "Crazy things",
+                    fontSize = 15.sp,
+                    fontStyle = FontStyle.Normal,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 1,
+                    color = Util.TextColor,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(end = 5.dp, start = 5.dp)
+                )
 
-                Card(
-
-                    modifier = Modifier
-                        .padding(top = 5.dp, end = 5.dp, start = 10.dp, bottom = 5.dp)
-                        .clip(RoundedCornerShape(0.5.dp))
-                        .size(45.dp)
-                ) {
-
-                    Image(
-                        painter = painterResource(id = R.drawable.music_test_image2),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(0.5.dp))
-                    )
-
-
-                }
-
-                Column(modifier = Modifier.weight(2f)) {
-                    Text(
-                        text = "Crazy things",
-                        fontSize = 18.sp,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        color = Util.TextColor,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(end = 5.dp, start = 5.dp)
-                    )
-
-                    Text(
-                        text = "Tems",
-                        fontSize = 12.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontStyle = FontStyle.Normal,
-                        fontFamily = FontFamily.Default,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(end = 5.dp, start = 5.dp),
-                        color = Color.Gray
-                    )
-
-
-                }
-
-                Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
-
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_rewind), contentDescription =null )
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_pause), contentDescription =null )
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_forward), contentDescription =null )
-                    }
-
-                }
+                Text(
+                    text = "Tems",
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontStyle = FontStyle.Normal,
+                    fontFamily = FontFamily.Default,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(end = 5.dp, start = 5.dp),
+                    color = Color.Gray
+                )
 
 
             }
+
+            Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
+
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_rewind),
+                        contentDescription = null
+                    )
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_pause),
+                        contentDescription = null
+                    )
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_forward),
+                        contentDescription = null
+                    )
+                }
+
+            }
+
+
+        }
 
     }
 }
