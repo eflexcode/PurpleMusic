@@ -105,6 +105,20 @@ fun MusicScreen(application: Application) {
 
             LazyColumn() {
 
+                item {
+                    Text(
+                        text = Util.getGreeting(),
+                        color = Util.TextColor,
+                        fontSize = 16.sp,
+                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(6.dp).fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+
+
+                }
+
                 items(musicItems) {
 
                     MusicItem(onClicked = {}, it)

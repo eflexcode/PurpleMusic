@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.larrex.purplemusic.Util.Companion.BottomBarLabel
+import com.larrex.purplemusic.Util.Companion.BottomBarLabelSelected
 import com.larrex.purplemusic.di.MusicModule
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.navigation.BottomNavGraph
@@ -91,11 +94,9 @@ fun CreateBNV(navController: NavHostController) {
         mutableStateOf(0)
     }
 
-//    val imageId by remember(index) {
-//
-//    }
-
-//    val current
+    var currentIndex by rememberSaveable() {
+        mutableStateOf(0)
+    }
 
     val navItems = listOf(
         BottomBarScreens.MusicScreen.barTitle,
@@ -118,6 +119,14 @@ fun CreateBNV(navController: NavHostController) {
         R.drawable.ic_search_selected
     )
 
+    val selectedLabelColor = BottomBarLabelSelected
+    val labelColor = BottomBarLabel
+
+
+    var rememberLabelColor = remember {
+        if (indexSelected == currentIndex) selectedLabelColor  else labelColor
+    }
+
         Column(
             verticalArrangement = Arrangement.spacedBy(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -136,9 +145,12 @@ fun CreateBNV(navController: NavHostController) {
                 NavigationBarItem(selected = indexSelected == index,
                     onClick = {
                         indexSelected = index
+                        currentIndex = index
+
                         navController.navigate(items.toLowerCase()) {
                             popUpTo(navController.graph.findStartDestination().id)
                             launchSingleTop = true
+
                         }
                     },
                     label = {
@@ -160,12 +172,9 @@ fun CreateBNV(navController: NavHostController) {
 
             }
 
-
         }
 
-
     }
-
 
 }
 

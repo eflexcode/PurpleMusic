@@ -2,15 +2,12 @@ package com.larrex.purplemusic.ui.navigation
 
 import android.app.Application
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph
-import androidx.navigation.NavHostController
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.larrex.purplemusic.ui.screens.AlbumScreen
-import com.larrex.purplemusic.ui.screens.FavouriteScreen
-import com.larrex.purplemusic.ui.screens.MusicScreen
-import com.larrex.purplemusic.ui.screens.SearchScreen
+import com.larrex.purplemusic.domain.model.AlbumItem
+import com.larrex.purplemusic.ui.navigation.navTypes.AlbumNavType
+import com.larrex.purplemusic.ui.screens.*
 
 @Composable
 fun BottomNavGraph(navController: NavHostController, application: Application) {
@@ -24,10 +21,18 @@ fun BottomNavGraph(navController: NavHostController, application: Application) {
             FavouriteScreen()
         }
         composable(route = BottomBarScreens.AlbumScreen.route) {
-            AlbumScreen()
+            AlbumScreen(navController)
         }
         composable(route = BottomBarScreens.SearchScreen.route) {
             SearchScreen()
+        }
+        composable(
+            route = BottomBarScreens.AlbumDetailsScreen.route) {
+
+            val album = navController.previousBackStackEntry?.savedStateHandle?.get<AlbumItem>("album")
+
+            AlbumDetailsScreen(album, navController)
+
         }
 
     }

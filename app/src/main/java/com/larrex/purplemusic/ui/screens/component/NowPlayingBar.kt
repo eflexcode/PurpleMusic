@@ -39,7 +39,6 @@ fun NowPlayingBar(onClicked: () -> Unit) {
             .background(Util.BottomBarBackground), contentAlignment = Alignment.Center
     ) {
 
-
         Row(
             modifier = Modifier
                 .background(Util.BottomBarBackground)
@@ -54,7 +53,7 @@ fun NowPlayingBar(onClicked: () -> Unit) {
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .padding(top = 5.dp, end = 5.dp, start = 10.dp, bottom = 5.dp)
+                    .padding(top = 5.dp, end = 5.dp, start = 15.dp, bottom = 5.dp)
                     .clip(RoundedCornerShape(5.dp))
                     .size(45.dp)
             )
@@ -83,7 +82,6 @@ fun NowPlayingBar(onClicked: () -> Unit) {
                     color = Color.Gray
                 )
 
-
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
@@ -108,7 +106,6 @@ fun NowPlayingBar(onClicked: () -> Unit) {
                 }
 
             }
-
 
         }
 

@@ -29,7 +29,6 @@ import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.SongItem
 import java.io.File
 
-
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
@@ -43,7 +42,12 @@ fun Preview() {
 @Composable
 fun MusicItem(onClicked: () -> Unit, songItem: SongItem) {
 
-    val painter = rememberImagePainter(data = songItem.songCoverImageUri)
+    val painter = rememberAsyncImagePainter(
+        model = songItem.songCoverImageUri,
+       error = painterResource(
+            id = R.drawable.ic_music_selected_small
+        )
+    )
 
     Row(
         modifier = Modifier
@@ -58,20 +62,21 @@ fun MusicItem(onClicked: () -> Unit, songItem: SongItem) {
         horizontalArrangement = Arrangement.Center
     ) {
 
-            Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding(top = 7.dp, end = 5.dp, start = 15.dp, bottom = 7.dp)
-                    .clip(RoundedCornerShape(3.dp))
-                    .size(45.dp)
-            )
+        Image(
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .padding(top = 7.dp, end = 5.dp, start = 15.dp, bottom = 7.dp)
+                .clip(RoundedCornerShape(3.dp))
+                .size(45.dp)
+        )
 
-
-        Column(modifier = Modifier
-            .weight(2f)
-            .padding(end = 15.dp, start = 5.dp)) {
+        Column(
+            modifier = Modifier
+                .weight(2f)
+                .padding(end = 15.dp, start = 5.dp)
+        ) {
             Text(
                 text = songItem.songName,
                 fontSize = 15.sp,
