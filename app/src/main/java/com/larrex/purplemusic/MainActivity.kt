@@ -27,9 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.Util.Companion.BottomBarLabel
 import com.larrex.purplemusic.Util.Companion.BottomBarLabelSelected
 import com.larrex.purplemusic.di.MusicModule
@@ -59,7 +64,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
+
 }
+private const val TAG = "MainActivity"
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -72,7 +82,6 @@ fun MainUi(application: Application) {
 
     val TAG = "MainActivity"
 
-
     val navController = rememberNavController()
     val viewModel = hiltViewModel<MusicViewModel>()
 
@@ -83,7 +92,6 @@ fun MainUi(application: Application) {
 
         }
     }
-
 
 }
 
@@ -99,10 +107,10 @@ fun CreateBNV(navController: NavHostController) {
     }
 
     val navItems = listOf(
-        BottomBarScreens.MusicScreen.barTitle,
-        BottomBarScreens.AlbumScreen.barTitle,
-        BottomBarScreens.FavouriteScreen.barTitle,
-        BottomBarScreens.SearchScreen.barTitle
+        BottomBarScreens.MusicScreen,
+        BottomBarScreens.AlbumScreen,
+        BottomBarScreens.FavouriteScreen,
+        BottomBarScreens.SearchScreen
     )
 
     val navIcons = listOf(
@@ -119,19 +127,14 @@ fun CreateBNV(navController: NavHostController) {
         R.drawable.ic_search_selected
     )
 
-    val selectedLabelColor = BottomBarLabelSelected
-    val labelColor = BottomBarLabel
-
-
-    var rememberLabelColor = remember {
-        if (indexSelected == currentIndex) selectedLabelColor  else labelColor
-    }
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(0.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+    Column(
+        verticalArrangement = Arrangement.spacedBy(0.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+            shape = RoundedCornerShape(0.dp)
         ) {
-            Card(elevation = CardDefaults.cardElevation(defaultElevation = 10.dp), shape = RoundedCornerShape(0.dp)) {
 
             NowPlayingBar {
 
@@ -140,42 +143,56 @@ fun CreateBNV(navController: NavHostController) {
 
         NavigationBar(containerColor = Util.BottomBarBackground, tonalElevation = 40.dp) {
 
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+
             navItems.forEachIndexed() { index, items ->
 
-                NavigationBarItem(selected = indexSelected == index,
-                    onClick = {
-                        indexSelected = index
-                        currentIndex = index
+                var isRout =
+                    currentDestination?.hierarchy?.any { items.route == it.route } == true ||
+                            currentDestination?.hierarchy?.any { items.route == BottomBarScreens.AlbumDetailsScreen.route } == true
 
-                        navController.navigate(items.toLowerCase()) {
-                            popUpTo(navController.graph.findStartDestination().id)
+                if (items.route == BottomBarScreens.AlbumScreen.route &&
+                    currentDestination?.route == BottomBarScreens.AlbumDetailsScreen.route){
+                    isRout = true
+                }
+
+//                val paint = rememberAsyncImagePainter(model = if (isRout) navIconsSelected[index] else navIcons[index])
+
+                NavigationBarItem(selected = isRout,
+                    onClick = {
+
+                        navController.navigate(items.route) {
+
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+
                             launchSingleTop = true
+                            restoreState = true
 
                         }
                     },
                     label = {
                         Text(
-                            text = items,
-                            color = if (indexSelected == index) Util.BottomBarLabelSelected else Util.BottomBarLabel
+                            text = items.barTitle,
+                            color = if (isRout) BottomBarLabelSelected else BottomBarLabel
                         )
                     },
                     icon = {
                         Icon(
-                            painter = painterResource(id = if (indexSelected == index) navIconsSelected[index] else navIcons[index]),
+                            painter = painterResource(id = if (isRout) navIconsSelected[index] else navIcons[index]),
                             contentDescription = "", modifier = Modifier
                                 .padding(0.dp)
                                 .size(20.dp),
-                            tint = if (indexSelected == index) Util.BottomBarLabelSelected else Util.BottomBarLabel
+                            tint = if (isRout) BottomBarLabelSelected else BottomBarLabel
                         )
                     }
                 )
-
             }
-
         }
 
     }
-
 }
 
 @Preview(showBackground = true)

@@ -32,6 +32,7 @@ import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.ui.screens.component.MusicItem
+import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
 @Composable
@@ -121,6 +122,20 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                             color = Color.Gray
                         )
                     }
+
+                    Button(
+                        onClick = {  },
+                        modifier = Modifier.width(200.dp).padding(bottom = 10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = Color.White,
+                            containerColor = Purple
+                        )
+                    ) {
+
+                        Text(text = "Play all")
+
+                    }
+
                 }
 
             }
@@ -134,7 +149,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
         //back button
         IconButton(
             onClick = { navController.popBackStack() }, modifier = Modifier
-                .padding(top = 0.dp, end = 5.dp, start = 5.dp, bottom = 5.dp)
+                .padding(top = 10.dp, end = 5.dp, start = 5.dp, bottom = 5.dp)
                 .size(50.dp)
         ) {
             Icon(

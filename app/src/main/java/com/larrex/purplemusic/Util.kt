@@ -44,7 +44,7 @@ class Util {
                 "Good morning"
             }else if (time < 16){
                 "Good afternoon"
-            }else if (time < 17){
+            }else if (time < 18){
                 "Good evening"
             }else{
                 "Good night"

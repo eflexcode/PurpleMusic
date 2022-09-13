@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -39,13 +43,14 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.SongItem
+import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun MusicScreen(application: Application) {
+fun MusicScreen(navController: NavController) {
 
     Box(
         modifier = Modifier
@@ -101,36 +106,69 @@ fun MusicScreen(application: Application) {
             }
 
         } else {
+
             val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
 
             LazyColumn() {
 
                 item {
-                    Text(
-                        text = Util.getGreeting(),
-                        color = Util.TextColor,
-                        fontSize = 16.sp,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(6.dp).fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
 
+                    Row() {
 
+                        Text(
+                            text = Util.getGreeting(),
+                            color = Util.TextColor,
+                            fontSize = 20.sp,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 10.dp, bottom = 3.dp)
+                                .weight(2f),
+                            textAlign = TextAlign.Start,
+                        )
+
+                        IconButton(onClick = {
+
+                            navController.navigate(BottomBarScreens.SearchScreen.route) {
+
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+
+                                launchSingleTop = true
+                                restoreState = true
+
+                            }
+
+                        },
+                            modifier = Modifier
+                                .weight(0.3f)
+                                .padding(end = 20.dp, top = 0.dp, bottom = 3.dp)
+                        ) {
+
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_search),
+                                contentDescription = null
+                            )
+
+                        }
+
+                    }
                 }
 
                 items(musicItems) {
 
                     MusicItem(onClicked = {}, it)
 
-
                 }
 
             }
-        }
 
+
+        }
     }
 }
+
 
 
 
