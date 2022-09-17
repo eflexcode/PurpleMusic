@@ -7,6 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import com.larrex.purplemusic.domain.model.AlbumItem
+import com.larrex.purplemusic.domain.model.ArtistItemModel
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.repository.Repository
 import kotlinx.coroutines.Dispatchers
@@ -64,9 +65,9 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
                     val albumId = cursor.getLong(albumIdColumn)
                     val duration = cursor.getInt(durationColumn)
                     val size = cursor.getInt(sizeColumn)
-                    val name = cursor.getString(nameColumn)
-                    val title = cursor.getString(titleColumn)
-                    val artist = cursor.getString(artistColumn)
+                    val name = cursor.getString(nameColumn) + " "
+                    val title = cursor.getString(titleColumn) + " "
+                    val artist = cursor.getString(artistColumn) + " "
 
                     val songUri: Uri =
                         ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
@@ -150,12 +151,124 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
 
     }
 
+    override fun getAllArtist(): Flow<List<ArtistItemModel>> {
+        return flow<List<ArtistItemModel>> {
+
+            val artistNames: MutableList<String> = ArrayList()
+            val artists: MutableList<ArtistItemModel> = ArrayList()
+            val artistsNew: MutableList<ArtistItemModel> = ArrayList()
+
+            val projection = arrayOf(
+                MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
+                MediaStore.Audio.Artists.NUMBER_OF_TRACKS,
+                MediaStore.Audio.Artists.ARTIST,
+                MediaStore.Audio.Artists._ID,
+            )
+
+            val libraryUri: Uri
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                libraryUri = MediaStore.Audio.Artists.getContentUri(MediaStore.VOLUME_EXTERNAL)
+            } else {
+                libraryUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI
+            }
+
+            val order = MediaStore.Audio.Artists.ARTIST + " ASC"
+
+            val query = application.contentResolver.query(libraryUri, projection, null, null, order)
+
+            query?.use { it ->
+
+                val artistNameColumn = it.getColumnIndex(MediaStore.Audio.Artists.ARTIST)
+                val idColumn = it.getColumnIndex(MediaStore.Audio.Artists._ID)
+                val songsNumberColumn = it.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)
+                val albumNumberColumn = it.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)
+
+                while (it.moveToNext()) {
+
+                    val artistName = it.getString(artistNameColumn)
+                    val id = it.getLong(idColumn)
+                    val songNumber = it.getInt(songsNumberColumn)
+                    val albumNumber = it.getInt(albumNumberColumn)
+
+                    artistNames.add(artistName)
+
+                    val imageUri: Uri = Uri.parse("")
+
+                    val artistItemModel =
+                        ArtistItemModel(imageUri, albumNumber, songNumber, artistName)
+
+
+                    artists.add(artistItemModel)
+
+                }
+
+
+            }
+
+            query?.close()
+
+            for (item in artists){
+                val projectionArt = arrayOf(
+                    MediaStore.Audio.Albums.ALBUM_ART,
+                    MediaStore.Audio.Albums._ID
+                )
+
+                val libraryUriArt: Uri
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    libraryUriArt =
+                        MediaStore.Audio.Albums.getContentUri(MediaStore.VOLUME_EXTERNAL)
+                } else {
+                    libraryUriArt = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI
+                }
+
+                val orderArt = MediaStore.Audio.Albums.ALBUM + " ASC"
+                val where = "${MediaStore.Audio.Albums.ARTIST} =?"
+                val whereVal = arrayOf(item.artistName)
+
+                val queryArt = application.contentResolver.query(
+                    libraryUriArt,
+                    projectionArt,
+                    where,
+                    whereVal,
+                    orderArt
+                )
+
+                queryArt?.use {
+                    val idColumnArt = it.getColumnIndex(MediaStore.Audio.Albums._ID)
+
+                    while (it.moveToNext()) {
+                        val idArt = it.getLong(idColumnArt)
+
+                       val imageUri : Uri = ContentUris.withAppendedId(
+                            Uri.parse("content://media/external/audio/albumart"),
+                            idArt
+                        )
+
+                        item.coverImageUri = imageUri
+
+
+                    }
+
+
+                }
+//                emit(artists)
+
+            }
+
+
+
+            emit(artists)
+
+        }.flowOn(Dispatchers.IO)
+    }
+
     override fun getAllSongsFromAlbum(albumName: String): Flow<List<SongItem>> {
 
         return flow<List<SongItem>> {
 
             Log.d(TAG, "getAllSongsFromAlbum: $albumName")
-
 
             val projection = arrayOf<String>(
                 MediaStore.Audio.Media.DISPLAY_NAME,

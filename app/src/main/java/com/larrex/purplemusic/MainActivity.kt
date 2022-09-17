@@ -2,49 +2,34 @@ package com.larrex.purplemusic
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Application
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.Util.Companion.BottomBarLabel
 import com.larrex.purplemusic.Util.Companion.BottomBarLabelSelected
-import com.larrex.purplemusic.di.MusicModule
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.navigation.BottomNavGraph
 import com.larrex.purplemusic.ui.screens.component.NowPlayingBar
 import com.larrex.purplemusic.ui.theme.*
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -109,22 +94,23 @@ fun CreateBNV(navController: NavHostController) {
     val navItems = listOf(
         BottomBarScreens.MusicScreen,
         BottomBarScreens.AlbumScreen,
-        BottomBarScreens.FavouriteScreen,
-        BottomBarScreens.SearchScreen
+        BottomBarScreens.ArtistScreen,
+        BottomBarScreens.FavouriteScreen
+
     )
 
     val navIcons = listOf(
         R.drawable.ic_music,
         R.drawable.ic_album,
+        R.drawable.ic_artist,
         R.drawable.ic_favourite,
-        R.drawable.ic_search
     )
 
     val navIconsSelected = listOf(
         R.drawable.ic_music_selected,
         R.drawable.ic_album_selected,
-        R.drawable.ic_favourite_selected,
-        R.drawable.ic_search_selected
+        R.drawable.ic_artist_selected,
+        R.drawable.ic_favourite_selected
     )
 
     Column(

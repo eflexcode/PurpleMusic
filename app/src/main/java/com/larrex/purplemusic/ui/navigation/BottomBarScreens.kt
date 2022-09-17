@@ -7,9 +7,9 @@ sealed class BottomBarScreens(val route: String,
                               iconResourceId: Int){
 
     object MusicScreen : BottomBarScreens("music","Music", R.drawable.ic_music)
-    object FavouriteScreen : BottomBarScreens("favourite","Favourite", R.drawable.ic_favourite)
     object AlbumScreen : BottomBarScreens("albums","Albums", R.drawable.ic_album)
-    object SearchScreen : BottomBarScreens("search","Search", R.drawable.ic_search)
+    object ArtistScreen : BottomBarScreens("artists","Artists", R.drawable.ic_search)
+    object FavouriteScreen : BottomBarScreens("favourite","Favourite", R.drawable.ic_favourite)
     object AlbumDetailsScreen : BottomBarScreens("album_details","", 0)
 
 }

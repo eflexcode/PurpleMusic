@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
+import com.larrex.purplemusic.ui.theme.PurpleGray
 
 @Composable
 fun NowPlayingBar(onClicked: () -> Unit) {
@@ -32,80 +33,85 @@ fun NowPlayingBar(onClicked: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(65.dp)
+            .height(63.dp)
             .toggleable(value = true, onValueChange = {
                 onClicked()
             })
-            .background(Util.BottomBarBackground), contentAlignment = Alignment.Center
+            .background(Util.BottomBarBackground), contentAlignment = Alignment.BottomCenter
     ) {
 
-        Row(
-            modifier = Modifier
-                .background(Util.BottomBarBackground)
-                .fillMaxWidth()
-                .padding(start = 0.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
+        Column {
 
-            Image(
-                painter = painterResource(id = R.drawable.music_test_image2),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            Row(
                 modifier = Modifier
-                    .padding(top = 5.dp, end = 5.dp, start = 15.dp, bottom = 5.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .size(45.dp)
-            )
+                    .background(Util.BottomBarBackground)
+                    .fillMaxWidth()
+                    .padding(start = 0.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
 
-            Column(modifier = Modifier.weight(2f)) {
-                Text(
-                    text = "Crazy things",
-                    fontSize = 15.sp,
-                    fontStyle = FontStyle.Normal,
-                    fontWeight = FontWeight.Normal,
-                    maxLines = 1,
-                    color = Util.TextColor,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(end = 5.dp, start = 5.dp)
+                Image(
+                    painter = painterResource(id = R.drawable.music_test_image2),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(top = 5.dp, end = 5.dp, start = 15.dp, bottom = 7.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .size(45.dp)
                 )
 
-                Text(
-                    text = "Tems",
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(end = 5.dp, start = 5.dp),
-                    color = Color.Gray
-                )
+                Column(modifier = Modifier.weight(2f)) {
+                    Text(
+                        text = "Crazy things",
+                        fontSize = 15.sp,
+                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight.Normal,
+                        maxLines = 1,
+                        color = Util.TextColor,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(end = 5.dp, start = 5.dp)
+                    )
 
+                    Text(
+                        text = "Tems",
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(end = 5.dp, start = 5.dp),
+                        color = Color.Gray
+                    )
+
+                }
+
+                Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
+
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_rewind),
+                            contentDescription = null
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_pause),
+                            contentDescription = null
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_forward),
+                            contentDescription = null
+                        )
+                    }
+
+                }
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
-
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_rewind),
-                        contentDescription = null
-                    )
-                }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_pause),
-                        contentDescription = null
-                    )
-                }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_forward),
-                        contentDescription = null
-                    )
-                }
-
-            }
+            Box(modifier = Modifier.fillMaxWidth().height(3.dp).background(PurpleGray))
 
         }
 

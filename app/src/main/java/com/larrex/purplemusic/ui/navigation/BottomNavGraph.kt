@@ -6,7 +6,6 @@ import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.larrex.purplemusic.domain.model.AlbumItem
-import com.larrex.purplemusic.ui.navigation.navTypes.AlbumNavType
 import com.larrex.purplemusic.ui.screens.*
 
 @Composable
@@ -23,7 +22,7 @@ fun BottomNavGraph(navController: NavHostController, application: Application) {
         composable(route = BottomBarScreens.AlbumScreen.route) {
             AlbumScreen(navController)
         }
-        composable(route = BottomBarScreens.SearchScreen.route) {
+        composable(route = BottomBarScreens.ArtistScreen.route) {
             SearchScreen()
         }
         composable(

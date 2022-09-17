@@ -2,6 +2,7 @@ package com.larrex.purplemusic.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.larrex.purplemusic.domain.model.AlbumItem
+import com.larrex.purplemusic.domain.model.ArtistItemModel
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,5 +27,9 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
         return repository.getAllAlbums()
     }
 
+    fun getAllArtist(): Flow<List<ArtistItemModel>> {
+
+        return repository.getAllArtist()
+    }
 
 }
