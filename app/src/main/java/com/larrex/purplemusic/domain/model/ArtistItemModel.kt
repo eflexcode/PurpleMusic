@@ -6,7 +6,7 @@ data class ArtistItemModel(
     var coverImageUri: Uri,
     val albumsCount: Int,
     val songsCount: Int,
-    val artistName: String
+    val artistName: String,
 ) {
 
 }

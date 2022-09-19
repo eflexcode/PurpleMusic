@@ -37,14 +37,14 @@ import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 @Composable
 fun MusicScreen(navController: NavController) {
 
-    val chipItems = listOf("Music","Albums")
+    val chipItems = listOf("Music", "Albums")
     var newText by remember { mutableStateOf(TextFieldValue("")) }
 
     Box(
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 147.dp), contentAlignment = Alignment.Center
+            .padding(bottom = 137.dp), contentAlignment = Alignment.Center
     ) {
         val viewModel = hiltViewModel<MusicViewModel>()
 
@@ -97,10 +97,6 @@ fun MusicScreen(navController: NavController) {
 
             val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
 
-            if (musicItems.isEmpty()) {
-                CircularProgressIndicator()
-            }
-
             LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {
 
                 item {
@@ -151,32 +147,37 @@ fun MusicScreen(navController: NavController) {
 //                        }
 //                    }
 
+                    if (musicItems.isNotEmpty()) {
+                        TextField(
+                            value = newText,
+                            onValueChange = { text ->
+                                newText = text
+                            },
+                            modifier = Modifier
+                                .padding(top = 5.dp, end = 20.dp, start = 20.dp, bottom = 5.dp)
+                                .fillMaxWidth(),
+                            colors = TextFieldDefaults.textFieldColors(
+                                contentColorFor(backgroundColor = Color.Transparent),
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                containerColor = Util.searchBarBackground,
+                                placeholderColor = Color.Gray,
+                            ),
+                            singleLine = true,
+                            shape = RoundedCornerShape(10.dp),
+                            placeholder = { Text(text = "Search music", color = Color.Gray) },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_search),
+                                    contentDescription = null, modifier = Modifier.size(20.dp),
+                                )
+                            }
 
-                    TextField(
-                        value = newText,
-                        onValueChange = { text ->
-                            newText = text
-                        },
-                        modifier = Modifier
-                            .padding(top = 5.dp, end = 20.dp, start = 20.dp, bottom = 5.dp)
-                            .fillMaxWidth(),
-                        colors = TextFieldDefaults.textFieldColors(
-                            contentColorFor(backgroundColor = Color.Transparent),
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            containerColor = Util.searchBarBackground, placeholderColor = Color.Gray,
-                        ),
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        placeholder = { Text(text = "Search music", color = Color.Gray) },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_search),
-                                contentDescription = null, modifier = Modifier.size(20.dp),
-                            )
-                        }
+                        )
 
-                    )
+                    }else  {
+                        CircularProgressIndicator()
+                    }
 
                 }
 

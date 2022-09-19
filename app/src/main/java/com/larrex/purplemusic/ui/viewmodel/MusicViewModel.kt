@@ -27,6 +27,11 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
         return repository.getAllAlbums()
     }
 
+    fun getAllAlbumsFromArtist(artistName: String): Flow<List<AlbumItem>> {
+
+        return repository.getAllAlbumFromArtist(artistName)
+    }
+
     fun getAllArtist(): Flow<List<ArtistItemModel>> {
 
         return repository.getAllArtist()

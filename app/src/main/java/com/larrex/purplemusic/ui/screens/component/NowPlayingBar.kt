@@ -5,11 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,22 +22,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
-import com.larrex.purplemusic.ui.theme.PurpleGray
 
 @Composable
 fun NowPlayingBar(onClicked: () -> Unit) {
 
+    var sliderValue by remember {
+        mutableStateOf(60f)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(63.dp)
             .toggleable(value = true, onValueChange = {
                 onClicked()
             })
             .background(Util.BottomBarBackground), contentAlignment = Alignment.BottomCenter
     ) {
 
-        Column {
+        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
 
             Row(
                 modifier = Modifier
@@ -56,7 +55,7 @@ fun NowPlayingBar(onClicked: () -> Unit) {
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .padding(top = 5.dp, end = 5.dp, start = 15.dp, bottom = 7.dp)
+                        .padding(top = 5.dp, end = 5.dp, start = 15.dp, bottom = 5.dp)
                         .clip(RoundedCornerShape(5.dp))
                         .size(45.dp)
                 )
@@ -91,27 +90,41 @@ fun NowPlayingBar(onClicked: () -> Unit) {
 
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_rewind),
+                            painter = painterResource(id = R.drawable.ic_round_skip_backward),
                             contentDescription = null
                         )
                     }
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_pause),
+                            painter = painterResource(id = R.drawable.ic_round_play),
                             contentDescription = null
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_forward),
+                            painter = painterResource(id = R.drawable.ic_round_skip_forward),
                             contentDescription = null
                         )
                     }
 
                 }
+
             }
 
-            Box(modifier = Modifier.fillMaxWidth().height(3.dp).background(PurpleGray))
+//            Slider(
+//                value = sliderValue,
+//                onValueChange = { sliderValue = it },
+//                modifier = Modifier
+//                    .padding(start = 0.dp, end = 0.dp)
+//                    .height(5.dp),
+//                valueRange = 0f..100f,
+//                colors = SliderDefaults.colors(
+//                    thumbColor = Color.Transparent,
+//                    activeTickColor = Purple,
+//                    disabledThumbColor = Color.Transparent
+//                ),
+//                enabled = true
+//            )
 
         }
 

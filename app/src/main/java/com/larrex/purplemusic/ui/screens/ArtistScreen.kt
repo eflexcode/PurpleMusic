@@ -9,18 +9,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.rememberPagerState
+import androidx.navigation.NavController
 import com.larrex.purplemusic.Util
+import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.ArtistItem
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
+private const val TAG = "ArtistScreen"
+
 @Composable
-fun SearchScreen() {
+fun ArtistScreen(navController: NavController) {
 
     val viewModel = hiltViewModel<MusicViewModel>()
 
@@ -30,7 +31,7 @@ fun SearchScreen() {
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 147.dp), contentAlignment = Alignment.Center
+            .padding(bottom = 138.dp), contentAlignment = Alignment.Center
 
     ) {
         if (artists.isEmpty()) {
@@ -38,16 +39,18 @@ fun SearchScreen() {
         }
         LazyVerticalGrid(
             modifier = Modifier
-                .fillMaxSize(), columns = GridCells.Fixed(2)) {
+                .fillMaxSize(), columns = GridCells.Fixed(2)
+        ) {
 
-            items(artists){
+            items(artists) {
 
                 ArtistItem(artistItemModel = it) {
 
+                    navController.currentBackStackEntry?.savedStateHandle?.set("artistName",it.artistName)
+                    navController.navigate(BottomBarScreens.ArtistDetailsScreen.route)
                 }
 
             }
-
 
         }
     }
@@ -57,5 +60,5 @@ fun SearchScreen() {
 @Preview(showBackground = true)
 @Composable
 fun Previews() {
-    SearchScreen()
+//    ArtistScreen()
 }

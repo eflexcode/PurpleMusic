@@ -195,6 +195,8 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
 
                     val imageUri: Uri = Uri.parse("")
 
+                    val albums : MutableList<String> = ArrayList<String>()
+
                     val artistItemModel =
                         ArtistItemModel(imageUri, albumNumber, songNumber, artistName)
 
@@ -245,7 +247,6 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
                             Uri.parse("content://media/external/audio/albumart"),
                             idArt
                         )
-
                         item.coverImageUri = imageUri
 
 
@@ -253,7 +254,6 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
 
 
                 }
-//                emit(artists)
 
             }
 
@@ -338,6 +338,61 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
             }
         }.flowOn(Dispatchers.IO)
 
+    }
+
+    override fun getAllAlbumFromArtist(artistName: String): Flow<List<AlbumItem>> {
+        return flow<List<AlbumItem>> {
+            val albums: MutableList<AlbumItem> = ArrayList()
+
+            val projection = arrayOf(
+                MediaStore.Audio.Albums.ALBUM,
+                MediaStore.Audio.Albums.ALBUM_ART,
+                MediaStore.Audio.Albums.NUMBER_OF_SONGS,
+                MediaStore.Audio.Albums.ARTIST,
+                MediaStore.Audio.Albums._ID
+            )
+
+            val libraryUri: Uri
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                libraryUri = MediaStore.Audio.Albums.getContentUri(MediaStore.VOLUME_EXTERNAL)
+            } else {
+                libraryUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI
+            }
+
+            val order = MediaStore.Audio.Albums.ALBUM + " ASC"
+            val where = "${MediaStore.Audio.Albums.ARTIST} =?"
+            val whereVal = arrayOf(artistName)
+            val query = application.contentResolver.query(libraryUri, projection, where, whereVal, order)
+
+            query?.use {
+
+                val albumNameColumn = it.getColumnIndex(MediaStore.Audio.Albums.ALBUM)
+                val idColumn = it.getColumnIndex(MediaStore.Audio.Albums._ID)
+                val artistColumn = it.getColumnIndex(MediaStore.Audio.Albums.ARTIST)
+                val songsNumberColumn = it.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS)
+
+                while (it.moveToNext()) {
+
+                    val albumName = it.getString(albumNameColumn)
+                    val id = it.getLong(idColumn)
+                    val artist = it.getString(artistColumn)
+                    val songNumber = it.getInt(songsNumberColumn)
+
+                    val imageUri: Uri = ContentUris.withAppendedId(
+                        Uri.parse("content://media/external/audio/albumart"),
+                        id
+                    )
+
+                    val album = AlbumItem(artist, imageUri, id, albumName, songNumber)
+
+                    albums.add(album)
+
+                }
+                emit(albums)
+            }
+
+        }.flowOn(Dispatchers.IO)
     }
 
 }

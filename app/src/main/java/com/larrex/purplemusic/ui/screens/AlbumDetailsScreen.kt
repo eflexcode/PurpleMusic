@@ -54,7 +54,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 147.dp)
+            .padding(bottom = 138.dp)
     ) {
 
         LazyColumn(
@@ -64,7 +64,17 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
         ) {
 
             item {
-
+               //back button
+                    IconButton(
+                        onClick = { navController.popBackStack() }, modifier = Modifier
+                            .padding(top = 10.dp, end = 5.dp, start = 5.dp, bottom = 0.dp)
+                            .size(50.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = null
+                        )
+                    }
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,8 +84,8 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                     Card(
                         modifier = Modifier
                             .background(Util.BottomBarBackground)
-                            .size(height = 250.dp, width = 220.dp)
-                            .padding(top = 50.dp, end = 5.dp, start = 5.dp, bottom = 5.dp),
+                            .size(height = 220.dp, width = 220.dp)
+                            .padding(top = 10.dp, end = 5.dp, start = 5.dp, bottom = 5.dp),
                         colors = CardDefaults.cardColors(containerColor = Util.BottomBarBackground),
                         elevation = CardDefaults.cardElevation(10.dp),
 
@@ -124,8 +134,10 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                     }
 
                     Button(
-                        onClick = {  },
-                        modifier = Modifier.width(200.dp).padding(bottom = 10.dp),
+                        onClick = { },
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(bottom = 10.dp),
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color.White,
                             containerColor = Purple
@@ -146,17 +158,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
         }
 
-        //back button
-        IconButton(
-            onClick = { navController.popBackStack() }, modifier = Modifier
-                .padding(top = 10.dp, end = 5.dp, start = 5.dp, bottom = 5.dp)
-                .size(50.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_back),
-                contentDescription = null
-            )
-        }
+
     }
 
 }

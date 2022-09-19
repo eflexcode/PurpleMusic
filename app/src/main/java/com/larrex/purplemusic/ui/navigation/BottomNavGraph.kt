@@ -23,7 +23,7 @@ fun BottomNavGraph(navController: NavHostController, application: Application) {
             AlbumScreen(navController)
         }
         composable(route = BottomBarScreens.ArtistScreen.route) {
-            SearchScreen()
+            ArtistScreen(navController)
         }
         composable(
             route = BottomBarScreens.AlbumDetailsScreen.route) {
@@ -33,7 +33,17 @@ fun BottomNavGraph(navController: NavHostController, application: Application) {
             AlbumDetailsScreen(album, navController)
 
         }
+        composable(
+            route = BottomBarScreens.ArtistDetailsScreen.route) {
 
+            val name = navController.previousBackStackEntry?.savedStateHandle?.get<String>("artistName")
+
+            ArtistScreenDetails(navController,name)
+
+        }
+        composable("nowPlaying"){
+            NowPlayingScreen()
+        }
     }
 
 }

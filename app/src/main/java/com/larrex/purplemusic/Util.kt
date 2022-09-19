@@ -17,7 +17,7 @@ class Util {
 
         val BottomBarBackground2
             @Composable get() =
-                if (isSystemInDarkTheme()) Color.Black else PurpleGray
+                if (isSystemInDarkTheme()) Color.Gray else Color.White
 
         val TextColor
             @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black

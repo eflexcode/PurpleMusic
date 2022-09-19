@@ -11,5 +11,6 @@ interface Repository {
     fun getAllAlbums() : Flow<List<AlbumItem>>
     fun getAllArtist() : Flow<List<ArtistItemModel>>
     fun getAllSongsFromAlbum(albumName : String) : Flow<List<SongItem>>
+    fun getAllAlbumFromArtist(artistName : String) : Flow<List<AlbumItem>>
 
 }

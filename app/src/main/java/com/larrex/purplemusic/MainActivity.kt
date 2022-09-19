@@ -6,6 +6,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,12 +22,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.larrex.purplemusic.Util.Companion.BottomBarLabel
 import com.larrex.purplemusic.Util.Companion.BottomBarLabelSelected
+import com.larrex.purplemusic.Util.Companion.searchBarBackground
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.navigation.BottomNavGraph
+import com.larrex.purplemusic.ui.screens.NowPlayingScreen
 import com.larrex.purplemusic.ui.screens.component.NowPlayingBar
 import com.larrex.purplemusic.ui.theme.*
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
@@ -51,8 +57,8 @@ class MainActivity : ComponentActivity() {
     }
 
 
-
 }
+
 private const val TAG = "MainActivity"
 
 
@@ -83,8 +89,22 @@ fun MainUi(application: Application) {
 @Composable
 fun CreateBNV(navController: NavHostController) {
 
+//    val navControllerNowPlaying = rememberNavController()
+//
+//    NavHost(navController = navController, startDestination = "nowPlaying") {
+//
+//        composable("nowPlaying"){
+//            NowPlayingScreen()
+//        }
+//
+//    }
+
     var indexSelected by remember {
         mutableStateOf(0)
+    }
+
+    var sliderValue by remember {
+        mutableStateOf(60f)
     }
 
     var currentIndex by rememberSaveable() {
@@ -117,12 +137,29 @@ fun CreateBNV(navController: NavHostController) {
         verticalArrangement = Arrangement.spacedBy(0.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(searchBarBackground)
+                    .height(2.dp)
+            )
+            Box(
+                modifier = Modifier
+                    .background(Purple, RoundedCornerShape(100))
+                    .height(2.dp)
+                    .fillMaxWidth(0.3f)
+            )
+
+        }
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
             shape = RoundedCornerShape(0.dp)
         ) {
-
             NowPlayingBar {
+
+                navController.navigate("nowPlaying")
 
             }
         }
@@ -135,15 +172,19 @@ fun CreateBNV(navController: NavHostController) {
             navItems.forEachIndexed() { index, items ->
 
                 var isRout =
-                    currentDestination?.hierarchy?.any { items.route == it.route } == true ||
-                            currentDestination?.hierarchy?.any { items.route == BottomBarScreens.AlbumDetailsScreen.route } == true
+                    currentDestination?.hierarchy?.any { items.route == it.route } == true
 
                 if (items.route == BottomBarScreens.AlbumScreen.route &&
-                    currentDestination?.route == BottomBarScreens.AlbumDetailsScreen.route){
+                    currentDestination?.route == BottomBarScreens.AlbumDetailsScreen.route
+                ) {
                     isRout = true
                 }
 
-//                val paint = rememberAsyncImagePainter(model = if (isRout) navIconsSelected[index] else navIcons[index])
+                if (items.route == BottomBarScreens.ArtistScreen.route &&
+                    currentDestination?.route == BottomBarScreens.ArtistDetailsScreen.route
+                ) {
+                    isRout = true
+                }
 
                 NavigationBarItem(selected = isRout,
                     onClick = {
