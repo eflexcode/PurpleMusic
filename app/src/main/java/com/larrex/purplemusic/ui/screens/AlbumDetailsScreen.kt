@@ -54,7 +54,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 138.dp)
+            .padding(bottom = 137.dp)
     ) {
 
         LazyColumn(

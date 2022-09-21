@@ -45,7 +45,7 @@ fun ArtistScreenDetails(navController: NavController, artistName: String?) {
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 138.dp)
+            .padding(bottom = 137.dp)
     ) {
 
         Column() {

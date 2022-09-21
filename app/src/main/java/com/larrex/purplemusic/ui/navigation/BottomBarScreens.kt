@@ -12,5 +12,6 @@ sealed class BottomBarScreens(val route: String,
     object FavouriteScreen : BottomBarScreens("favourite","Favourite", R.drawable.ic_favourite)
     object AlbumDetailsScreen : BottomBarScreens("album_details","", 0)
     object ArtistDetailsScreen : BottomBarScreens("artist_details","", 0)
+    object NowPlayingScreen : BottomBarScreens("nowPlaying","", 0)
 
 }

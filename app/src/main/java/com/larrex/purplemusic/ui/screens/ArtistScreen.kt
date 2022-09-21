@@ -31,7 +31,7 @@ fun ArtistScreen(navController: NavController) {
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 138.dp), contentAlignment = Alignment.Center
+            .padding(bottom = 137.dp), contentAlignment = Alignment.Center
 
     ) {
         if (artists.isEmpty()) {

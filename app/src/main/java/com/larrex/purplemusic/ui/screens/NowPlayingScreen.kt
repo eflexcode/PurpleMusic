@@ -23,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.ui.screens.component.MusicItem
@@ -31,7 +33,7 @@ import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NowPlayingScreen() {
+fun NowPlayingScreen(navController: NavController) {
 
     var sliderValue by remember {
         mutableStateOf(60f)
@@ -45,29 +47,38 @@ fun NowPlayingScreen() {
 
     val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
 
-
-    Box(modifier = Modifier.fillMaxSize().background(Util.BottomBarBackground)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Util.BottomBarBackground)
+    ) {
 
         LazyColumn() {
 
             item {
 
-                    IconButton(onClick = { /*TODO*/ },modifier = Modifier
-                           ) {
+                IconButton(
+                    onClick = {
 
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_cancel),
-                            contentDescription = "cancel"
-                        )
+                        viewModel.setBarVisible(true)
+                        navController.popBackStack()
 
-                    }
+                    }, modifier = Modifier
+                ) {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_cancel),
+                        contentDescription = "cancel"
+                    )
+
+                }
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(0.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 90.dp),
+                        .padding(top = 70.dp),
                 ) {
 
                     Card(
@@ -244,6 +255,8 @@ fun NowPlayingScreen() {
 @Composable
 fun Pre() {
 
-    NowPlayingScreen()
+    val navController = rememberNavController()
+
+    NowPlayingScreen(navController)
 
 }

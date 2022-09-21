@@ -41,8 +41,8 @@ fun BottomNavGraph(navController: NavHostController, application: Application) {
             ArtistScreenDetails(navController,name)
 
         }
-        composable("nowPlaying"){
-            NowPlayingScreen()
+        composable(BottomBarScreens.NowPlayingScreen.route){
+            NowPlayingScreen(navController)
         }
     }
 
