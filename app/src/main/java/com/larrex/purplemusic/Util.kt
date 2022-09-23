@@ -42,6 +42,14 @@ class Util {
                 searchBarColorDark
             else
                 searchBarColor
+
+        val playlistButtonBackground
+            @Composable
+            get() = if (isSystemInDarkTheme())
+                PlaylistColorDark
+            else
+                PlaylistColor
+
         val ChipBackground
             @Composable
             get() = if (isSystemInDarkTheme())

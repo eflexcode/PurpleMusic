@@ -100,14 +100,14 @@ fun CreateBNV(navController: NavHostController, mThis: MainActivity) {
         R.drawable.ic_music,
         R.drawable.ic_album,
         R.drawable.ic_artist,
-        R.drawable.ic_favourite,
+        R.drawable.ic_list,
     )
 
     val navIconsSelected = listOf(
         R.drawable.ic_music_selected,
         R.drawable.ic_album_selected,
         R.drawable.ic_artist_selected,
-        R.drawable.ic_favourite_selected
+        R.drawable.ic_list_selected
     )
 
     val navBackStackEntry2 by navController.currentBackStackEntryAsState()

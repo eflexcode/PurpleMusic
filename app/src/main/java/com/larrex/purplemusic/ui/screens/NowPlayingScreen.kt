@@ -166,7 +166,6 @@ fun NowPlayingScreen(navController: NavController) {
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
                                 .fillMaxWidth()
-
                         )
 
                     }
@@ -176,30 +175,27 @@ fun NowPlayingScreen(navController: NavController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
+                        IconButton(onClick = { /*TODO*/ }, colors = IconButtonDefaults.iconButtonColors(contentColor = Purple)) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.shuffle),
+                                contentDescription = null
+                            )
+                        }
+
                         IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(70.dp)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_round_skip_backward),
                                 contentDescription = null, modifier = Modifier.size(40.dp)
                             )
                         }
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_round_backward_10),
-                                contentDescription = null
-                            )
-                        }
+
                         IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(80.dp)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_round_pause),
                                 contentDescription = null, modifier = Modifier.size(70.dp)
                             )
                         }
-                        IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_round_forward_10),
-                                contentDescription = null
-                            )
-                        }
+
                         IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(70.dp)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_round_skip_forward),
@@ -207,6 +203,12 @@ fun NowPlayingScreen(navController: NavController) {
                             )
                         }
 
+                        IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.repeat_one),
+                                contentDescription = null
+                            )
+                        }
                     }
 
                     TextField(

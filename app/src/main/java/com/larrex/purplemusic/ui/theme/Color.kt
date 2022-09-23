@@ -17,3 +17,7 @@ val BottomBarLabelColor = Color(0xFF45464f)
 val searchBarColor = Color(0xFFf3f5f9)
 
 val searchBarColorDark = Color(0xFF1B1A1A)
+
+val PlaylistColor = Color(0xFFECECEC)
+
+val PlaylistColorDark = Color(0xFF3A3838)
