@@ -25,16 +25,14 @@ import com.larrex.purplemusic.ui.theme.searchBarColorDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePlaylist(onClick:(Boolean) -> Unit) {
+fun CreatePlaylist(onClick: (Boolean) -> Unit) {
     var newText by remember { mutableStateOf(TextFieldValue("")) }
 
-    val dialogState = remember {
-        mutableStateOf(false)
+    var dialogState by remember {
+        mutableStateOf(true)
     }
 
-//    val state = remember
-
-    Dialog(onDismissRequest = { }) {
+    Dialog(onDismissRequest = { dialogState = false }) {
 
         Box(
             modifier = Modifier.background(Util.searchBarBackground, RoundedCornerShape(20.dp))
@@ -95,9 +93,10 @@ fun CreatePlaylist(onClick:(Boolean) -> Unit) {
 
                     Button(
                         modifier = Modifier.padding(start = 0.dp),
-                        onClick = { },
+                        onClick = { onClick(false) },
                         colors = ButtonDefaults.buttonColors(
-                            contentColor = Color.Gray, containerColor = Util.playlistButtonBackground
+                            contentColor = Color.Gray,
+                            containerColor = Util.playlistButtonBackground
                         )
                     ) {
 
@@ -109,17 +108,16 @@ fun CreatePlaylist(onClick:(Boolean) -> Unit) {
 
             }
 
-
         }
-
     }
+
 
 }
 
 @Preview()
 @Composable
 fun F() {
-    CreatePlaylist(){
+    CreatePlaylist() {
 
     }
 }

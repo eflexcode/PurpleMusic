@@ -28,6 +28,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.Util.Companion.BottomBarLabel
 import com.larrex.purplemusic.Util.Companion.BottomBarLabelSelected
 import com.larrex.purplemusic.Util.Companion.searchBarBackground
@@ -115,6 +116,9 @@ fun CreateBNV(navController: NavHostController, mThis: MainActivity) {
 
     val isNavBarVisible = currentDestination2?.route != BottomBarScreens.NowPlayingScreen.route
 
+    val viewModel = hiltViewModel<MusicViewModel>()
+    val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
+
     AnimatedVisibility(
         visible = isNavBarVisible,
         enter = slideInVertically { it },
@@ -144,7 +148,7 @@ fun CreateBNV(navController: NavHostController, mThis: MainActivity) {
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                 shape = RoundedCornerShape(0.dp)
             ) {
-                NowPlayingBar {
+                NowPlayingBar(nowPlaying) {
 
                     navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 

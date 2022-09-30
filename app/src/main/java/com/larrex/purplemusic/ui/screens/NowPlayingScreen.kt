@@ -1,5 +1,7 @@
 package com.larrex.purplemusic.ui.screens
 
+import android.net.Uri
+import android.os.Handler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,8 +27,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
+import com.larrex.purplemusic.domain.model.SongItem
+import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
@@ -46,6 +51,20 @@ fun NowPlayingScreen(navController: NavController) {
     val viewModel = hiltViewModel<MusicViewModel>()
 
     val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
+    val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
+
+    val handler = Handler()
+
+    handler.postDelayed({
+    },3000)
+
+    val nextUps by viewModel.getNextUps().collectAsState(emptyList())
+
+    val painter = rememberAsyncImagePainter(
+        model = nowPlaying?.albumArt, placeholder = painterResource(
+            id = R.drawable.ic_music_selected_small
+        ), error = painterResource(id = R.drawable.ic_music_selected_small)
+    )
 
     Box(
         modifier = Modifier
@@ -60,7 +79,6 @@ fun NowPlayingScreen(navController: NavController) {
                 IconButton(
                     onClick = {
 
-                        viewModel.setBarVisible(true)
                         navController.popBackStack()
 
                     }, modifier = Modifier
@@ -78,7 +96,7 @@ fun NowPlayingScreen(navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 70.dp),
+                        .padding(top = 60.dp),
                 ) {
 
                     Card(
@@ -90,47 +108,51 @@ fun NowPlayingScreen(navController: NavController) {
                         elevation = CardDefaults.cardElevation(10.dp),
 
                         ) {
+
                         Image(
-                            painter = painterResource(id = R.drawable.legends_never_die),
+                            painter = painter,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-
                                 .clip(RoundedCornerShape(10.dp))
                                 .fillMaxSize()
+                        )
 
+                    }
+
+                    nowPlaying?.musicName?.let {
+                        Text(
+                            text = it,
+                            fontSize = 24.sp,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            color = Util.TextColor,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .padding(end = 35.dp, start = 35.dp, top = 25.dp)
                         )
                     }
 
-                    Text(
-                        text = "Man of the year",
-                        fontSize = 24.sp,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        color = Util.TextColor,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .padding(end = 5.dp, start = 5.dp, top = 25.dp)
-                    )
-                    Text(
-                        text = "Juice wrld",
-                        fontSize = 16.sp,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        color = Color.Gray,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .padding(end = 5.dp, start = 5.dp, top = 5.dp, bottom = 30.dp)
-                    )
+                    nowPlaying?.let {
+                        Text(
+                            text = it.artistName,
+                            fontSize = 16.sp,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Normal,
+                            maxLines = 1,
+                            color = Color.Gray,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .padding(end = 35.dp, start = 35.dp, top = 5.dp, bottom = 10.dp)
+                        )
+                    }
 
                     Slider(
                         value = sliderValue,
                         onValueChange = { sliderValue = it },
                         modifier = Modifier
-                            .padding(start = 20.dp, end = 20.dp)
-                            .height(30.dp),
+                            .padding(start = 20.dp, end = 20.dp),
                         valueRange = 0f..100f,
                         colors = SliderDefaults.colors(
                             thumbColor = Purple,
@@ -156,7 +178,7 @@ fun NowPlayingScreen(navController: NavController) {
                         )
 
                         Text(
-                            text = "40:00",
+                            text = nowPlaying?.duration.toString(),
                             fontSize = 12.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,
@@ -175,7 +197,13 @@ fun NowPlayingScreen(navController: NavController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        IconButton(onClick = { /*TODO*/ }, colors = IconButtonDefaults.iconButtonColors(contentColor = Purple)) {
+                        IconButton(
+                            onClick = { /*TODO*/ },
+                            colors = if (nowPlaying?.shuffle == true) IconButtonDefaults.iconButtonColors(
+                                contentColor = Purple
+                            ) else IconButtonDefaults.iconButtonColors(contentColor = Util.TextColor)
+
+                        ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.shuffle),
                                 contentDescription = null
@@ -205,7 +233,9 @@ fun NowPlayingScreen(navController: NavController) {
 
                         IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
                             Icon(
-                                painter = painterResource(id = R.drawable.repeat_one),
+                                painter = if (nowPlaying?.repeat == true) painterResource(id = R.drawable.repeat_one) else painterResource(
+                                    id = R.drawable.repeat_all
+                                ),
                                 contentDescription = null
                             )
                         }
@@ -228,7 +258,7 @@ fun NowPlayingScreen(navController: NavController) {
                         ),
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
-                        placeholder = { Text(text = "Search music", color = Color.Gray) },
+                        placeholder = { Text(text = "Search next ups", color = Color.Gray) },
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_search),
@@ -241,9 +271,15 @@ fun NowPlayingScreen(navController: NavController) {
                 }
             }
 
-            items(musicItems) {
+            items(nextUps) {
 
-                MusicItem(onClicked = {}, it)
+                val songUri: Uri = Uri.parse(it.songUri)
+                val imageUri: Uri = Uri.parse(it.songCoverImageUri)
+
+                val songItem =
+                    SongItem(songUri, it.songName, it.artistName, imageUri, it.size, it.duration)
+
+                MusicItem(onClicked = {}, onLongClicked = {}, songItem)
 
             }
 

@@ -1,8 +1,7 @@
 package com.larrex.purplemusic.ui.screens.component
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -39,12 +39,13 @@ fun Preview() {
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MusicItem(onClicked: () -> Unit, songItem: SongItem) {
+fun MusicItem(onClicked: () -> Unit, onLongClicked: () -> Unit, songItem: SongItem) {
 
     val painter = rememberAsyncImagePainter(
         model = songItem.songCoverImageUri,
-       error = painterResource(
+        error = painterResource(
             id = R.drawable.ic_music_selected_small
         )
     )
@@ -55,10 +56,11 @@ fun MusicItem(onClicked: () -> Unit, songItem: SongItem) {
             .fillMaxWidth()
             .padding(start = 0.dp)
             .size(65.dp)
-            .toggleable(value = true, onValueChange = {
-                onClicked()
-            }),
-        verticalAlignment = Alignment.CenterVertically,
+            .combinedClickable(
+                onClick = { onClicked() },
+                onLongClick = { onLongClicked() },
+                onDoubleClick = { },
+            ), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
 

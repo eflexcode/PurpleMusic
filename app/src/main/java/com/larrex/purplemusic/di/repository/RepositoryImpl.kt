@@ -10,16 +10,25 @@ import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.ArtistItemModel
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.repository.Repository
+import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
+import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
+import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlayingAndNextUpsDatabase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
-class RepositoryImpl @Inject constructor(private var application: Application) : Repository {
+class RepositoryImpl @Inject constructor(
+    private var application: Application,
+    private var database: NowPlayingAndNextUpsDatabase
+) : Repository {
 
     private val TAG = "RepositoryImpl"
-
+    val thread = Thread()
     override fun getAllSongs(): Flow<List<SongItem>> {
 
         return flow<List<SongItem>> {
@@ -76,10 +85,6 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
                         Uri.parse("content://media/external/audio/albumart"),
                         albumId
                     )
-
-//                    val realName = name.substring(0, name.lastIndexOf("."))
-//
-//                    realName.replace(artist, "")
 
                     val songItem = SongItem(songUri, title, artist, imageUri, size, duration)
 
@@ -195,7 +200,7 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
 
                     val imageUri: Uri = Uri.parse("")
 
-                    val albums : MutableList<String> = ArrayList<String>()
+                    val albums: MutableList<String> = ArrayList<String>()
 
                     val artistItemModel =
                         ArtistItemModel(imageUri, albumNumber, songNumber, artistName)
@@ -205,12 +210,11 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
 
                 }
 
-
             }
 
             query?.close()
 
-            for (item in artists){
+            for (item in artists) {
                 val projectionArt = arrayOf(
                     MediaStore.Audio.Albums.ALBUM_ART,
                     MediaStore.Audio.Albums._ID
@@ -243,7 +247,7 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
                     while (it.moveToNext()) {
                         val idArt = it.getLong(idColumnArt)
 
-                       val imageUri : Uri = ContentUris.withAppendedId(
+                        val imageUri: Uri = ContentUris.withAppendedId(
                             Uri.parse("content://media/external/audio/albumart"),
                             idArt
                         )
@@ -256,8 +260,6 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
                 }
 
             }
-
-
 
             emit(artists)
 
@@ -325,10 +327,6 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
                         albumId
                     )
 
-//                    val realName = name.substring(0, name.lastIndexOf("."))
-//
-//                    realName.replace(artist, "")
-
                     val songItem = SongItem(songUri, title, artist, imageUri, size, duration)
 
                     songs.add(songItem)
@@ -363,7 +361,8 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
             val order = MediaStore.Audio.Albums.ALBUM + " ASC"
             val where = "${MediaStore.Audio.Albums.ARTIST} =?"
             val whereVal = arrayOf(artistName)
-            val query = application.contentResolver.query(libraryUri, projection, where, whereVal, order)
+            val query =
+                application.contentResolver.query(libraryUri, projection, where, whereVal, order)
 
             query?.use {
 
@@ -393,6 +392,52 @@ class RepositoryImpl @Inject constructor(private var application: Application) :
             }
 
         }.flowOn(Dispatchers.IO)
+    }
+
+    override fun insertNowPlaying(nowPlaying: NowPlaying) {
+
+        database.dao().insertNowPlaying(nowPlaying)
+
+    }
+
+    override fun insertNextUps(nextUpSongs: List<NextUpSongs>) {
+
+        for (nextUp in nextUpSongs) {
+
+            database.dao().insertNextUps(nextUp)
+
+        }
+    }
+
+    override fun getNowPlaying(): Flow<NowPlaying> {
+
+        return flow<NowPlaying> {
+
+            emit(database.dao().getNowPlaying())
+
+        }.flowOn(Dispatchers.IO)
+    }
+
+    override fun getNextUps(): Flow<List<NextUpSongs>> {
+
+      return flow<List<NextUpSongs>> {
+
+          emit(database.dao().getNextUps())
+
+      }.flowOn(Dispatchers.IO)
+
+    }
+
+    override fun deleteNowPlay() {
+
+        database.dao().deleteNowPlay()
+
+    }
+
+    override fun deleteNextUps() {
+
+      database.dao().deleteNextUps()
+
     }
 
 }

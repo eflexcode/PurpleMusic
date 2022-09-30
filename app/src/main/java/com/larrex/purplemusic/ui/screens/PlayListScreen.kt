@@ -25,8 +25,8 @@ fun FavouriteScreen() {
     }
 
     if (isFABClicked) {
-        CreatePlaylist(){
-
+        CreatePlaylist() {
+            isFABClicked = it
         }
 
     }

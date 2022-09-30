@@ -20,16 +20,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
+import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
 
 @Composable
-fun NowPlayingBar(onClicked: () -> Unit) {
+fun NowPlayingBar(nowPlaying: NowPlaying?, onClicked: () -> Unit) {
 
     var sliderValue by remember {
         mutableStateOf(60f)
     }
-
+    val painter = rememberAsyncImagePainter(
+        model = nowPlaying?.albumArt, placeholder = painterResource(
+            id = R.drawable.ic_music_selected_small
+        ), error = painterResource(id = R.drawable.ic_music_selected_small)
+    )
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,7 +57,7 @@ fun NowPlayingBar(onClicked: () -> Unit) {
             ) {
 
                 Image(
-                    painter = painterResource(id = R.drawable.music_test_image2),
+                    painter = painter,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -61,29 +67,32 @@ fun NowPlayingBar(onClicked: () -> Unit) {
                 )
 
                 Column(modifier = Modifier.weight(2f)) {
-                    Text(
-                        text = "Crazy things",
-                        fontSize = 15.sp,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        color = Util.TextColor,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(end = 5.dp, start = 5.dp)
-                    )
+                    if (nowPlaying != null) {
 
-                    Text(
-                        text = "Tems",
-                        fontSize = 12.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontStyle = FontStyle.Normal,
-                        fontFamily = FontFamily.Default,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(end = 5.dp, start = 5.dp),
-                        color = Color.Gray
-                    )
+                        Text(
+                            text = nowPlaying.musicName,
+                            fontSize = 16.sp,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Normal,
+                            maxLines = 1,
+                            color = Util.TextColor,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(end = 5.dp, start = 5.dp)
+                        )
 
+                        Text(
+                            text = nowPlaying.artistName,
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontStyle = FontStyle.Normal,
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(end = 5.dp, start = 5.dp),
+                            color = Color.Gray
+                        )
+
+                    }
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
@@ -135,8 +144,8 @@ fun NowPlayingBar(onClicked: () -> Unit) {
 @Composable
 fun PreviewNowPlayingBar() {
 
-    NowPlayingBar {
-
-    }
+//    NowPlayingBar {
+//
+//    }
 
 }

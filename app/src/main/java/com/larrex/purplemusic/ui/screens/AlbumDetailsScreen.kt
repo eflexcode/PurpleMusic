@@ -31,9 +31,17 @@ import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.SongItem
+import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
+import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
+import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+
 
 @Composable
 fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
@@ -43,6 +51,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
         error = painterResource(id = R.drawable.ic_music_selected_small)
     )
 
+
     val viewModel = hiltViewModel<MusicViewModel>()
 
     val albumName: String = albumItem?.albumName ?: ""
@@ -50,6 +59,14 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
     val songsInAlbum by viewModel.getAllSongsFromAlbum(albumName)
         .collectAsState(initial = emptyList())
 
+    val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
+
+    for (song in songsInAlbum){
+
+        nextUpSongs.add(NextUpSongs(null,
+            song.songUri.toString(),song.songName,
+            song.artistName,song.songCoverImageUri.toString(),song.size,song.duration))
+    }
     Box(
         modifier = Modifier
             .background(Util.BottomBarBackground)
@@ -64,17 +81,17 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
         ) {
 
             item {
-               //back button
-                    IconButton(
-                        onClick = { navController.popBackStack() }, modifier = Modifier
-                            .padding(top = 10.dp, end = 5.dp, start = 5.dp, bottom = 0.dp)
-                            .size(50.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_back),
-                            contentDescription = null
-                        )
-                    }
+                //back button
+                IconButton(
+                    onClick = { navController.popBackStack() }, modifier = Modifier
+                        .padding(top = 10.dp, end = 5.dp, start = 5.dp, bottom = 0.dp)
+                        .size(50.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = null
+                    )
+                }
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -134,7 +151,30 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                     }
 
                     Button(
-                        onClick = { },
+                        onClick = {
+
+                            CoroutineScope(Dispatchers.IO).launch {
+
+                                val nowPlaying = NowPlaying(
+                                    null,
+                                    songsInAlbum[0].songUri.toString(),
+                                    songsInAlbum[0].songName, songsInAlbum[0].artistName,
+                                    songsInAlbum[0].songCoverImageUri.toString(),
+                                    songsInAlbum[0].duration, 0, false, false
+                                )
+
+                                viewModel.deleteNowPlaying()
+                                viewModel.deleteNextUps()
+
+                                viewModel.insertNowPlaying(nowPlaying)
+
+                                viewModel.insertNextUps(nextUpSongs)
+
+
+                            }
+                            navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+
+                        },
                         modifier = Modifier
                             .width(200.dp)
                             .padding(bottom = 10.dp),
@@ -153,15 +193,41 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
             }
 
             items(songsInAlbum) {
-                MusicItem(onClicked = { }, songItem = it)
+                MusicItem(onClicked = {
+
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        val nowPlaying = NowPlaying(
+                            null,
+                            it.songUri.toString(),
+                            it.songName, it.artistName,
+                            it.songCoverImageUri.toString(),
+                            it.duration, 0, false, false
+                        )
+
+                        viewModel.deleteNowPlaying()
+                        viewModel.deleteNextUps()
+
+                        viewModel.insertNowPlaying(nowPlaying)
+
+                        viewModel.insertNextUps(nextUpSongs)
+
+
+                    }
+                    navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+
+                }, songItem = it, onLongClicked = {
+
+                })
             }
 
         }
-
-
     }
 
+
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

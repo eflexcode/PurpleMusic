@@ -7,6 +7,8 @@ import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.ArtistItemModel
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.repository.Repository
+import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
+import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -43,19 +45,36 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
         return repository.getAllArtist()
     }
 
-    var isVisible : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    fun insertNowPlaying(nowPlaying: NowPlaying) {
 
-    fun isBarVisible(): LiveData<Boolean> {
+        repository.insertNowPlaying(nowPlaying)
 
-        return isVisible
     }
 
-    fun setBarVisible(isVisibleNew: Boolean){
+    fun deleteNowPlaying() {
 
-        isVisible.value = isVisibleNew
+        repository.deleteNowPlay()
+
     }
 
+    fun getNowPlaying() : Flow<NowPlaying>{
 
+        return repository.getNowPlaying()
+    }
 
+    fun insertNextUps(nextUps : List<NextUpSongs>){
+
+        repository.insertNextUps(nextUps)
+
+    }
+
+    fun getNextUps(): Flow<List<NextUpSongs>>{
+
+        return repository.getNextUps()
+    }
+
+    fun deleteNextUps(){
+        repository.deleteNextUps()
+    }
 
 }

@@ -2,6 +2,7 @@ package com.larrex.purplemusic.ui.screens
 
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,10 +29,17 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
+import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
+import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+private const val TAG = "MusicScreen"
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +47,9 @@ fun MusicScreen(navController: NavController) {
 
     val chipItems = listOf("Music", "Albums")
     var newText by remember { mutableStateOf(TextFieldValue("")) }
+    val scope = rememberCoroutineScope()
+    val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
+
 
     Box(
         modifier = Modifier
@@ -67,6 +78,7 @@ fun MusicScreen(navController: NavController) {
         val storagePermission = rememberMultiplePermissionsState(permissionList)
 
         if (!storagePermission.allPermissionsGranted) {
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -87,7 +99,7 @@ fun MusicScreen(navController: NavController) {
                     )
                 ) {
 
-                    Text(text = "Give Permission")
+                    Text(text = "Give Permissions")
 
                 }
 
@@ -97,55 +109,19 @@ fun MusicScreen(navController: NavController) {
 
             val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
 
+//            for (song in musicItems) {
+//                nextUpSongs.add(
+//                    NextUpSongs(
+//                        null,
+//                        song.songUri.toString(), song.songName,
+//                        song.artistName, song.songCoverImageUri.toString(), song.size, song.duration
+//                    )
+//                )
+//            }
+
             LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {
 
                 item {
-
-//                    Row(
-//                        modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        horizontalArrangement = Arrangement.Center
-//                    ) {
-//
-//                        Text(
-//                            text = Util.getGreeting(),
-//                            color = Util.TextColor,
-//                            fontSize = 25.sp,
-//                            fontWeight = FontWeight.Normal,
-//                            textAlign = TextAlign.Start, modifier = Modifier
-//                                .weight(2f)
-//                                .fillMaxWidth()
-//                                .padding(start = 15.dp)
-//                        )
-//
-//                        IconButton(
-//                            onClick = {
-////
-////                                navController.navigate(BottomBarScreens.ArtistScreen.route) {
-////
-////                                    popUpTo(navController.graph.findStartDestination().id) {
-////                                        saveState = true
-////                                    }
-////
-////                                    launchSingleTop = true
-////                                    restoreState = true
-////
-////                                }
-//
-//                            },
-//                            modifier = Modifier
-//                                .size(18.dp)
-//                                .padding(end = 10.dp)
-//                                .weight(0.3f)
-//                        ) {
-//
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.ic_search),
-//                                contentDescription = null
-//                            )
-//
-//                        }
-//                    }
 
                     if (musicItems.isNotEmpty()) {
                         TextField(
@@ -175,7 +151,7 @@ fun MusicScreen(navController: NavController) {
 
                         )
 
-                    }else  {
+                    } else {
                         CircularProgressIndicator()
                     }
 
@@ -183,12 +159,46 @@ fun MusicScreen(navController: NavController) {
 
                 items(musicItems) {
 
-                    MusicItem(onClicked = {}, it)
+                    MusicItem(onClicked = {
+
+                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+                        CoroutineScope(Dispatchers.IO).launch {
+
+                            val nowPlaying = NowPlaying(
+                                null,
+                                it.songUri.toString(),
+                                it.songName, it.artistName,
+                                it.songCoverImageUri.toString(),
+                                it.duration, 0, false, false
+                            )
+
+                            viewModel.deleteNowPlaying()
+                            viewModel.deleteNextUps()
+
+                            viewModel.insertNowPlaying(nowPlaying)
+
+                            musicItems.forEach { song->
+
+                                nextUpSongs.add(
+                                    NextUpSongs(
+                                        null,
+                                        song.songUri.toString(), song.songName,
+                                        song.artistName, song.songCoverImageUri.toString(), song.size, song.duration
+                                    )
+                                )
+                            }.apply {
+                                viewModel.insertNextUps(nextUpSongs)
+                            }
+
+                        }
+
+                    }, onLongClicked = {
+                        Log.d(TAG, "MusicScreen: " + it.songName)
+                    }, it)
 
                 }
 
             }
-
 
         }
     }
