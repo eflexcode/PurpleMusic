@@ -21,3 +21,8 @@ val searchBarColorDark = Color(0xFF1B1A1A)
 val PlaylistColor = Color(0xFFECECEC)
 
 val PlaylistColorDark = Color(0xFF3A3838)
+
+val PurplePickSongs = Color(0xFFF0E2FF)
+
+val PurplePickColorDark = Color(0xFF333232)
+

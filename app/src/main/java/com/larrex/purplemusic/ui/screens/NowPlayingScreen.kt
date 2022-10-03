@@ -32,9 +32,13 @@ import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
+import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,13 +54,7 @@ fun NowPlayingScreen(navController: NavController) {
 
     val viewModel = hiltViewModel<MusicViewModel>()
 
-    val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
     val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
-
-    val handler = Handler()
-
-    handler.postDelayed({
-    },3000)
 
     val nextUps by viewModel.getNextUps().collectAsState(emptyList())
 
@@ -271,15 +269,29 @@ fun NowPlayingScreen(navController: NavController) {
                 }
             }
 
-            items(nextUps) {
+            items(nextUps) { item->
 
-                val songUri: Uri = Uri.parse(it.songUri)
-                val imageUri: Uri = Uri.parse(it.songCoverImageUri)
+                val songUri: Uri = Uri.parse(item.songUri)
+                val imageUri: Uri = Uri.parse(item.songCoverImageUri)
 
                 val songItem =
-                    SongItem(songUri, it.songName, it.artistName, imageUri, it.size, it.duration)
+                    SongItem(songUri, item.songName, item.artistName, imageUri, item.size, item.duration)
 
-                MusicItem(onClicked = {}, onLongClicked = {}, songItem)
+                MusicItem(onClicked = {
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        val nowPlaying = NowPlaying(
+                            null,
+                            item.songUri.toString(),
+                            item.songName, item.artistName,
+                            item.songCoverImageUri.toString(),
+                            item.duration, 0, false, false
+                        )
+
+                        viewModel.deleteNowPlaying()
+                        viewModel.insertNowPlaying(nowPlaying)
+                    }
+                }, onLongClicked = {}, onUnselected = {}, songItem)
 
             }
 

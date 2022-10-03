@@ -12,13 +12,13 @@ interface NowPlayingAndNextUpsDao {
     fun insertNowPlaying(nowPlaying: NowPlaying)
 
     @Insert
-    fun insertNextUps(nextUpSongs: NextUpSongs)
+    fun insertNextUps(nextUpSongs: List<NextUpSongs>)
 
     @Query("SELECT * FROM NowPlaying")
-    fun getNowPlaying() : NowPlaying
+    fun getNowPlaying() : Flow<NowPlaying>
 
     @Query("SELECT * FROM NextUpSongs")
-    fun getNextUps() : List<NextUpSongs>
+    fun getNextUps() : Flow<List<NextUpSongs>>
 
     @Query("DELETE FROM NowPlaying")
     fun deleteNowPlay()

@@ -29,12 +29,26 @@ class Util {
                 else
                     Purple
 
+        val PickSongsFloatingBackground
+            @Composable get() =
+                if (isSystemInDarkTheme())
+                    PurplePickColorDark
+                else
+                    Color.White
+
         val BottomBarLabel
             @Composable get() =
                 if (isSystemInDarkTheme())
                     Color.Gray
                 else
                     Color.Gray
+
+        val pickSongsBackground
+            @Composable
+            get() = if (isSystemInDarkTheme())
+                PurplePickColorDark
+            else
+                PurplePickSongs
 
         val searchBarBackground
             @Composable

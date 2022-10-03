@@ -192,17 +192,17 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
             }
 
-            items(songsInAlbum) {
+            items(songsInAlbum) { item->
                 MusicItem(onClicked = {
 
                     CoroutineScope(Dispatchers.IO).launch {
 
                         val nowPlaying = NowPlaying(
                             null,
-                            it.songUri.toString(),
-                            it.songName, it.artistName,
-                            it.songCoverImageUri.toString(),
-                            it.duration, 0, false, false
+                            item.songUri.toString(),
+                            item.songName, item.artistName,
+                            item.songCoverImageUri.toString(),
+                            item.duration, 0, false, false
                         )
 
                         viewModel.deleteNowPlaying()
@@ -216,7 +216,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                     }
                     navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
-                }, songItem = it, onLongClicked = {
+                }, songItem = item, onLongClicked = {
 
                 })
             }

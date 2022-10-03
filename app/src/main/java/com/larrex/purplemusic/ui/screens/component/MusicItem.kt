@@ -7,7 +7,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +27,8 @@ import coil.compose.rememberImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.SongItem
+import com.larrex.purplemusic.ui.theme.PurpleGray
+import com.larrex.purplemusic.ui.theme.PurplePickSongs
 import java.io.File
 
 @Preview(showBackground = true)
@@ -41,7 +43,12 @@ fun Preview() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MusicItem(onClicked: () -> Unit, onLongClicked: () -> Unit, songItem: SongItem) {
+fun MusicItem(
+    onClicked: () -> Unit,
+    onLongClicked: () -> Unit,
+    onUnselected: (name : String) -> Unit,
+    songItem: SongItem
+) {
 
     val painter = rememberAsyncImagePainter(
         model = songItem.songCoverImageUri,
@@ -50,15 +57,37 @@ fun MusicItem(onClicked: () -> Unit, onLongClicked: () -> Unit, songItem: SongIt
         )
     )
 
+    var isSelected by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
-            .background(Util.BottomBarBackground)
+            .background(if (!isSelected) Util.BottomBarBackground else Util.pickSongsBackground)
             .fillMaxWidth()
             .padding(start = 0.dp)
             .size(65.dp)
             .combinedClickable(
-                onClick = { onClicked() },
-                onLongClick = { onLongClicked() },
+                onClick = {
+
+                    if (isSelected) {
+
+                        isSelected = false
+                        onUnselected(songItem.songName)
+
+                    } else {
+
+                        onClicked()
+
+                    }
+                },
+                onLongClick = {
+
+                    if (!isSelected) {
+
+                        onLongClicked()
+                        isSelected = true
+
+                    }
+                },
                 onDoubleClick = { },
             ), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center

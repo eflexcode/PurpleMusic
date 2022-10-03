@@ -3,6 +3,12 @@ package com.larrex.purplemusic.ui.screens
 import android.Manifest
 import android.os.Build
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,6 +39,7 @@ import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
 import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.MusicItem
+import com.larrex.purplemusic.ui.screens.component.PickSongsFloatingItem
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -41,15 +48,23 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "MusicScreen"
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class, ExperimentalAnimationApi::class,
+)
 @Composable
 fun MusicScreen(navController: NavController) {
 
     val chipItems = listOf("Music", "Albums")
     var newText by remember { mutableStateOf(TextFieldValue("")) }
+    var selectedCount by remember { mutableStateOf(0) }
     val scope = rememberCoroutineScope()
     val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
 
+    var visibleState =
+        remember { MutableTransitionState(false).apply { targetState = false } }
+
+    var nowPlaying: NowPlaying? = null
 
     Box(
         modifier = Modifier
@@ -109,16 +124,6 @@ fun MusicScreen(navController: NavController) {
 
             val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
 
-//            for (song in musicItems) {
-//                nextUpSongs.add(
-//                    NextUpSongs(
-//                        null,
-//                        song.songUri.toString(), song.songName,
-//                        song.artistName, song.songCoverImageUri.toString(), song.size, song.duration
-//                    )
-//                )
-//            }
-
             LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {
 
                 item {
@@ -151,55 +156,136 @@ fun MusicScreen(navController: NavController) {
 
                         )
 
+
                     } else {
                         CircularProgressIndicator()
                     }
 
                 }
 
-                items(musicItems) {
+                items(musicItems) { item ->
 
                     MusicItem(onClicked = {
 
                         navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+
                         CoroutineScope(Dispatchers.IO).launch {
 
-                            val nowPlaying = NowPlaying(
+                            nowPlaying = NowPlaying(
                                 null,
-                                it.songUri.toString(),
-                                it.songName, it.artistName,
-                                it.songCoverImageUri.toString(),
-                                it.duration, 0, false, false
+                                item.songUri.toString(),
+                                item.songName, item.artistName,
+                                item.songCoverImageUri.toString(),
+                                item.duration, 0, false, false
                             )
 
                             viewModel.deleteNowPlaying()
                             viewModel.deleteNextUps()
 
-                            viewModel.insertNowPlaying(nowPlaying)
+                            viewModel.insertNowPlaying(nowPlaying!!)
 
-                            musicItems.forEach { song->
+                            musicItems.forEach { song ->
 
                                 nextUpSongs.add(
                                     NextUpSongs(
                                         null,
-                                        song.songUri.toString(), song.songName,
-                                        song.artistName, song.songCoverImageUri.toString(), song.size, song.duration
+                                        song.songUri.toString(),
+                                        song.songName,
+                                        song.artistName,
+                                        song.songCoverImageUri.toString(),
+                                        song.size,
+                                        song.duration
                                     )
                                 )
+
                             }.apply {
+
                                 viewModel.insertNextUps(nextUpSongs)
+
                             }
 
                         }
 
                     }, onLongClicked = {
-                        Log.d(TAG, "MusicScreen: " + it.songName)
-                    }, it)
+
+                        Log.d(TAG, "MusicScreen: " + item.songName)
+                        visibleState.targetState = true
+                        selectedCount++
+
+                        CoroutineScope(Dispatchers.IO).launch {
+
+                            nextUpSongs.add(
+                                NextUpSongs(
+                                    null,
+                                    item.songUri.toString(),
+                                    item.songName,
+                                    item.artistName,
+                                    item.songCoverImageUri.toString(),
+                                    item.size,
+                                    item.duration
+                                )
+                            )
+
+                            nowPlaying = NowPlaying(
+                                null,
+                                nextUpSongs[0].songUri.toString(),
+                                nextUpSongs[0].songName, nextUpSongs[0].artistName,
+                                nextUpSongs[0].songCoverImageUri.toString(),
+                                nextUpSongs[0].duration, 0, false, false
+                            )
+
+                        }
+                    }, onUnselected = {
+
+                        selectedCount--
+
+                        if (selectedCount == 0) {
+                            visibleState.targetState = false
+
+                        }
+                        for (song in nextUpSongs) {
+
+                            if (song.songName == it) {
+
+                                nextUpSongs.remove(song)
+                                return@MusicItem
+
+                            }
+                        }
+                    }, item)
 
                 }
 
             }
 
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp), contentAlignment = Alignment.BottomEnd
+            ) {
+                AnimatedVisibility(
+                    visibleState = visibleState,
+                    enter = scaleIn(),
+                    exit = scaleOut()
+                ) {
+                    PickSongsFloatingItem(selectedCount) {
+
+                        CoroutineScope(Dispatchers.IO).launch {
+
+                            viewModel.deleteNowPlaying()
+                            viewModel.deleteNextUps()
+
+                            nowPlaying?.let { viewModel.insertNowPlaying(it) }
+                            viewModel.insertNextUps(nextUpSongs)
+
+
+                            visibleState.targetState = false
+                        }
+                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+                    }
+                }
+
+            }
         }
     }
 }
