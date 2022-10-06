@@ -2,9 +2,7 @@
 ## Built by Eze larry ifeanyi
 this project is not yet finished
 <p float="left">
-
-<img src="/image/image5.gif" width="250" />
-  <img src="/image/image1.png" width="250" /> 
+ <img src="/image/image1.png" width="250" /> 
   <img src="/image/image2.png" width="250" /> 
   <img src="/image/image3.png" width="250" /> 
   <img src="/image/image5.png" width="250" /> 
