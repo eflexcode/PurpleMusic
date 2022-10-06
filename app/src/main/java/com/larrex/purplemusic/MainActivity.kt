@@ -3,6 +3,7 @@ package com.larrex.purplemusic
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -61,7 +62,6 @@ class MainActivity : ComponentActivity() {
 }
 
 private const val TAG = "MainActivity"
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

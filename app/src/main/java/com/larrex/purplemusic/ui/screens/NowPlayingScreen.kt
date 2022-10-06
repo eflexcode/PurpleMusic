@@ -124,7 +124,8 @@ fun NowPlayingScreen(navController: NavController) {
                             fontSize = 24.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Bold,
-                            maxLines = 1,
+                            textAlign = TextAlign.Center,
+                            maxLines = 2,
                             color = Util.TextColor,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
@@ -138,7 +139,8 @@ fun NowPlayingScreen(navController: NavController) {
                             fontSize = 16.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,
-                            maxLines = 1,
+                            maxLines = 2,
+                            textAlign = TextAlign.Center,
                             color = Color.Gray,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
@@ -176,7 +178,7 @@ fun NowPlayingScreen(navController: NavController) {
                         )
 
                         Text(
-                            text = nowPlaying?.duration.toString(),
+                            text = Util.formatTime(nowPlaying?.duration.toString()),
                             fontSize = 12.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,

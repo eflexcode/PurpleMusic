@@ -1,10 +1,13 @@
 package com.larrex.purplemusic
 
+import android.provider.ContactsContract.Data
 import android.text.format.Time
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.larrex.purplemusic.ui.theme.*
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class Util {
@@ -94,10 +97,27 @@ class Util {
                 "Good night ✨"
             }
 
-
         }
 
+        fun formatTime(duration: String): String {
+
+            return if (duration != "null") {
+
+                val mDuration = duration.toLong()
+
+                var timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+
+                if (mDuration == 3600000L){
+                    timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                }
+
+                timeFormat.format(Date(mDuration - TimeZone.getDefault().rawOffset))
+
+            } else {
+
+                "00:00"
+            }
+        }
 
     }
-
 }

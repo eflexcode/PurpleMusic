@@ -193,6 +193,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
             }
 
             items(songsInAlbum) { item->
+
                 MusicItem(onClicked = {
 
                     CoroutineScope(Dispatchers.IO).launch {
@@ -212,11 +213,12 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
                         viewModel.insertNextUps(nextUpSongs)
 
-
                     }
                     navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                 }, songItem = item, onLongClicked = {
+
+                }, onUnselected = {
 
                 })
             }
