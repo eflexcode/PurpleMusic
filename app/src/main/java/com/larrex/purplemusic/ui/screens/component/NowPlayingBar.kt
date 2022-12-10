@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
-import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
+import com.larrex.purplemusic.domain.room.NowPlaying
 
 @Composable
 fun NowPlayingBar(nowPlaying: NowPlaying?, onClicked: () -> Unit) {

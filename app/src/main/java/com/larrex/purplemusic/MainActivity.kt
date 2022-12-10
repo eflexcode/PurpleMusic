@@ -67,6 +67,7 @@ private const val TAG = "MainActivity"
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainUi(application: Application, mainActivity: MainActivity) {
+
     val permissionList = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -78,9 +79,9 @@ fun MainUi(application: Application, mainActivity: MainActivity) {
     val viewModel = hiltViewModel<MusicViewModel>()
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-        Scaffold(bottomBar = { CreateBNV(navController = navController, mainActivity) }) {
+        Scaffold(bottomBar = { CreateBNV(navController = navController) }) {
 
-            BottomNavGraph(navController = navController, application)
+            BottomNavGraph(navController = navController, viewModel)
 
         }
     }
@@ -88,7 +89,7 @@ fun MainUi(application: Application, mainActivity: MainActivity) {
 }
 
 @Composable
-fun CreateBNV(navController: NavHostController, mThis: MainActivity) {
+fun CreateBNV(navController: NavHostController) {
 
     val navItems = listOf(
         BottomBarScreens.MusicScreen,
@@ -176,7 +177,6 @@ fun CreateBNV(navController: NavHostController, mThis: MainActivity) {
                     ) {
                         isRout = true
                     }
-
 
                     NavigationBarItem(selected = isRout,
                         onClick = {

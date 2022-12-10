@@ -10,24 +10,23 @@ import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.ArtistItemModel
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.repository.Repository
-import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
-import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
-import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlayingAndNextUpsDatabase
-import kotlinx.coroutines.CoroutineScope
+import com.larrex.purplemusic.domain.room.NextUpSongs
+import com.larrex.purplemusic.domain.room.NowPlaying
+import com.larrex.purplemusic.domain.room.Playlist
+import com.larrex.purplemusic.domain.room.PurpleDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
-    private var application: Application, private var database: NowPlayingAndNextUpsDatabase
+    private var application: Application, private var database: PurpleDatabase
 ) : Repository {
 
     private val TAG = "RepositoryImpl"
     val thread = Thread()
+
     override fun getAllSongs(): Flow<List<SongItem>> {
 
         return flow<List<SongItem>> {
@@ -389,6 +388,12 @@ class RepositoryImpl @Inject constructor(
 
     }
 
+    override fun insertPlaylist(playlist: Playlist) {
+
+        database.dao().insertPlaylist(playlist)
+
+    }
+
     override fun insertNextUps(nextUpSongs: List<NextUpSongs>) {
 
         database.dao().insertNextUps(nextUpSongs)
@@ -402,6 +407,12 @@ class RepositoryImpl @Inject constructor(
     override fun getNextUps(): Flow<List<NextUpSongs>> {
 
         return database.dao().getNextUps()
+
+    }
+
+    override fun getPlaylistItem(): Flow<List<Playlist>> {
+
+      return  database.dao().getPlaylistItem(true)
 
     }
 

@@ -7,9 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.ui.screens.*
+import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
 @Composable
-fun BottomNavGraph(navController: NavHostController, application: Application) {
+fun BottomNavGraph(navController: NavHostController, viewModel: MusicViewModel) {
 
     NavHost(navController = navController, startDestination = BottomBarScreens.MusicScreen.route) {
 
@@ -17,7 +18,7 @@ fun BottomNavGraph(navController: NavHostController, application: Application) {
             MusicScreen(navController)
         }
         composable(route = BottomBarScreens.FavouriteScreen.route) {
-            FavouriteScreen()
+            FavouriteScreen(viewModel)
         }
         composable(route = BottomBarScreens.AlbumScreen.route) {
             AlbumScreen(navController)

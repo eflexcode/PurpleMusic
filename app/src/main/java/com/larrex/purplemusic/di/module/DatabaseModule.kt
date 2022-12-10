@@ -2,10 +2,7 @@ package com.larrex.purplemusic.di.module
 
 import android.app.Application
 import androidx.room.Room
-import com.larrex.purplemusic.di.repository.RepositoryImpl
-import com.larrex.purplemusic.domain.repository.Repository
-import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlayingAndNextUpsDatabase
-import dagger.Binds
+import com.larrex.purplemusic.domain.room.PurpleDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,11 +17,11 @@ abstract class DatabaseModule {
 
         @Provides
         @Singleton
-        fun provideNowPlayDatabase(context : Application): NowPlayingAndNextUpsDatabase {
+        fun provideNowPlayDatabase(context : Application): PurpleDatabase {
 
             return Room.databaseBuilder(
                 context,
-                NowPlayingAndNextUpsDatabase::class.java,
+                PurpleDatabase::class.java,
                 "NowPlayingAndNextUpsDatabase"
             ).build()
 

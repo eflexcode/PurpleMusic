@@ -1,21 +1,16 @@
 package com.larrex.purplemusic.ui.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.ArtistItemModel
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.repository.Repository
-import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
-import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
+import com.larrex.purplemusic.domain.room.NextUpSongs
+import com.larrex.purplemusic.domain.room.NowPlaying
+import com.larrex.purplemusic.domain.room.Playlist
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @HiltViewModel
 class MusicViewModel @Inject constructor(private var repository: Repository) : ViewModel() {
@@ -57,24 +52,34 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
 
     }
 
-    fun getNowPlaying() : Flow<NowPlaying>{
+    fun getNowPlaying(): Flow<NowPlaying> {
 
         return repository.getNowPlaying()
     }
 
-    fun insertNextUps(nextUps : List<NextUpSongs>){
+    fun insertNextUps(nextUps: List<NextUpSongs>) {
 
         repository.insertNextUps(nextUps)
 
     }
 
-    fun getNextUps(): Flow<List<NextUpSongs>>{
+    fun getNextUps(): Flow<List<NextUpSongs>> {
 
         return repository.getNextUps()
     }
 
-    fun deleteNextUps(){
+    fun deleteNextUps() {
         repository.deleteNextUps()
+    }
+
+    fun insertPlaylist(playlist: Playlist) {
+
+        repository.insertPlaylist(playlist)
+
+    }
+
+    fun getPlaylistItem(): Flow<List<Playlist>> {
+       return repository.getPlaylistItem()
     }
 
 }

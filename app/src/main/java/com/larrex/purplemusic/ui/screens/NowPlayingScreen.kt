@@ -1,7 +1,6 @@
 package com.larrex.purplemusic.ui.screens
 
 import android.net.Uri
-import android.os.Handler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -31,8 +30,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.SongItem
-import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
-import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
+import com.larrex.purplemusic.domain.room.NowPlaying
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel

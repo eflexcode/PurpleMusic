@@ -1,4 +1,4 @@
-package com.larrex.purplemusic.domain.room.nowplayingroom
+package com.larrex.purplemusic.domain.room
 
 import android.net.Uri
 import androidx.room.Entity

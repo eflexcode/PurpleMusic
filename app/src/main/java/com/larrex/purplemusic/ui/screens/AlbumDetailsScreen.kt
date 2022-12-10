@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,9 +29,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.AlbumItem
-import com.larrex.purplemusic.domain.model.SongItem
-import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
-import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
+import com.larrex.purplemusic.domain.room.NextUpSongs
+import com.larrex.purplemusic.domain.room.NowPlaying
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.theme.Purple
@@ -63,9 +61,11 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
     for (song in songsInAlbum){
 
-        nextUpSongs.add(NextUpSongs(null,
+        nextUpSongs.add(
+            NextUpSongs(null,
             song.songUri.toString(),song.songName,
-            song.artistName,song.songCoverImageUri.toString(),song.size,song.duration))
+            song.artistName,song.songCoverImageUri.toString(),song.size,song.duration)
+        )
     }
     Box(
         modifier = Modifier

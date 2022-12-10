@@ -1,11 +1,11 @@
-package com.larrex.purplemusic.domain.room.nowplayingroom
+package com.larrex.purplemusic.domain.room
 
 import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "NextUpSongs")
-data class NextUpSongs(
+data class  NextUpSongs(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
     val songUri: String,

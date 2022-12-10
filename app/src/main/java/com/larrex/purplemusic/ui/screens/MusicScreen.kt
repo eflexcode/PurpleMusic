@@ -20,23 +20,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
-import com.larrex.purplemusic.domain.room.nowplayingroom.NextUpSongs
-import com.larrex.purplemusic.domain.room.nowplayingroom.NowPlaying
+import com.larrex.purplemusic.domain.room.NextUpSongs
+import com.larrex.purplemusic.domain.room.NowPlaying
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.screens.component.PickSongsFloatingItem
@@ -72,6 +69,7 @@ fun MusicScreen(navController: NavController) {
             .fillMaxSize()
             .padding(bottom = 137.dp), contentAlignment = Alignment.Center
     ) {
+
         val viewModel = hiltViewModel<MusicViewModel>()
 
         val readState =
@@ -293,6 +291,7 @@ fun MusicScreen(navController: NavController) {
 @Preview(showBackground = true, widthDp = 600, heightDp = 800)
 @Composable
 fun Font() {
+
     var navController: NavController = rememberNavController()
 
     MusicScreen(navController)

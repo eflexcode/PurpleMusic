@@ -1,4 +1,4 @@
-package com.larrex.purplemusic.domain.room.nowplayingroom
+package com.larrex.purplemusic.domain.room
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -6,7 +6,7 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface NowPlayingAndNextUpsDao {
+interface PurpleDao {
 
     @Insert
     fun insertNowPlaying(nowPlaying: NowPlaying)
@@ -26,5 +26,12 @@ interface NowPlayingAndNextUpsDao {
     @Query("DELETE FROM NextUpSongs")
     fun deleteNextUps()
 
+    //Playlist starts here
+
+    @Insert
+    fun insertPlaylist(playlist: Playlist)
+
+    @Query("SELECT * FROM Playlist WHERE playlistItem=:playlistItem")
+    fun getPlaylistItem(playlistItem: Boolean) : Flow<List<Playlist>>
 
 }
