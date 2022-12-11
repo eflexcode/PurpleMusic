@@ -20,6 +20,9 @@ import com.larrex.purplemusic.domain.room.Playlist
 import com.larrex.purplemusic.ui.screens.component.CreatePlaylist
 import com.larrex.purplemusic.ui.screens.component.PlayListItem
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun FavouriteScreen(viewModel: MusicViewModel) {
@@ -49,8 +52,10 @@ fun FavouriteScreen(viewModel: MusicViewModel) {
                 size = 0,
                 playlistName = name
             )
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.insertPlaylist(mPlaylist)
+            }
 
-            viewModel.insertPlaylist(mPlaylist)
 
         }
 
@@ -64,11 +69,11 @@ fun FavouriteScreen(viewModel: MusicViewModel) {
 
     ) {
 
-        LazyColumn() {
+        LazyColumn(Modifier.fillMaxSize()) {
 
             items(playlists){
 
-                PlayListItem(playlist = it) {
+                PlayListItem(playlist = it,false) {
 
                 }
 

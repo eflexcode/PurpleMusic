@@ -44,7 +44,7 @@ fun Preview() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MusicItem(
-    onClicked: () -> Unit,
+    onClicked: (state: Boolean) -> Unit,
     onLongClicked: () -> Unit,
     onUnselected: (name : String) -> Unit,
     songItem: SongItem
@@ -69,13 +69,13 @@ fun MusicItem(
                 onClick = {
 
                     if (isSelected) {
-
+                        onClicked(false)
                         isSelected = false
                         onUnselected(songItem.songName)
 
                     } else {
-
-                        onClicked()
+                        onClicked(true)
+                        isSelected = true
 
                     }
                 },

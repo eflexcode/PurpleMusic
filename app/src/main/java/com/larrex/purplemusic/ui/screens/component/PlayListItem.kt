@@ -1,20 +1,13 @@
 package com.larrex.purplemusic.ui.screens.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,11 +18,11 @@ import com.larrex.purplemusic.domain.room.Playlist
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PlayListItem(playlist: Playlist, onClicked: () -> Unit,) {
+fun PlayListItem(playlist: Playlist, floating : Boolean, onClicked: () -> Unit,) {
 
     Row(
         modifier = Modifier
-            .background(Util.BottomBarBackground)
+            .background( if (floating) Util.PickSongsFloatingBackground else Util.BottomBarBackground)
             .fillMaxWidth()
             .padding(start = 0.dp)
             .size(65.dp)
