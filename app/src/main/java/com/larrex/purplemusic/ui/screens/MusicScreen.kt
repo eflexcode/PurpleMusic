@@ -168,7 +168,7 @@ fun MusicScreen(navController: NavController) {
                     MusicItem(onClicked = {
 
 
-                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+//                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                         CoroutineScope(Dispatchers.IO).launch {
 
@@ -300,6 +300,7 @@ fun MusicScreen(navController: NavController) {
                     visibleState = visibleState, enter = scaleIn(), exit = scaleOut()
                 ) {
                     PickSongsFloatingItem(selectedCount, viewModel, addToPlaylist = {
+
                         CoroutineScope(Dispatchers.IO).launch {
 
                             musicItems.forEach { song ->

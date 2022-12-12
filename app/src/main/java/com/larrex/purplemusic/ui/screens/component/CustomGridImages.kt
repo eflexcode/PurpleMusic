@@ -10,18 +10,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.larrex.purplemusic.R
 
 @Composable
-fun CustomGridImages(images: List<Int>, modifier: Modifier) {
+fun CustomGridImages(images: List<String>, modifier: Modifier) {
 
 
-    Box(modifier =  modifier) {
+    Box(modifier = modifier) {
 
         when (images.size) {
 
             1 -> {
                 Image(
-                    painter = painterResource(id = images[0]),
+                    painter =
+                    rememberAsyncImagePainter(
+                        model = images[0],
+                        error = painterResource(
+                            id = R.drawable.ic_music_selected_small
+                        )
+
+                    ),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
@@ -34,7 +43,13 @@ fun CustomGridImages(images: List<Int>, modifier: Modifier) {
 
                 Row(modifier = Modifier.fillMaxSize()) {
                     Image(
-                        painter = painterResource(id = images[0]),
+                        painter =rememberAsyncImagePainter(
+                            model = images[0],
+                            error = painterResource(
+                                id = R.drawable.ic_music_selected_small
+                            )
+
+                        ),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         alignment = Alignment.Center,
@@ -43,7 +58,13 @@ fun CustomGridImages(images: List<Int>, modifier: Modifier) {
                     )
 
                     Image(
-                        painter = painterResource(id = images[1]),
+                        painter = rememberAsyncImagePainter(
+                            model = images[1],
+                            error = painterResource(
+                                id = R.drawable.ic_music_selected_small
+                            )
+
+                        ),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         alignment = Alignment.Center,
@@ -57,7 +78,13 @@ fun CustomGridImages(images: List<Int>, modifier: Modifier) {
 
                 Row(modifier = Modifier.fillMaxSize()) {
                     Image(
-                        painter = painterResource(id = images[0]),
+                        rememberAsyncImagePainter(
+                            model = images[0],
+                            error = painterResource(
+                                id = R.drawable.ic_music_selected_small
+                            )
+
+                        ),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         alignment = Alignment.Center,
@@ -67,14 +94,26 @@ fun CustomGridImages(images: List<Int>, modifier: Modifier) {
 
                     Column(modifier = Modifier.weight(1f)) {
                         Image(
-                            painter = painterResource(id = images[1]),
+                            painter = rememberAsyncImagePainter(
+                                model = images[1],
+                                error = painterResource(
+                                    id = R.drawable.ic_music_selected_small
+                                )
+
+                            ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center,
                             modifier = Modifier.weight(1f)
                         )
                         Image(
-                            painter = painterResource(id = images[2]),
+                            painter = rememberAsyncImagePainter(
+                                model = images[2],
+                                error = painterResource(
+                                    id = R.drawable.ic_music_selected_small
+                                )
+
+                            ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center,
@@ -91,14 +130,26 @@ fun CustomGridImages(images: List<Int>, modifier: Modifier) {
 
                     Column(modifier = Modifier.weight(1f)) {
                         Image(
-                            painter = painterResource(id = images[0]),
+                            painter = rememberAsyncImagePainter(
+                                model = images[0],
+                                error = painterResource(
+                                    id = R.drawable.ic_music_selected_small
+                                )
+
+                            ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center,
                             modifier = Modifier.weight(1f)
                         )
                         Image(
-                            painter = painterResource(id = images[1]),
+                            painter = rememberAsyncImagePainter(
+                                model = images[1],
+                                error = painterResource(
+                                    id = R.drawable.ic_music_selected_small
+                                )
+
+                            ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center,
@@ -107,14 +158,26 @@ fun CustomGridImages(images: List<Int>, modifier: Modifier) {
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Image(
-                            painter = painterResource(id = images[2]),
+                            painter = rememberAsyncImagePainter(
+                                model = images[2],
+                                error = painterResource(
+                                    id = R.drawable.ic_music_selected_small
+                                )
+
+                            ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center,
                             modifier = Modifier.weight(1f)
                         )
                         Image(
-                            painter = painterResource(id = images[3]),
+                            painter = rememberAsyncImagePainter(
+                                model = images[3],
+                                error = painterResource(
+                                    id = R.drawable.ic_music_selected_small
+                                )
+
+                            ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center,

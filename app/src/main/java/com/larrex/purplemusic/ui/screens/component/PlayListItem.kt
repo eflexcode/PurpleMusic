@@ -38,7 +38,7 @@ fun PlayListItem(playlist: Playlist, floating : Boolean, onClicked: () -> Unit,)
         horizontalArrangement = Arrangement.Center
     ) {
 
-//      CustomGridImages(images = playlistModel.images, modifier = Modifier.padding(start = 10.dp).size(45.dp).clip(RoundedCornerShape(5.dp)))
+      CustomGridImages(images = playlistModel.images, modifier = Modifier.padding(start = 10.dp).size(45.dp).clip(RoundedCornerShape(5.dp)))
 
         Column(
             modifier = Modifier

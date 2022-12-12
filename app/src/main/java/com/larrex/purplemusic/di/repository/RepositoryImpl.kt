@@ -398,6 +398,12 @@ class RepositoryImpl @Inject constructor(
         database.dao().insertToPlaylist(playlist)
     }
 
+    override fun getPlaylistItemImages(playlistId: Long): Flow<List<Playlist>> {
+
+        return database.dao().getPlaylistItemImages(playlistId)
+
+    }
+
     override fun insertNextUps(nextUpSongs: List<NextUpSongs>) {
 
         database.dao().insertNextUps(nextUpSongs)

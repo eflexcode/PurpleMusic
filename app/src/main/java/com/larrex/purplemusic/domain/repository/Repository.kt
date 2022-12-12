@@ -26,6 +26,8 @@ interface Repository {
 
     fun insertToPlaylist(playlist: List<Playlist>)
 
+    fun getPlaylistItemImages(playlistId: Long) : Flow<List<Playlist>>
+
     fun insertNextUps(nextUpSongs: List<NextUpSongs>)
 
     fun getNowPlaying() : Flow<NowPlaying>

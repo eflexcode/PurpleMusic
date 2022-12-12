@@ -88,4 +88,9 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
        return repository.getPlaylistItem()
     }
 
+    fun getPlaylistItemImages(playlistId: Long) : Flow<List<Playlist>>{
+
+        return repository.getPlaylistItemImages(playlistId)
+    }
+
 }
