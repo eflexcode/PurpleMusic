@@ -34,6 +34,7 @@ import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.room.NextUpSongs
 import com.larrex.purplemusic.domain.room.NowPlaying
+import com.larrex.purplemusic.domain.room.Playlist
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.screens.component.PickSongsFloatingItem
@@ -57,9 +58,9 @@ fun MusicScreen(navController: NavController) {
     var selectedCount by remember { mutableStateOf(0) }
     val scope = rememberCoroutineScope()
     val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
+    val playlists: MutableList<Playlist> = ArrayList<Playlist>()
 
-    var visibleState =
-        remember { MutableTransitionState(false).apply { targetState = false } }
+    var visibleState = remember { MutableTransitionState(false).apply { targetState = false } }
 
     var nowPlaying: NowPlaying? = null
 
@@ -100,15 +101,15 @@ fun MusicScreen(navController: NavController) {
 
                 Text(
                     text = "Storage permission is required to load audio files",
-                    modifier = Modifier.padding(10.dp), color = Color.Gray,
+                    modifier = Modifier.padding(10.dp),
+                    color = Color.Gray,
                     textAlign = TextAlign.Center
                 )
 
                 Button(
                     onClick = { storagePermission.launchMultiplePermissionRequest() },
                     colors = ButtonDefaults.buttonColors(
-                        contentColor = Color.White,
-                        containerColor = Purple
+                        contentColor = Color.White, containerColor = Purple
                     )
                 ) {
 
@@ -127,13 +128,14 @@ fun MusicScreen(navController: NavController) {
                 item {
 
                     if (musicItems.isNotEmpty()) {
-                        TextField(
-                            value = newText,
+                        TextField(value = newText,
                             onValueChange = { text ->
                                 newText = text
                             },
                             modifier = Modifier
-                                .padding(top = 5.dp, end = 20.dp, start = 20.dp, bottom = 5.dp)
+                                .padding(
+                                    top = 5.dp, end = 20.dp, start = 20.dp, bottom = 5.dp
+                                )
                                 .fillMaxWidth(),
                             colors = TextFieldDefaults.textFieldColors(
                                 contentColorFor(backgroundColor = Color.Transparent),
@@ -165,75 +167,49 @@ fun MusicScreen(navController: NavController) {
 
                     MusicItem(onClicked = {
 
-                        if (it) {
 
-                            visibleState.targetState = true
-                            selectedCount++
+                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
-                            CoroutineScope(Dispatchers.IO).launch {
+                        CoroutineScope(Dispatchers.IO).launch {
+
+                            nowPlaying = NowPlaying(
+                                null,
+                                item.songUri.toString(),
+                                item.songName,
+                                item.artistName,
+                                item.songCoverImageUri.toString(),
+                                item.duration,
+                                0,
+                                false,
+                                false
+                            )
+
+                            viewModel.deleteNowPlaying()
+                            viewModel.deleteNextUps()
+
+                            viewModel.insertNowPlaying(nowPlaying!!)
+
+                            musicItems.forEach { song ->
 
                                 nextUpSongs.add(
                                     NextUpSongs(
                                         null,
-                                        item.songUri.toString(),
-                                        item.songName,
-                                        item.artistName,
-                                        item.songCoverImageUri.toString(),
-                                        item.size,
-                                        item.duration
+                                        song.songUri.toString(),
+                                        song.songName,
+                                        song.artistName,
+                                        song.songCoverImageUri.toString(),
+                                        song.size,
+                                        song.duration
                                     )
                                 )
 
-                                nowPlaying = NowPlaying(
-                                    null,
-                                    nextUpSongs[0].songUri.toString(),
-                                    nextUpSongs[0].songName, nextUpSongs[0].artistName,
-                                    nextUpSongs[0].songCoverImageUri.toString(),
-                                    nextUpSongs[0].duration, 0, false, false
-                                )
+                            }.apply {
+
+                                viewModel.insertNextUps(nextUpSongs)
 
                             }
 
-                        } else {
 
-                            navController.navigate(BottomBarScreens.NowPlayingScreen.route)
-
-                            CoroutineScope(Dispatchers.IO).launch {
-
-                                nowPlaying = NowPlaying(
-                                    null,
-                                    item.songUri.toString(),
-                                    item.songName, item.artistName,
-                                    item.songCoverImageUri.toString(),
-                                    item.duration, 0, false, false
-                                )
-
-                                viewModel.deleteNowPlaying()
-                                viewModel.deleteNextUps()
-
-                                viewModel.insertNowPlaying(nowPlaying!!)
-
-                                musicItems.forEach { song ->
-
-                                    nextUpSongs.add(
-                                        NextUpSongs(
-                                            null,
-                                            song.songUri.toString(),
-                                            song.songName,
-                                            song.artistName,
-                                            song.songCoverImageUri.toString(),
-                                            song.size,
-                                            song.duration
-                                        )
-                                    )
-
-                                }.apply {
-
-                                    viewModel.insertNextUps(nextUpSongs)
-
-                                }
-
-                            }
                         }
 
                     }, onLongClicked = {
@@ -259,10 +235,17 @@ fun MusicScreen(navController: NavController) {
                             nowPlaying = NowPlaying(
                                 null,
                                 nextUpSongs[0].songUri.toString(),
-                                nextUpSongs[0].songName, nextUpSongs[0].artistName,
+                                nextUpSongs[0].songName,
+                                nextUpSongs[0].artistName,
                                 nextUpSongs[0].songCoverImageUri.toString(),
-                                nextUpSongs[0].duration, 0, false, false
+                                nextUpSongs[0].duration,
+                                0,
+                                false,
+                                false
                             )
+
+                            //add playlist
+
 
                         }
                     }, onUnselected = {
@@ -278,10 +261,29 @@ fun MusicScreen(navController: NavController) {
                             if (song.songName == it) {
 
                                 nextUpSongs.remove(song)
+
+                                CoroutineScope(Dispatchers.IO).launch {
+
+                                    nowPlaying = NowPlaying(
+                                        null,
+                                        nextUpSongs[0].songUri.toString(),
+                                        nextUpSongs[0].songName,
+                                        nextUpSongs[0].artistName,
+                                        nextUpSongs[0].songCoverImageUri.toString(),
+                                        nextUpSongs[0].duration,
+                                        0,
+                                        false,
+                                        false
+                                    )
+
+                                }
+
                                 return@MusicItem
 
                             }
                         }
+
+
                     }, item)
 
                 }
@@ -291,14 +293,40 @@ fun MusicScreen(navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp), contentAlignment = Alignment.BottomEnd
+                    .padding(10.dp),
+                contentAlignment = Alignment.BottomEnd
             ) {
                 AnimatedVisibility(
-                    visibleState = visibleState,
-                    enter = scaleIn(),
-                    exit = scaleOut()
+                    visibleState = visibleState, enter = scaleIn(), exit = scaleOut()
                 ) {
-                    PickSongsFloatingItem(selectedCount, viewModel) {
+                    PickSongsFloatingItem(selectedCount, viewModel, addToPlaylist = {
+                        CoroutineScope(Dispatchers.IO).launch {
+
+                            musicItems.forEach { song ->
+
+                                playlists.add(
+                                    Playlist(
+                                        songCoverImageUri = song.songCoverImageUri.toString(),
+                                        playlistId = it,
+                                        songName = song.songName,
+                                        songUri = song.songUri.toString(),
+                                        albumName = "",
+                                        artistName = song.artistName,
+                                        playlistItem = true,
+                                        duration = song.duration,
+                                        size = song.size,
+                                        playlistName = ""
+                                    )
+                                )
+
+                            }.apply {
+
+                                viewModel.insertToPlaylist(playlists)
+
+                            }
+
+                        }
+                    }) {
 
                         CoroutineScope(Dispatchers.IO).launch {
 

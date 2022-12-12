@@ -31,6 +31,10 @@ interface PurpleDao {
     @Insert
     fun insertPlaylist(playlist: Playlist)
 
+
+    @Insert
+    fun insertToPlaylist(playlist: List<Playlist>)
+
     @Query("SELECT * FROM Playlist WHERE playlistItem=:playlistItem")
     fun getPlaylistItem(playlistItem: Boolean) : Flow<List<Playlist>>
 

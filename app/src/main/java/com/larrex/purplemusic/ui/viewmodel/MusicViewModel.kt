@@ -78,6 +78,12 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
 
     }
 
+    fun insertToPlaylist(playlist: List<Playlist>) {
+
+        repository.insertToPlaylist(playlist)
+
+    }
+
     fun getPlaylistItem(): Flow<List<Playlist>> {
        return repository.getPlaylistItem()
     }

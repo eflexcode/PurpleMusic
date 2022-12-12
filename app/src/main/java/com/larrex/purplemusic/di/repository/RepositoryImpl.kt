@@ -394,6 +394,10 @@ class RepositoryImpl @Inject constructor(
 
     }
 
+    override fun insertToPlaylist(playlist: List<Playlist>) {
+        database.dao().insertToPlaylist(playlist)
+    }
+
     override fun insertNextUps(nextUpSongs: List<NextUpSongs>) {
 
         database.dao().insertNextUps(nextUpSongs)

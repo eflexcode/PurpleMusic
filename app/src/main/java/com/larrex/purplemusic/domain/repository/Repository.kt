@@ -21,7 +21,10 @@ interface Repository {
     fun getAllAlbumFromArtist(artistName : String) : Flow<List<AlbumItem>>
 
     fun insertNowPlaying(nowPlaying: NowPlaying)
+
     fun insertPlaylist(playlist: Playlist)
+
+    fun insertToPlaylist(playlist: List<Playlist>)
 
     fun insertNextUps(nextUpSongs: List<NextUpSongs>)
 

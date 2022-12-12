@@ -46,7 +46,7 @@ fun Preview() {
 fun MusicItem(
     onClicked: (state: Boolean) -> Unit,
     onLongClicked: () -> Unit,
-    onUnselected: (name : String) -> Unit,
+    onUnselected: (name: String) -> Unit,
     songItem: SongItem
 ) {
 
@@ -68,16 +68,7 @@ fun MusicItem(
             .combinedClickable(
                 onClick = {
 
-                    if (isSelected) {
-                        onClicked(false)
-                        isSelected = false
-                        onUnselected(songItem.songName)
-
-                    } else {
-                        onClicked(true)
-                        isSelected = true
-
-                    }
+                    onClicked(false)
                 },
                 onLongClick = {
 
@@ -86,6 +77,10 @@ fun MusicItem(
                         onLongClicked()
                         isSelected = true
 
+                    } else {
+                        isSelected = false
+                        onUnselected(songItem.songName)
+//                        onLongClicked()
                     }
                 },
                 onDoubleClick = { },

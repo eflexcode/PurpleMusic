@@ -21,7 +21,7 @@ import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
 @Composable
-fun PickSongsFloatingItem(count: Int, viewModel: MusicViewModel, play: () -> Unit) {
+fun PickSongsFloatingItem(count: Int, viewModel: MusicViewModel,addToPlaylist:(playlistId : Long) -> Unit, play: () -> Unit) {
 
     val playlists by viewModel.getPlaylistItem().collectAsState(initial = emptyList())
 
@@ -41,7 +41,7 @@ fun PickSongsFloatingItem(count: Int, viewModel: MusicViewModel, play: () -> Uni
             ) {
 
                 Text(
-                    text = "Long press to select",
+                    text = "Long press to select or unselect",
                     fontSize = 13.sp,
                     color = Util.TextColor
                 )
@@ -78,6 +78,8 @@ fun PickSongsFloatingItem(count: Int, viewModel: MusicViewModel, play: () -> Uni
                     items(playlists) {
 
                         PlayListItem(playlist = it,true) {
+
+                            addToPlaylist(it.playlistId)
 
                         }
 
