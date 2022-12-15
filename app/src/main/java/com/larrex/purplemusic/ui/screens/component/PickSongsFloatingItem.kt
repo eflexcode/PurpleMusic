@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -76,8 +75,11 @@ fun PickSongsFloatingItem(count: Int, viewModel: MusicViewModel,addToPlaylist:(p
                 LazyColumn(Modifier.height(100.dp).width(200.dp).padding(top = 5.dp)) {
 
                     items(playlists) {
+                        val playlistItemImages by viewModel.getPlaylistItemImages(it.playlistId)
+                            .collectAsState(initial = emptyList())
 
-                        PlayListItem(playlist = it,true) {
+                        if (playlistItemImages.isNotEmpty())
+                        PlayListItem(playlist = it,true,playlistItemImages) {
 
                             addToPlaylist(it.playlistId)
 

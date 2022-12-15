@@ -11,12 +11,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.room.Playlist
+import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.CreatePlaylist
 import com.larrex.purplemusic.ui.screens.component.PlayListItem
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
@@ -25,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun FavouriteScreen(viewModel: MusicViewModel) {
+fun FavouriteScreen(viewModel: MusicViewModel, navController: NavController) {
 
     var isFABClicked by remember {
         mutableStateOf(false)
@@ -35,7 +36,7 @@ fun FavouriteScreen(viewModel: MusicViewModel) {
 
     if (isFABClicked) {
 
-        CreatePlaylist() {status,name->
+        CreatePlaylist() { status, name ->
             isFABClicked = status
 
             val playlistId = System.currentTimeMillis()
@@ -71,11 +72,17 @@ fun FavouriteScreen(viewModel: MusicViewModel) {
 
         LazyColumn(Modifier.fillMaxSize()) {
 
-            items(playlists){
+            items(playlists) {
 
-                PlayListItem(playlist = it,false) {
+                val playlistItemImages by viewModel.getPlaylistItemImages(it.playlistId)
+                    .collectAsState(initial = emptyList())
 
-                }
+                if (playlistItemImages.isNotEmpty())
+                    PlayListItem(playlist = it, false, playlistItemImages) {
+                        navController.currentBackStackEntry?.savedStateHandle?.set("playlistId", it.playlistId)
+
+                        navController.navigate(BottomBarScreens.PlaylistDetailsScreen.route)
+                    }
 
             }
 

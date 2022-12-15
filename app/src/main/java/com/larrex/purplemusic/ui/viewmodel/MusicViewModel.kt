@@ -1,5 +1,10 @@
 package com.larrex.purplemusic.ui.viewmodel
 
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.ArtistItemModel
@@ -9,11 +14,20 @@ import com.larrex.purplemusic.domain.room.NextUpSongs
 import com.larrex.purplemusic.domain.room.NowPlaying
 import com.larrex.purplemusic.domain.room.Playlist
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val TAG = "MusicViewModel"
 
 @HiltViewModel
 class MusicViewModel @Inject constructor(private var repository: Repository) : ViewModel() {
+
+    val playlistItemImages = mutableStateListOf<String>()
+    var canLoad by mutableStateOf(false)
 
     fun getAllSongs(): Flow<List<SongItem>> {
 
@@ -85,12 +99,17 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
     }
 
     fun getPlaylistItem(): Flow<List<Playlist>> {
-       return repository.getPlaylistItem()
+        return repository.getPlaylistItem()
     }
 
-    fun getPlaylistItemImages(playlistId: Long) : Flow<List<Playlist>>{
+    fun getPlaylistItemImages(playlistId: Long): Flow<List<Playlist>> {
+        Log.d(TAG, "getPlaylistItemImages: $playlistId")
+          return  repository.getPlaylistItemImages(playlistId)
 
-        return repository.getPlaylistItemImages(playlistId)
+    }
+
+    fun getPlaylistContentWithId(playlistId: Long) : Flow<List<Playlist>>{
+        return  repository.getPlaylistContentWithId(playlistId)
     }
 
 }

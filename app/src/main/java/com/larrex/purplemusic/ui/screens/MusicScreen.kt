@@ -59,6 +59,7 @@ fun MusicScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
     val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
     val playlists: MutableList<Playlist> = ArrayList<Playlist>()
+    val playlistsWithId: MutableList<Playlist> = ArrayList<Playlist>()
 
     var visibleState = remember { MutableTransitionState(false).apply { targetState = false } }
 
@@ -245,7 +246,20 @@ fun MusicScreen(navController: NavController) {
                             )
 
                             //add playlist
-
+                            playlists.add(
+                                Playlist(
+                                    songCoverImageUri = item.songCoverImageUri.toString(),
+                                    playlistId = 0,
+                                    songName = item.songName,
+                                    songUri = item.songUri.toString(),
+                                    albumName = "",
+                                    artistName = item.artistName,
+                                    playlistItem = false,
+                                    duration = item.duration,
+                                    size = item.size,
+                                    playlistName = ""
+                                )
+                            )
 
                         }
                     }, onUnselected = {
@@ -254,6 +268,7 @@ fun MusicScreen(navController: NavController) {
 
                         if (selectedCount == 0) {
                             visibleState.targetState = false
+                            playlists.clear()
 
                         }
                         for (song in nextUpSongs) {
@@ -303,9 +318,9 @@ fun MusicScreen(navController: NavController) {
 
                         CoroutineScope(Dispatchers.IO).launch {
 
-                            musicItems.forEach { song ->
+                            playlists.forEach { song ->
 
-                                playlists.add(
+                                playlistsWithId.add(
                                     Playlist(
                                         songCoverImageUri = song.songCoverImageUri.toString(),
                                         playlistId = it,
@@ -313,7 +328,7 @@ fun MusicScreen(navController: NavController) {
                                         songUri = song.songUri.toString(),
                                         albumName = "",
                                         artistName = song.artistName,
-                                        playlistItem = true,
+                                        playlistItem = false,
                                         duration = song.duration,
                                         size = song.size,
                                         playlistName = ""
@@ -322,7 +337,7 @@ fun MusicScreen(navController: NavController) {
 
                             }.apply {
 
-                                viewModel.insertToPlaylist(playlists)
+                                viewModel.insertToPlaylist(playlistsWithId)
 
                             }
 

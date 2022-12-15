@@ -28,6 +28,8 @@ interface Repository {
 
     fun getPlaylistItemImages(playlistId: Long) : Flow<List<Playlist>>
 
+    fun getPlaylistContentWithId(playlistId: Long) : Flow<List<Playlist>>
+
     fun insertNextUps(nextUpSongs: List<NextUpSongs>)
 
     fun getNowPlaying() : Flow<NowPlaying>

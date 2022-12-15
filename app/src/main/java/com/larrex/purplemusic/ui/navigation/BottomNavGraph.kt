@@ -18,7 +18,7 @@ fun BottomNavGraph(navController: NavHostController, viewModel: MusicViewModel) 
             MusicScreen(navController)
         }
         composable(route = BottomBarScreens.FavouriteScreen.route) {
-            FavouriteScreen(viewModel)
+            FavouriteScreen(viewModel,navController)
         }
         composable(route = BottomBarScreens.AlbumScreen.route) {
             AlbumScreen(navController)
@@ -26,16 +26,14 @@ fun BottomNavGraph(navController: NavHostController, viewModel: MusicViewModel) 
         composable(route = BottomBarScreens.ArtistScreen.route) {
             ArtistScreen(navController)
         }
-        composable(
-            route = BottomBarScreens.AlbumDetailsScreen.route) {
+        composable(route = BottomBarScreens.AlbumDetailsScreen.route) {
 
             val album = navController.previousBackStackEntry?.savedStateHandle?.get<AlbumItem>("album")
 
             AlbumDetailsScreen(album, navController)
 
         }
-        composable(
-            route = BottomBarScreens.ArtistDetailsScreen.route) {
+        composable(route = BottomBarScreens.ArtistDetailsScreen.route) {
 
             val name = navController.previousBackStackEntry?.savedStateHandle?.get<String>("artistName")
 
@@ -44,6 +42,14 @@ fun BottomNavGraph(navController: NavHostController, viewModel: MusicViewModel) 
         }
         composable(BottomBarScreens.NowPlayingScreen.route){
             NowPlayingScreen(navController)
+        }
+        composable(BottomBarScreens.PlaylistDetailsScreen.route){
+
+            val id = navController.previousBackStackEntry?.savedStateHandle?.get<Long>("playlistId")
+
+            if (id != null) {
+                PlaylistDetailsScreen(navController,viewModel,id)
+            }
         }
     }
 

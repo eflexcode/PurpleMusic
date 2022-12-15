@@ -13,5 +13,6 @@ sealed class BottomBarScreens(val route: String,
     object AlbumDetailsScreen : BottomBarScreens("album_details","", 0)
     object ArtistDetailsScreen : BottomBarScreens("artist_details","", 0)
     object NowPlayingScreen : BottomBarScreens("nowPlaying","", 0)
+    object PlaylistDetailsScreen : BottomBarScreens("playlist_details_screen","", 0)
 
 }
