@@ -91,7 +91,7 @@ fun PickSongsFloatingItem(
                         val songs by viewModel.getPlaylistContentWithId(it.playlistId)
                             .collectAsState(initial = emptyList())
                         if (playlistItemImages.isNotEmpty())
-                            PlayListItem(playlist = it, true, playlistItemImages, songs.size - 1) {
+                            PlayListItem(playlist = it, true, playlistItemImages, viewModel) {
 
                                 addToPlaylist(it.playlistId)
 

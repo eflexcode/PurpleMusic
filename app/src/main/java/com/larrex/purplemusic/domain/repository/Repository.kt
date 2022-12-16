@@ -43,4 +43,6 @@ interface Repository {
     fun deleteNextUps()
 
     fun deleteSingleItemFromAPlaylist(id: Int)
+
+    fun deleteAPlaylist(ids: List<Int>)
 }

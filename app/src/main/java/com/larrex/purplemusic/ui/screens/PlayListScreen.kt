@@ -77,12 +77,10 @@ fun FavouriteScreen(viewModel: MusicViewModel, navController: NavController) {
                 val playlistItemImages by viewModel.getPlaylistItemImages(it.playlistId)
                     .collectAsState(initial = emptyList())
 
-                //to get tracks count
-                val songs by viewModel.getPlaylistContentWithId(it.playlistId)
-                    .collectAsState(initial = emptyList())
+
 
                 if (playlistItemImages.isNotEmpty())
-                    PlayListItem(playlist = it, false, playlistItemImages,songs.size-1) {
+                    PlayListItem(playlist = it, false, playlistItemImages,viewModel) {
                         navController.currentBackStackEntry?.savedStateHandle?.set("playlistId", it.playlistId)
 
                         navController.navigate(BottomBarScreens.PlaylistDetailsScreen.route)

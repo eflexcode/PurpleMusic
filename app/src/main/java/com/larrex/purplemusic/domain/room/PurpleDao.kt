@@ -46,4 +46,7 @@ interface PurpleDao {
     @Query("DELETE FROM Playlist WHERE id=:id")
     fun deleteSingleItemFromAPlaylist(id: Int)
 
+    @Query("DELETE FROM Playlist WHERE id in (:ids)")
+    fun deleteAPlaylist(ids: List<Int>)
+
 }

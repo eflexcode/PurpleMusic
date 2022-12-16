@@ -104,15 +104,19 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
 
     fun getPlaylistItemImages(playlistId: Long): Flow<List<Playlist>> {
         Log.d(TAG, "getPlaylistItemImages: $playlistId")
-          return  repository.getPlaylistItemImages(playlistId)
+        return repository.getPlaylistItemImages(playlistId)
 
     }
 
-    fun getPlaylistContentWithId(playlistId: Long) : Flow<List<Playlist>>{
-        return  repository.getPlaylistContentWithId(playlistId)
+    fun getPlaylistContentWithId(playlistId: Long): Flow<List<Playlist>> {
+        return repository.getPlaylistContentWithId(playlistId)
     }
 
-    fun deleteSingleItemFromAPlaylist(id: Int){
+    fun deleteSingleItemFromAPlaylist(id: Int) {
         repository.deleteSingleItemFromAPlaylist(id)
+    }
+
+    fun deleteAPlaylist(ids: List<Int>) {
+        repository.deleteAPlaylist(ids)
     }
 }

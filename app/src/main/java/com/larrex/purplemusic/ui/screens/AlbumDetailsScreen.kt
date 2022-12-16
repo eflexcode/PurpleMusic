@@ -49,7 +49,6 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
         error = painterResource(id = R.drawable.ic_music_selected_small)
     )
 
-
     val viewModel = hiltViewModel<MusicViewModel>()
 
     val albumName: String = albumItem?.albumName ?: ""
@@ -118,6 +117,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
                         )
                     }
+
                     if (albumItem != null) {
                         Text(
                             text = albumItem.albumName,
@@ -172,6 +172,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
 
                             }
+
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                         },
