@@ -178,6 +178,12 @@ fun CreateBNV(navController: NavHostController) {
                         isRout = true
                     }
 
+                    if (items.route == BottomBarScreens.FavouriteScreen.route &&
+                        currentDestination?.route == BottomBarScreens.PlaylistDetailsScreen.route
+                    ) {
+                        isRout = true
+                    }
+
                     NavigationBarItem(selected = isRout,
                         onClick = {
 

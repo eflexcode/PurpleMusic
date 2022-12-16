@@ -1,11 +1,12 @@
 package com.larrex.purplemusic.ui.screens.component
 
-import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import android.widget.Toast
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -14,36 +15,53 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
+import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.room.Playlist
 import com.larrex.purplemusic.ui.theme.Gray
+import com.larrex.purplemusic.ui.theme.PurpleGray
+import com.larrex.purplemusic.ui.theme.PurplePickSongs
+import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
 
-
-private const val TAG = "PlayListItem"
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PlayListItem(
-    playlist: Playlist,
-    floating: Boolean,
-    playlists: List<Playlist>,
-    playlistsTracksCount: Int,
+fun MusicItemPlaylist(
     onClicked: () -> Unit,
+    songItem: Playlist,
+    viewModel: MusicViewModel
 ) {
 
-    Log.d(TAG, "PlayListItem: " + playlist.playlistName)
+    val painter = rememberAsyncImagePainter(
+        model = songItem.songCoverImageUri,
+        error = painterResource(
+            id = R.drawable.ic_music_selected_small
+        )
+    )
+
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier
-            .background(if (floating) Util.PickSongsFloatingBackground else Util.BottomBarBackground)
+            .background(Util.BottomBarBackground)
             .fillMaxWidth()
             .padding(start = 0.dp)
             .size(65.dp)
@@ -51,23 +69,20 @@ fun PlayListItem(
                 onClick = {
 
                     onClicked()
-                },
 
-                ), verticalAlignment = Alignment.CenterVertically,
+                }
+            ), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
 
-        // believe me this was the only way i would think of
-
-
-        CustomGridImages(
-            playlists,
+        Image(
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
-                .padding(start = 10.dp)
+                .padding(top = 7.dp, end = 5.dp, start = 15.dp, bottom = 7.dp)
+                .clip(RoundedCornerShape(3.dp))
                 .size(45.dp)
-                .clip(
-                    RoundedCornerShape(5.dp)
-                ),
         )
 
         Column(
@@ -75,9 +90,8 @@ fun PlayListItem(
                 .weight(2f)
                 .padding(end = 15.dp, start = 5.dp)
         ) {
-
             Text(
-                text = playlist.playlistName,
+                text = songItem.songName,
                 fontSize = 15.sp,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Normal,
@@ -88,22 +102,32 @@ fun PlayListItem(
             )
 
             Text(
-                text = "Tracks $playlistsTracksCount",
+                text = songItem.artistName,
                 fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontStyle = FontStyle.Normal,
-                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(end = 5.dp, start = 5.dp),
                 color = Color.Gray
             )
 
         }
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = {
+            Toast.makeText(context, "Successfully deleted ${songItem.playlistName}", Toast.LENGTH_LONG).show()
+            CoroutineScope(Dispatchers.IO).launch {
+
+                songItem.id?.let { viewModel.deleteSingleItemFromAPlaylist(it) }
+
+            }
+
+
+        }) {
 
             Icon(
-                painter = painterResource(id = R.drawable.ic_delete_forever),
+                painter = painterResource(id = R.drawable.ic_remove),
                 contentDescription = "Delete forever",
                 tint = Gray
             )
@@ -111,5 +135,4 @@ fun PlayListItem(
         }
 
     }
-
 }

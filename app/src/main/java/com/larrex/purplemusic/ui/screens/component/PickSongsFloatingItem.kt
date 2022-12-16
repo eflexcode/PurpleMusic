@@ -20,7 +20,12 @@ import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
 @Composable
-fun PickSongsFloatingItem(count: Int, viewModel: MusicViewModel,addToPlaylist:(playlistId : Long) -> Unit, play: () -> Unit) {
+fun PickSongsFloatingItem(
+    count: Int,
+    viewModel: MusicViewModel,
+    addToPlaylist: (playlistId: Long) -> Unit,
+    play: () -> Unit
+) {
 
     val playlists by viewModel.getPlaylistItem().collectAsState(initial = emptyList())
 
@@ -72,18 +77,25 @@ fun PickSongsFloatingItem(count: Int, viewModel: MusicViewModel,addToPlaylist:(p
                     color = Util.TextColor
                 )
 
-                LazyColumn(Modifier.height(100.dp).width(200.dp).padding(top = 5.dp)) {
+                LazyColumn(
+                    Modifier
+                        .height(100.dp)
+                        .width(200.dp)
+                        .padding(top = 5.dp)
+                ) {
 
                     items(playlists) {
                         val playlistItemImages by viewModel.getPlaylistItemImages(it.playlistId)
                             .collectAsState(initial = emptyList())
-
+//to get tracks count
+                        val songs by viewModel.getPlaylistContentWithId(it.playlistId)
+                            .collectAsState(initial = emptyList())
                         if (playlistItemImages.isNotEmpty())
-                        PlayListItem(playlist = it,true,playlistItemImages) {
+                            PlayListItem(playlist = it, true, playlistItemImages, songs.size - 1) {
 
-                            addToPlaylist(it.playlistId)
+                                addToPlaylist(it.playlistId)
 
-                        }
+                            }
 
                     }
 

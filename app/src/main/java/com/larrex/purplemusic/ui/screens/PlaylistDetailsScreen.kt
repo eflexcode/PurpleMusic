@@ -31,9 +31,12 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
+import com.larrex.purplemusic.domain.room.NextUpSongs
+import com.larrex.purplemusic.domain.room.NowPlaying
 import com.larrex.purplemusic.ui.navigation.BottomBarScreens
 import com.larrex.purplemusic.ui.screens.component.CustomGridImages
 import com.larrex.purplemusic.ui.screens.component.MusicItem
+import com.larrex.purplemusic.ui.screens.component.MusicItemPlaylist
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -43,15 +46,29 @@ import kotlinx.coroutines.launch
 private const val TAG = "PlaylistDetailsScreen"
 
 @Composable
-fun PlaylistDetailsScreen(navController: NavController,viewModel :MusicViewModel,playlist:Long) {
+fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewModel, playlist: Long) {
 
-        val songs by viewModel.getPlaylistContentWithId(playlist)
+    val songs by viewModel.getPlaylistContentWithId(playlist)
         .collectAsState(initial = emptyList())
 
-        val images by viewModel.getPlaylistItemImages(playlist)
+    val images by viewModel.getPlaylistItemImages(playlist)
         .collectAsState(initial = emptyList())
 
     Log.d(TAG, "PlaylistDetailsScreen: $images")
+
+    val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
+
+    for (song in songs) {
+        if (!song.playlistItem)
+
+            nextUpSongs.add(
+                NextUpSongs(
+                    null,
+                    song.songUri.toString(), song.songName,
+                    song.artistName, song.songCoverImageUri.toString(), song.size, song.duration
+                )
+            )
+    }
 
     Box(
         modifier = Modifier
@@ -62,7 +79,8 @@ fun PlaylistDetailsScreen(navController: NavController,viewModel :MusicViewModel
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Util.BottomBarBackground), contentPadding = PaddingValues(bottom = 150.dp)
+                .background(Util.BottomBarBackground),
+            contentPadding = PaddingValues(bottom = 150.dp)
         ) {
 
             item {
@@ -73,7 +91,7 @@ fun PlaylistDetailsScreen(navController: NavController,viewModel :MusicViewModel
                         .size(50.dp)
                 ) {
                     Icon(
-                        painter = painterResource(id =  R.drawable.ic_back),
+                        painter = painterResource(id = R.drawable.ic_back),
                         contentDescription = null
                     )
                 }
@@ -94,9 +112,11 @@ fun PlaylistDetailsScreen(navController: NavController,viewModel :MusicViewModel
                         ) {
                         if (images.isNotEmpty())
 
-                        CustomGridImages(images = images, modifier = Modifier
-                            .size(220.dp)
-                            .clip(RoundedCornerShape(5.dp)))
+                            CustomGridImages(
+                                images = images, modifier = Modifier
+                                    .size(220.dp)
+                                    .clip(RoundedCornerShape(5.dp))
+                            )
 
                     }
 
@@ -109,13 +129,43 @@ fun PlaylistDetailsScreen(navController: NavController,viewModel :MusicViewModel
                             maxLines = 1,
                             color = Util.TextColor,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(end = 20.dp, start = 20.dp, top = 10.dp, bottom = 20.dp)
+                            modifier = Modifier.padding(
+                                end = 20.dp,
+                                start = 20.dp,
+                                top = 10.dp,
+                                bottom = 20.dp
+                            )
                         )
 
                     Button(
                         onClick = {
 
+                            CoroutineScope(Dispatchers.IO).launch {
 
+                                if (songs.size > 1) {
+
+                                    val nowPlaying = NowPlaying(
+                                        null,
+                                        songs[1].songUri.toString(),
+                                        songs[1].songName,
+                                        songs[1].artistName,
+                                        songs[1].songCoverImageUri.toString(),
+                                        songs[1].duration,
+                                        0,
+                                        false,
+                                        false
+                                    )
+
+                                    viewModel.deleteNowPlaying()
+                                    viewModel.deleteNextUps()
+
+                                    viewModel.insertNowPlaying(nowPlaying)
+
+                                    viewModel.insertNextUps(nextUpSongs)
+
+
+                                }
+                            }
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                         },
@@ -138,12 +188,33 @@ fun PlaylistDetailsScreen(navController: NavController,viewModel :MusicViewModel
 
             items(songs) { item ->
 
-//                MusicItem(onClicked = {
-//
-//                    navController.navigate(BottomBarScreens.NowPlayingScreen.route)
-//
-//
-//                }, item)
+                if (!item.playlistItem)
+
+                    MusicItemPlaylist(onClicked = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if (songs.size > 1) {
+                                val nowPlaying = NowPlaying(
+                                    null,
+                                    songs[1].songUri.toString(),
+                                    songs[1].songName,
+                                    songs[1].artistName,
+                                    songs[1].songCoverImageUri.toString(),
+                                    songs[1].duration, 0, false, false
+                                )
+
+                                viewModel.deleteNowPlaying()
+                                viewModel.deleteNextUps()
+
+                                viewModel.insertNowPlaying(nowPlaying)
+
+                                viewModel.insertNextUps(nextUpSongs)
+
+
+                            }
+                        }
+                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+
+                    }, songItem = item,viewModel)
 
             }
 

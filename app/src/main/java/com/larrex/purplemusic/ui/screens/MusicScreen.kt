@@ -269,8 +269,9 @@ fun MusicScreen(navController: NavController) {
                         if (selectedCount == 0) {
                             visibleState.targetState = false
                             playlists.clear()
-
+                            return@MusicItem
                         }
+
                         for (song in nextUpSongs) {
 
                             if (song.songName == it) {
@@ -338,7 +339,7 @@ fun MusicScreen(navController: NavController) {
                             }.apply {
 
                                 viewModel.insertToPlaylist(playlistsWithId)
-
+                                visibleState.targetState = false
                             }
 
                         }

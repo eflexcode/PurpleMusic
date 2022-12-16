@@ -443,4 +443,8 @@ class RepositoryImpl @Inject constructor(
 
     }
 
+    override fun deleteSingleItemFromAPlaylist(id: Int) {
+        database.dao().deleteSingleItemFromAPlaylist(id)
+    }
+
 }

@@ -15,10 +15,10 @@ interface PurpleDao {
     fun insertNextUps(nextUpSongs: List<NextUpSongs>)
 
     @Query("SELECT * FROM NowPlaying")
-    fun getNowPlaying() : Flow<NowPlaying>
+    fun getNowPlaying(): Flow<NowPlaying>
 
     @Query("SELECT * FROM NextUpSongs")
-    fun getNextUps() : Flow<List<NextUpSongs>>
+    fun getNextUps(): Flow<List<NextUpSongs>>
 
     @Query("DELETE FROM NowPlaying")
     fun deleteNowPlay()
@@ -35,12 +35,15 @@ interface PurpleDao {
     fun insertToPlaylist(playlist: List<Playlist>)
 
     @Query("SELECT * FROM Playlist WHERE playlistItem=:playlistItem")
-    fun getPlaylistItem(playlistItem: Boolean) : Flow<List<Playlist>>
+    fun getPlaylistItem(playlistItem: Boolean): Flow<List<Playlist>>
 
     @Query("SELECT * FROM Playlist WHERE playlistId=:playlistId Limit 5")
-    fun getPlaylistItemImages(playlistId: Long) : Flow<List<Playlist>>
+    fun getPlaylistItemImages(playlistId: Long): Flow<List<Playlist>>
 
     @Query("SELECT * FROM Playlist WHERE playlistId=:playlistId ")
-    fun getPlaylistContentWithId(playlistId: Long) : Flow<List<Playlist>>
+    fun getPlaylistContentWithId(playlistId: Long): Flow<List<Playlist>>
+
+    @Query("DELETE FROM Playlist WHERE id=:id")
+    fun deleteSingleItemFromAPlaylist(id: Int)
 
 }

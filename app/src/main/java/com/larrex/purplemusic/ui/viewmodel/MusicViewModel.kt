@@ -112,4 +112,7 @@ class MusicViewModel @Inject constructor(private var repository: Repository) : V
         return  repository.getPlaylistContentWithId(playlistId)
     }
 
+    fun deleteSingleItemFromAPlaylist(id: Int){
+        repository.deleteSingleItemFromAPlaylist(id)
+    }
 }
