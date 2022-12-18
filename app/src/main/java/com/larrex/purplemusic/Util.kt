@@ -107,7 +107,7 @@ class Util {
 
                 var timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
 
-                if (mDuration == 3600000L){
+                if (mDuration >= 3600000L){
                     timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
                 }
 

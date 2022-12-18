@@ -27,6 +27,7 @@ import coil.compose.rememberImagePainter
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.SongItem
+import com.larrex.purplemusic.domain.room.NowPlaying
 import com.larrex.purplemusic.ui.theme.PurpleGray
 import com.larrex.purplemusic.ui.theme.PurplePickSongs
 import java.io.File
@@ -47,7 +48,8 @@ fun MusicItem(
     onClicked: (state: Boolean) -> Unit,
     onLongClicked: () -> Unit,
     onUnselected: (name: String) -> Unit,
-    songItem: SongItem
+    songItem: SongItem,
+    nowPlaying: Boolean
 ) {
 
     val painter = rememberAsyncImagePainter(
@@ -115,13 +117,13 @@ fun MusicItem(
             )
 
             Text(
-                text = songItem.artistName,
+                text = if (nowPlaying) Util.formatTime(songItem.duration.toString())+" • "+ songItem.artistName else songItem.songName,
                 fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontStyle = FontStyle.Normal,
                 fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier.padding(end = 5.dp, start = 5.dp),
                 color = Color.Gray
             )

@@ -221,7 +221,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
                 }, onUnselected = {
 
-                })
+                }, nowPlaying = true)
             }
 
         }

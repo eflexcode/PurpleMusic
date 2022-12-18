@@ -72,18 +72,53 @@ fun NowPlayingScreen(navController: NavController) {
 
             item {
 
-                IconButton(
-                    onClick = {
+                Row() {
 
-                        navController.popBackStack()
+                    IconButton(
+                        onClick = {
 
-                    }, modifier = Modifier
-                ) {
+                            navController.popBackStack()
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_cancel),
-                        contentDescription = "cancel"
-                    )
+                        }, modifier = Modifier.weight(0.2f)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_arrow_down),
+                            contentDescription = "cancel"
+                        )
+
+                    }
+
+                    Column(modifier = Modifier.padding(end = 35.dp).fillMaxWidth().weight(2f)) {
+                        nowPlaying?.playingFromType?.let {
+                            Text(
+                                text = "Playing From $it",
+                                fontSize = 13.sp,
+                                fontStyle = FontStyle.Normal,
+                                fontWeight = FontWeight.Normal,
+                                textAlign = TextAlign.Center,
+                                maxLines = 2,
+                                color = Color.Gray,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(top = 13.dp)
+                            )
+                        }
+
+                        nowPlaying?.let {
+                            Text(
+                                text = it.playingFromName,
+                                fontSize = 12.sp,
+                                fontStyle = FontStyle.Normal,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 2,
+                                textAlign = TextAlign.Center,
+                                color = Util.TextColor,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(top = 0.dp, bottom = 0.dp)
+                            )
+                        }
+                    }
 
                 }
 
@@ -281,18 +316,22 @@ fun NowPlayingScreen(navController: NavController) {
                 MusicItem(onClicked = {
                     CoroutineScope(Dispatchers.IO).launch {
 
-                        val nowPlaying = NowPlaying(
-                            null,
-                            item.songUri.toString(),
-                            item.songName, item.artistName,
-                            item.songCoverImageUri.toString(),
-                            item.duration, 0, false, false
-                        )
+                        val nowPlaying = nowPlaying?.let { it1 ->
+                            NowPlaying(
+                                null,
+                                item.songUri.toString(),
+                                item.songName, item.artistName,
+                                item.songCoverImageUri.toString(),
+                                item.duration, 0, false, false, it1.playingFromType,it1.playingFromName
+                            )
+                        }
 
                         viewModel.deleteNowPlaying()
-                        viewModel.insertNowPlaying(nowPlaying)
+                        if (nowPlaying != null) {
+                            viewModel.insertNowPlaying(nowPlaying)
+                        }
                     }
-                }, onLongClicked = {}, onUnselected = {}, songItem)
+                }, onLongClicked = {}, onUnselected = {}, songItem,true)
 
             }
 
