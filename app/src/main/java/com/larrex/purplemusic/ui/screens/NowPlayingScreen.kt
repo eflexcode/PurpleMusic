@@ -243,6 +243,7 @@ fun NowPlayingScreen(navController: NavController) {
                         value = newText,
                         onValueChange = { text ->
                             newText = text
+                            viewModel.searchNextUps(newText.text.toString())
                         },
                         modifier = Modifier
                             .padding(top = 80.dp, end = 20.dp, start = 20.dp, bottom = 5.dp)
@@ -269,7 +270,7 @@ fun NowPlayingScreen(navController: NavController) {
                 }
             }
 
-            items(nextUps) { item->
+            items(if (newText.text.trim().toString().isEmpty())nextUps else viewModel.searchNextUpList) { item->
 
                 val songUri: Uri = Uri.parse(item.songUri)
                 val imageUri: Uri = Uri.parse(item.songCoverImageUri)

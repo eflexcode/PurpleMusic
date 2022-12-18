@@ -153,7 +153,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
                                         songs[1].duration,
                                         0,
                                         false,
-                                        false
+                                        false,"Playlist",songs[0].playlistName
                                     )
 
                                     viewModel.deleteNowPlaying()
@@ -199,7 +199,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
                                     songs[1].songName,
                                     songs[1].artistName,
                                     songs[1].songCoverImageUri.toString(),
-                                    songs[1].duration, 0, false, false
+                                    songs[1].duration, 0, false, false,"Playlist",songs[0].playlistName
                                 )
 
                                 viewModel.deleteNowPlaying()

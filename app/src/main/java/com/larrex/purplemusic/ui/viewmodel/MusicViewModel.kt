@@ -1,10 +1,7 @@
 package com.larrex.purplemusic.ui.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.ArtistItemModel
@@ -26,8 +23,57 @@ private const val TAG = "MusicViewModel"
 @HiltViewModel
 class MusicViewModel @Inject constructor(private var repository: Repository) : ViewModel() {
 
-    val playlistItemImages = mutableStateListOf<String>()
+    val searchSongsList = mutableStateListOf<SongItem>()
+    var allSongsList: List<SongItem> = ArrayList<SongItem>()
+
+    val searchNextUpList = mutableStateListOf<NextUpSongs>()
+    var allNextUpList: List<NextUpSongs> = ArrayList<NextUpSongs>()
+
     var canLoad by mutableStateOf(false)
+
+    init {
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+            getAllSongs().collectLatest {
+                allSongsList = it
+            }
+
+            getNextUps().collectLatest {
+                allNextUpList = it
+            }
+
+        }
+    }
+
+
+    fun searchSongs(songName: String) {
+
+        searchSongsList.clear()
+
+        allSongsList.forEach {
+
+            if (it.songName.toLowerCase().contains(songName.toLowerCase())) {
+                searchSongsList.add(it)
+            }
+
+        }
+
+    }
+
+    fun searchNextUps(songName: String) {
+
+        searchNextUpList.clear()
+
+        allNextUpList.forEach {
+
+            if (it.songName.toLowerCase().contains(songName.toLowerCase())) {
+                searchNextUpList.add(it)
+            }
+
+        }
+
+    }
 
     fun getAllSongs(): Flow<List<SongItem>> {
 

@@ -124,7 +124,10 @@ fun MusicScreen(navController: NavController) {
 
             val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
 
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(0.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
 
                 item {
 
@@ -132,6 +135,7 @@ fun MusicScreen(navController: NavController) {
                         TextField(value = newText,
                             onValueChange = { text ->
                                 newText = text
+                                viewModel.searchSongs(newText.text)
                             },
                             modifier = Modifier
                                 .padding(
@@ -164,10 +168,13 @@ fun MusicScreen(navController: NavController) {
 
                 }
 
-                items(musicItems) { item ->
+                items(
+                    if (newText.text.trim().toString()
+                            .isEmpty()
+                    ) musicItems else viewModel.searchSongsList
+                ) { item ->
 
                     MusicItem(onClicked = {
-
 
 //                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
@@ -182,7 +189,7 @@ fun MusicScreen(navController: NavController) {
                                 item.duration,
                                 0,
                                 false,
-                                false
+                                false, "Device", "All Songs"
                             )
 
                             viewModel.deleteNowPlaying()
@@ -242,7 +249,7 @@ fun MusicScreen(navController: NavController) {
                                 nextUpSongs[0].duration,
                                 0,
                                 false,
-                                false
+                                false,"Device","Marked Songs"
                             )
 
                             //add playlist
@@ -289,7 +296,7 @@ fun MusicScreen(navController: NavController) {
                                         nextUpSongs[0].duration,
                                         0,
                                         false,
-                                        false
+                                        false,"Device","Marked Songs"
                                     )
 
                                 }

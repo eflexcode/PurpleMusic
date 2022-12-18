@@ -16,6 +16,8 @@ data class NowPlaying(
     var currentDuration : Int,
     var repeat: Boolean,
     var shuffle: Boolean,
+    var playingFromType: String,
+    var playingFromName: String,
 ){
 
 }

@@ -124,7 +124,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                             fontSize = 23.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Bold,
-                            maxLines = 1,
+                            maxLines = 2,
                             color = Util.TextColor,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.padding(end = 20.dp, start = 20.dp, top = 10.dp)
@@ -135,7 +135,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                         Text(
                             text = albumItem.artistName,
                             fontSize = 12.sp,
-                            maxLines = 1,
+                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             fontStyle = FontStyle.Normal,
                             fontFamily = FontFamily.Default,
@@ -160,7 +160,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                                     songsInAlbum[0].songUri.toString(),
                                     songsInAlbum[0].songName, songsInAlbum[0].artistName,
                                     songsInAlbum[0].songCoverImageUri.toString(),
-                                    songsInAlbum[0].duration, 0, false, false
+                                    songsInAlbum[0].duration, 0, false, false,"Album",albumName
                                 )
 
                                 viewModel.deleteNowPlaying()
@@ -204,7 +204,7 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
                             item.songUri.toString(),
                             item.songName, item.artistName,
                             item.songCoverImageUri.toString(),
-                            item.duration, 0, false, false
+                            item.duration, 0, false, false,"Album",albumName
                         )
 
                         viewModel.deleteNowPlaying()
