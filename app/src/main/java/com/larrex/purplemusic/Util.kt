@@ -107,7 +107,7 @@ class Util {
 
                 var timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
 
-                if (mDuration >= 3600000L){
+                if (mDuration >= 3600000L) {
                     timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
                 }
 
@@ -118,6 +118,11 @@ class Util {
                 "00:00"
             }
         }
+
+        const val CHANNEL_NAME = "Playing_Music_Channel"
+        const val Notification_ID = 0xb126
+        const val CHANNEL_ID = "Now playing channel"
+        const val MEDIA_ID = "root_id"
 
     }
 }

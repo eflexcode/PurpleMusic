@@ -39,6 +39,7 @@ class RepositoryImpl @Inject constructor(
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.SIZE,
                 MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.DATA
             )
 
             val songs: MutableList<SongItem> = ArrayList()
@@ -66,6 +67,7 @@ class RepositoryImpl @Inject constructor(
                 val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
                 val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
                 val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+                val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
 
                 while (cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
@@ -75,6 +77,7 @@ class RepositoryImpl @Inject constructor(
                     val name = cursor.getString(nameColumn) + " "
                     val title = cursor.getString(titleColumn) + " "
                     val artist = cursor.getString(artistColumn) + " "
+                    val path = cursor.getString(pathColumn) + " "
 
                     val songUri: Uri =
                         ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
@@ -427,7 +430,7 @@ class RepositoryImpl @Inject constructor(
 
     override fun getPlaylistItem(): Flow<List<Playlist>> {
 
-      return  database.dao().getPlaylistItem(true)
+        return database.dao().getPlaylistItem(true)
 
     }
 

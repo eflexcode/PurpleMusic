@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +28,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.audio.AudioAttributes
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.SongItem
@@ -61,6 +66,16 @@ fun NowPlayingScreen(navController: NavController) {
             id = R.drawable.ic_music_selected_small
         ), error = painterResource(id = R.drawable.ic_music_selected_small)
     )
+   val arr =  AudioAttributes.Builder()
+        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+        .setUsage(C.USAGE_MEDIA)
+        .build()
+    val context = LocalContext.current
+
+    val exoPlayer: ExoPlayer = ExoPlayer.Builder(context)
+        .setAudioAttributes(arr,true)
+        .setHandleAudioBecomingNoisy(true)
+        .build()
 
     Box(
         modifier = Modifier
@@ -88,7 +103,12 @@ fun NowPlayingScreen(navController: NavController) {
 
                     }
 
-                    Column(modifier = Modifier.padding(end = 35.dp).fillMaxWidth().weight(2f)) {
+                    Column(
+                        modifier = Modifier
+                            .padding(end = 35.dp)
+                            .fillMaxWidth()
+                            .weight(2f)
+                    ) {
                         nowPlaying?.playingFromType?.let {
                             Text(
                                 text = "Playing From $it",
@@ -99,7 +119,8 @@ fun NowPlayingScreen(navController: NavController) {
                                 maxLines = 2,
                                 color = Color.Gray,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
                                     .padding(top = 13.dp)
                             )
                         }
@@ -114,7 +135,8 @@ fun NowPlayingScreen(navController: NavController) {
                                 textAlign = TextAlign.Center,
                                 color = Util.TextColor,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
                                     .padding(top = 0.dp, bottom = 0.dp)
                             )
                         }
@@ -158,7 +180,7 @@ fun NowPlayingScreen(navController: NavController) {
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
-                            maxLines = 2,
+                            maxLines = 1,
                             color = Util.TextColor,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier
@@ -172,7 +194,7 @@ fun NowPlayingScreen(navController: NavController) {
                             fontSize = 16.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,
-                            maxLines = 2,
+                            maxLines = 1,
                             textAlign = TextAlign.Center,
                             color = Color.Gray,
                             overflow = TextOverflow.Ellipsis,
@@ -200,7 +222,7 @@ fun NowPlayingScreen(navController: NavController) {
                     ) {
 
                         Text(
-                            text = "23:34",
+                            text = Util.formatTime(viewModel.currentDuration.toString()),
                             fontSize = 12.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,
@@ -243,21 +265,42 @@ fun NowPlayingScreen(navController: NavController) {
                             )
                         }
 
-                        IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(70.dp)) {
+                        IconButton(onClick = { viewModel.previous() }, modifier = Modifier.size(70.dp)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_round_skip_backward),
                                 contentDescription = null, modifier = Modifier.size(40.dp)
                             )
                         }
 
-                        IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(80.dp)) {
+                        IconButton(
+                            onClick = {
+
+                                nowPlaying?.musicUri?.let {
+                                    MediaItem.fromUri(
+                                        it
+                                    )
+                                }?.let { exoPlayer.addMediaItem(it) }
+//                                exoPlayer.playWhenReady = true
+//                                exoPlayer.prepare()
+                                      viewModel.play(context)
+                            },
+                            modifier = Modifier.size(80.dp)
+                        ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_round_pause),
+                                painter = painterResource(id = if (!viewModel.isPlaying) R.drawable.ic_round_play else R.drawable.ic_round_pause),
                                 contentDescription = null, modifier = Modifier.size(70.dp)
                             )
                         }
+//                        IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(80.dp)) {
+//                            Icon(
+//                                painter = painterResource(id = R.drawable.ic_round_pause),
+//                                contentDescription = null, modifier = Modifier.size(70.dp)
+//                            )
+//                        }
 
-                        IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(70.dp)) {
+                        IconButton(onClick = {
+                            viewModel.next()
+                                             }, modifier = Modifier.size(70.dp)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_round_skip_forward),
                                 contentDescription = null, modifier = Modifier.size(40.dp)
@@ -305,33 +348,51 @@ fun NowPlayingScreen(navController: NavController) {
                 }
             }
 
-            items(if (newText.text.trim().toString().isEmpty())nextUps else viewModel.searchNextUpList) { item->
+            items(
+                if (newText.text.trim().toString()
+                        .isEmpty()
+                ) nextUps else viewModel.searchNextUpList
+            ) { item ->
 
                 val songUri: Uri = Uri.parse(item.songUri)
                 val imageUri: Uri = Uri.parse(item.songCoverImageUri)
 
                 val songItem =
-                    SongItem(songUri, item.songName, item.artistName, imageUri, item.size, item.duration)
+                    SongItem(
+                        songUri,
+                        item.songName,
+                        item.artistName,
+                        imageUri,
+                        item.size,
+                        item.duration
+                    )
 
                 MusicItem(onClicked = {
-                    CoroutineScope(Dispatchers.IO).launch {
 
                         val nowPlaying = nowPlaying?.let { it1 ->
                             NowPlaying(
                                 null,
                                 item.songUri.toString(),
-                                item.songName, item.artistName,
+                                item.songName,
+                                item.artistName,
                                 item.songCoverImageUri.toString(),
-                                item.duration, 0, false, false, it1.playingFromType,it1.playingFromName
+                                item.duration,
+                                0,
+                                false,
+                                false,
+                                it1.playingFromType,
+                                it1.playingFromName
                             )
                         }
 
                         viewModel.deleteNowPlaying()
                         if (nowPlaying != null) {
                             viewModel.insertNowPlaying(nowPlaying)
+                            viewModel.play(context)
                         }
-                    }
-                }, onLongClicked = {}, onUnselected = {}, songItem,true)
+
+
+                }, onLongClicked = {}, onUnselected = {}, songItem, true)
 
             }
 
