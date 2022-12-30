@@ -1,6 +1,8 @@
 package com.larrex.purplemusic.ui.screens
 
 import android.net.Uri
+import android.os.Handler
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +46,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
+private const val TAG = "NowPlayingScreen"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NowPlayingScreen(navController: NavController) {
@@ -66,14 +72,14 @@ fun NowPlayingScreen(navController: NavController) {
             id = R.drawable.ic_music_selected_small
         ), error = painterResource(id = R.drawable.ic_music_selected_small)
     )
-   val arr =  AudioAttributes.Builder()
+    val arr = AudioAttributes.Builder()
         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
         .setUsage(C.USAGE_MEDIA)
         .build()
     val context = LocalContext.current
 
     val exoPlayer: ExoPlayer = ExoPlayer.Builder(context)
-        .setAudioAttributes(arr,true)
+        .setAudioAttributes(arr, true)
         .setHandleAudioBecomingNoisy(true)
         .build()
 
@@ -155,7 +161,7 @@ fun NowPlayingScreen(navController: NavController) {
                     Card(
                         modifier = Modifier
                             .background(Util.BottomBarBackground)
-                            .size(height = 360.dp, width = 360.dp)
+                            .size(height = 320.dp, width = 320.dp)
                             .padding(top = 0.dp, end = 0.dp, start = 0.dp, bottom = 0.dp),
                         colors = CardDefaults.cardColors(containerColor = Util.BottomBarBackground),
                         elevation = CardDefaults.cardElevation(10.dp),
@@ -191,7 +197,7 @@ fun NowPlayingScreen(navController: NavController) {
                     nowPlaying?.let {
                         Text(
                             text = it.artistName,
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,
                             maxLines = 1,
@@ -203,21 +209,28 @@ fun NowPlayingScreen(navController: NavController) {
                         )
                     }
 
-                    Slider(
-                        value = sliderValue,
-                        onValueChange = { sliderValue = it },
-                        modifier = Modifier
-                            .padding(start = 20.dp, end = 20.dp),
-                        valueRange = 0f..100f,
-                        colors = SliderDefaults.colors(
-                            thumbColor = Purple,
-                            activeTickColor = Purple
-                        )
-                    )
+                    if (nowPlaying != null) {
 
+                        Slider(
+                            value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration.toFloat()) * 100F),
+                            onValueChange = {
+
+                                viewModel.seekToPosition(((it.toLong() * nowPlaying!!.duration.toLong()) / 100L))
+
+                            },
+                            modifier = Modifier
+                                .padding(start = 30.dp, end = 30.dp),
+                            valueRange = 1f..100f,
+                            colors = SliderDefaults.colors(
+                                thumbColor = Purple,
+                                activeTickColor = Purple
+                            )
+                        )
+
+                    }
                     Row(
                         modifier = Modifier
-                            .padding(start = 30.dp, end = 30.dp)
+                            .padding(start = 37.dp, end = 37.dp)
                             .fillMaxWidth()
                     ) {
 
@@ -265,7 +278,10 @@ fun NowPlayingScreen(navController: NavController) {
                             )
                         }
 
-                        IconButton(onClick = { viewModel.previous() }, modifier = Modifier.size(70.dp)) {
+                        IconButton(
+                            onClick = { viewModel.previous() },
+                            modifier = Modifier.size(70.dp)
+                        ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_round_skip_backward),
                                 contentDescription = null, modifier = Modifier.size(40.dp)
@@ -282,7 +298,7 @@ fun NowPlayingScreen(navController: NavController) {
                                 }?.let { exoPlayer.addMediaItem(it) }
 //                                exoPlayer.playWhenReady = true
 //                                exoPlayer.prepare()
-                                      viewModel.play(context)
+                                viewModel.play(context)
                             },
                             modifier = Modifier.size(80.dp)
                         ) {
@@ -291,6 +307,7 @@ fun NowPlayingScreen(navController: NavController) {
                                 contentDescription = null, modifier = Modifier.size(70.dp)
                             )
                         }
+
 //                        IconButton(onClick = { /*TODO*/ }, modifier = Modifier.size(80.dp)) {
 //                            Icon(
 //                                painter = painterResource(id = R.drawable.ic_round_pause),
@@ -300,19 +317,25 @@ fun NowPlayingScreen(navController: NavController) {
 
                         IconButton(onClick = {
                             viewModel.next()
-                                             }, modifier = Modifier.size(70.dp)) {
+                        }, modifier = Modifier.size(70.dp)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_round_skip_forward),
                                 contentDescription = null, modifier = Modifier.size(40.dp)
                             )
                         }
 
-                        IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
+                        IconButton(onClick = {
+
+                            if (nowPlaying != null)
+                                nowPlaying!!.id?.let { viewModel.repeat(it,nowPlaying?.repeat!!) }
+
+                        }, modifier = Modifier) {
                             Icon(
-                                painter = if (nowPlaying?.repeat == true) painterResource(id = R.drawable.repeat_one) else painterResource(
+                                painter = if (nowPlaying?.repeat == 3) painterResource(id = R.drawable.repeat_one) else painterResource(
                                     id = R.drawable.repeat_all
                                 ),
-                                contentDescription = null
+                                contentDescription = null,
+                                tint =  if (nowPlaying?.repeat == 1) Color.Black else Purple
                             )
                         }
                     }
@@ -369,28 +392,27 @@ fun NowPlayingScreen(navController: NavController) {
 
                 MusicItem(onClicked = {
 
-                        val nowPlaying = nowPlaying?.let { it1 ->
-                            NowPlaying(
-                                null,
-                                item.songUri.toString(),
-                                item.songName,
-                                item.artistName,
-                                item.songCoverImageUri.toString(),
-                                item.duration,
-                                0,
-                                false,
-                                false,
-                                it1.playingFromType,
-                                it1.playingFromName
-                            )
-                        }
+                    val nowPlaying = nowPlaying?.let { it1 ->
+                        NowPlaying(
+                            null,
+                            item.songUri.toString(),
+                            item.songName,
+                            item.artistName,
+                            item.songCoverImageUri.toString(),
+                            item.duration,
+                            0,
+                            1,
+                            false,
+                            it1.playingFromType,
+                            it1.playingFromName
+                        )
+                    }
 
-                        viewModel.deleteNowPlaying()
-                        if (nowPlaying != null) {
-                            viewModel.insertNowPlaying(nowPlaying)
-                            viewModel.play(context)
-                        }
-
+                    viewModel.deleteNowPlaying()
+                    if (nowPlaying != null) {
+                        viewModel.insertNowPlaying(nowPlaying)
+                        viewModel.play(context)
+                    }
 
                 }, onLongClicked = {}, onUnselected = {}, songItem, true)
 

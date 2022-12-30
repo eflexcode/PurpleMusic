@@ -45,4 +45,7 @@ interface Repository {
     fun deleteSingleItemFromAPlaylist(id: Int)
 
     fun deleteAPlaylist(ids: List<Int>)
+
+   fun updateRepeat(id : Int,repeat : Int)
+    fun updateShuffle(id : Int,shuffle : Boolean)
 }

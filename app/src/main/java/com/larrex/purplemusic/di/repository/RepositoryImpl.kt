@@ -454,4 +454,13 @@ class RepositoryImpl @Inject constructor(
         database.dao().deleteAPlaylist(ids)
     }
 
+    override fun updateRepeat(id: Int, repeat: Int) {
+        database.dao().updateNowPlayingRepeat(id,repeat)
+    }
+
+    override fun updateShuffle(id: Int, shuffle: Boolean) {
+        database.dao().updateNowPlayingShuffle(id, shuffle)
+    }
+
+
 }

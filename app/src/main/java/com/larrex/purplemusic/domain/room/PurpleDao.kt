@@ -17,6 +17,12 @@ interface PurpleDao {
     @Query("SELECT * FROM NowPlaying")
     fun getNowPlaying(): Flow<NowPlaying>
 
+    @Query("UPDATE NowPlaying SET repeat=:repeat WHERE id = :id")
+    fun updateNowPlayingRepeat(id : Int,repeat : Int)
+
+    @Query("UPDATE NowPlaying SET shuffle=:shuffle WHERE id = :id")
+    fun updateNowPlayingShuffle(id : Int,shuffle : Boolean)
+
     @Query("SELECT * FROM NextUpSongs")
     fun getNextUps(): Flow<List<NextUpSongs>>
 

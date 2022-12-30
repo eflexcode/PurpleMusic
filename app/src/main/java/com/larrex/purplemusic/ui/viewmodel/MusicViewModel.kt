@@ -7,10 +7,7 @@ import android.os.Handler
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.google.android.exoplayer2.ExoPlayer
@@ -35,6 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.log
 
 private const val TAG = "MusicViewModel"
 
@@ -61,12 +59,17 @@ class MusicViewModel @Inject constructor(
 
     var canLoad by mutableStateOf(false)
     var currentDuration by mutableStateOf(0L)
+    var currentPositionSlider by mutableStateOf(0F)
 
     var playingFromName = ""
     var playingFromType = ""
+    var repeat: Int = 1
+    var shuffle = false
 
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
+
+    val scope = CoroutineScope(Dispatchers.IO)
 
     init {
 
@@ -78,9 +81,7 @@ class MusicViewModel @Inject constructor(
         mediaSession.isActive = true
         mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setPlayer(player)
-
-//        mediaSessionConnector
-
+        player.repeatMode = Player.REPEAT_MODE_ALL
         val navigator = object : TimelineQueueNavigator(mediaSession) {
 
             override fun getMediaDescription(
@@ -140,6 +141,7 @@ class MusicViewModel @Inject constructor(
 
             getNextUps().collectLatest {
                 player.clearMediaItems()
+                mediaItems.clear()
                 it.forEach {
 
                     mediaItems.add(MediaItem.fromUri(it.songUri.toUri()))
@@ -154,27 +156,30 @@ class MusicViewModel @Inject constructor(
 
             }
 
-
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-
             getNowPlaying().collectLatest {
 
-                nowPlaying = it
-                Log.d(TAG, "pppppppppppppp: " + it)
-//                playingFromType = it.playingFromType
-//                playingFromName = it.playingFromName
+
+                if (it != null) {
+                    playingFromType = it.playingFromType
+                    playingFromName = it.playingFromName
+                    repeat = it.repeat
+                    shuffle = it.shuffle
+                    nowPlaying = it
+                    Log.d(TAG, "pppppppppppppp: " + it)
+                    player.repeatMode =
+                        if (it.repeat == 1) Player.REPEAT_MODE_OFF else if (it.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
+                }
             }
 
         }
+
         val listener = object : Player.Listener {
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
 
-                val now =
-
-                    NowPlaying(
+                if (mediaItems.isNotEmpty()) {
+                    val now = NowPlaying(
                         null,
                         allNextUpList[player.currentMediaItemIndex].songUri.toString(),
                         allNextUpList[player.currentMediaItemIndex].songName,
@@ -182,22 +187,25 @@ class MusicViewModel @Inject constructor(
                         allNextUpList[player.currentMediaItemIndex].songCoverImageUri.toString(),
                         allNextUpList[player.currentMediaItemIndex].duration,
                         0,
-                        false,
-                        false,
+                        repeat,
+                        shuffle,
                         playingFromType,
                         playingFromName
+
                     )
 
-                Log.d(
-                    TAG,
-                    "onMediaItemTransition: 44 ${allNextUpList[player.currentMediaItemIndex].songName}"
-                )
 
-                if (isPlaying) {
+                    Log.d(
+                        TAG,
+                        "onMediaItemTransition: 44 ${allNextUpList[player.currentMediaItemIndex].songName}"
+                    )
 
-                    if (now.musicName.isNotEmpty()) {
-                        deleteNowPlaying()
-                        insertNowPlaying(now)
+                    if (isPlaying) {
+
+                        if (now.musicName.isNotEmpty()) {
+                            deleteNowPlaying()
+                            insertNowPlaying(now)
+                        }
                     }
                 }
 
@@ -250,19 +258,21 @@ class MusicViewModel @Inject constructor(
         player.playWhenReady = true
         player.prepare()
         isPlaying = true
-
+        currentDuration = player.currentPosition
         Log.d(TAG, "play: " + player)
         Log.d(TAG, "play: " + mediaItems.size)
         upDateDuration()
     }
 
     private fun upDateDuration() {
+
         currentDuration = player.currentPosition
+
         if (isPlaying)
 
             Handler().postDelayed({
                 upDateDuration()
-            },1000)
+            }, 1000)
 
 
     }
@@ -279,6 +289,10 @@ class MusicViewModel @Inject constructor(
 
     }
 
+    fun seekToPosition(position: Long) {
+        player.seekTo(position)
+    }
+
     fun previous() {
 
         if (player.hasPreviousMediaItem()) {
@@ -288,6 +302,30 @@ class MusicViewModel @Inject constructor(
             upDateDuration()
         }
 
+
+    }
+
+    fun repeat(id: Int, repeat: Int) {
+        Log.d(TAG, "repeat: $repeat")
+        scope.launch {
+
+            var value = 0
+
+            if (repeat == 1)
+                value = 2
+            else if (repeat == 2)
+                value = 3
+            else if (repeat == 3)
+                value = 1
+
+
+            repository.updateRepeat(id, value)
+        }
+
+
+    }
+
+    fun  shuffle(id: Int, shuffle: Boolean){
 
     }
 

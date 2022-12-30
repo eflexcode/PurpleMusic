@@ -14,7 +14,7 @@ data class NowPlaying(
     var albumArt: String,
     var duration: Int,
     var currentDuration : Int,
-    var repeat: Boolean,
+    var repeat: Int,
     var shuffle: Boolean,
     var playingFromType: String,
     var playingFromName: String,
