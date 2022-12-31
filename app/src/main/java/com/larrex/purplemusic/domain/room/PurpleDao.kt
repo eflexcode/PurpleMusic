@@ -18,10 +18,43 @@ interface PurpleDao {
     fun getNowPlaying(): Flow<NowPlaying>
 
     @Query("UPDATE NowPlaying SET repeat=:repeat WHERE id = :id")
-    fun updateNowPlayingRepeat(id : Int,repeat : Int)
+    fun updateNowPlayingRepeat(id: Int, repeat: Int)
 
     @Query("UPDATE NowPlaying SET shuffle=:shuffle WHERE id = :id")
-    fun updateNowPlayingShuffle(id : Int,shuffle : Boolean)
+    fun updateNowPlayingShuffle(id: Int, shuffle: Boolean)
+
+//    var musicUri: String,
+//    var musicName: String,
+//    var artistName: String,
+//    var albumArt: String,
+//    var duration: Int,
+//    var currentDuration: Int,
+//    var repeat: Int,
+//    var shuffle: Boolean,
+//    var playingFromType: String,
+//    var playingFromName: String,
+
+    @Query("UPDATE NowPlaying SET musicUri=:musicUri,musicName=:musicName,artistName=:artistName,albumArt=:albumArt,duration=:duration WHERE id = :id")
+    fun updateNowPlaying(
+        id: Int,
+        musicUri: String,
+        musicName: String,
+        artistName: String,
+        albumArt: String,
+        duration: Int,
+    )
+
+    @Query("UPDATE NowPlaying SET musicUri=:musicUri,musicName=:musicName,artistName=:artistName,albumArt=:albumArt,duration=:duration,playingFromType=:playingFromType,playingFromName=:playingFromName WHERE id = :id")
+    fun updateNowPlayingWithTypeAndName(
+        id: Int,
+        musicUri: String,
+        musicName: String,
+        artistName: String,
+        albumArt: String,
+        duration: Int,
+        playingFromType: String,
+        playingFromName: String,
+    )
 
     @Query("SELECT * FROM NextUpSongs")
     fun getNextUps(): Flow<List<NextUpSongs>>

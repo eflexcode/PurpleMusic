@@ -462,5 +462,30 @@ class RepositoryImpl @Inject constructor(
         database.dao().updateNowPlayingShuffle(id, shuffle)
     }
 
+    override fun updateNowPlaying(
+        id: Int,
+        musicUri: String,
+        musicName: String,
+        artistName: String,
+        albumArt: String,
+        duration: Int
+    ) {
+        database.dao().updateNowPlaying(id, musicUri, musicName, artistName, albumArt, duration)
+        Log.d(TAG, "updateNowPlaying: $id")
+    }
+
+    override fun updateNowPlayingWithTypeAndName(
+        id: Int,
+        musicUri: String,
+        musicName: String,
+        artistName: String,
+        albumArt: String,
+        duration: Int,
+        playingFromType: String,
+        playingFromName: String
+    ) {
+       database.dao().updateNowPlayingWithTypeAndName(id, musicUri, musicName, artistName, albumArt, duration, playingFromType, playingFromName)
+    }
+
 
 }

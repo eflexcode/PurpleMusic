@@ -266,7 +266,7 @@ fun NowPlayingScreen(navController: NavController) {
                     ) {
 
                         IconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = { nowPlaying?.id?.let { viewModel.shuffle(it,!nowPlaying!!.shuffle) } },
                             colors = if (nowPlaying?.shuffle == true) IconButtonDefaults.iconButtonColors(
                                 contentColor = Purple
                             ) else IconButtonDefaults.iconButtonColors(contentColor = Util.TextColor)
@@ -335,7 +335,7 @@ fun NowPlayingScreen(navController: NavController) {
                                     id = R.drawable.repeat_all
                                 ),
                                 contentDescription = null,
-                                tint =  if (nowPlaying?.repeat == 1) Color.Black else Purple
+                                tint =  if (nowPlaying?.repeat == 1) Util.TextColor else Purple
                             )
                         }
                     }

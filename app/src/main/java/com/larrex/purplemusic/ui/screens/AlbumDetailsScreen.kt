@@ -40,16 +40,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-
 @Composable
-fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
+fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController,viewModel: MusicViewModel) {
 
     val painter = rememberAsyncImagePainter(
         model = albumItem?.albumCoverImageUri,
         error = painterResource(id = R.drawable.ic_music_selected_small)
     )
 
-    val viewModel = hiltViewModel<MusicViewModel>()
 
     val albumName: String = albumItem?.albumName ?: ""
 
@@ -58,14 +56,19 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
     val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
 
-    for (song in songsInAlbum){
+    val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
+
+    for (song in songsInAlbum) {
 
         nextUpSongs.add(
-            NextUpSongs(null,
-            song.songUri.toString(),song.songName,
-            song.artistName,song.songCoverImageUri.toString(),song.size,song.duration)
+            NextUpSongs(
+                null,
+                song.songUri.toString(), song.songName,
+                song.artistName, song.songCoverImageUri.toString(), song.size, song.duration
+            )
         )
     }
+
     Box(
         modifier = Modifier
             .background(Util.BottomBarBackground)
@@ -155,22 +158,15 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
                             CoroutineScope(Dispatchers.IO).launch {
 
-                                val nowPlaying = NowPlaying(
-                                    null,
-                                    songsInAlbum[0].songUri.toString(),
-                                    songsInAlbum[0].songName, songsInAlbum[0].artistName,
-                                    songsInAlbum[0].songCoverImageUri.toString(),
-                                    songsInAlbum[0].duration, 0, false, false,"Album",albumName
-                                )
-
-                                viewModel.deleteNowPlaying()
+                                nowPlaying?.id?.let {
+                                    updateNowPlaying(
+                                        it,songsInAlbum[0].songUri.toString(),
+                                        songsInAlbum[0].songName, songsInAlbum[0].artistName,
+                                        songsInAlbum[0].songCoverImageUri.toString(),
+                                        songsInAlbum[0].duration,  "Album", albumName, viewModel)
+                                }
                                 viewModel.deleteNextUps()
-
-                                viewModel.insertNowPlaying(nowPlaying)
-
                                 viewModel.insertNextUps(nextUpSongs)
-
-
                             }
 
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
@@ -193,25 +189,35 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
 
             }
 
-            items(songsInAlbum) { item->
+            items(songsInAlbum) { item ->
 
                 MusicItem(onClicked = {
 
                     CoroutineScope(Dispatchers.IO).launch {
+//
+//                        val nowPlaying = NowPlaying(
+//                            null,
+//                            item.songUri.toString(),
+//                            item.songName, item.artistName,
+//                            item.songCoverImageUri.toString(),
+//                            item.duration, 0, 1, false, "Album", albumName
+//                        )
+//
+//                        viewModel.deleteNowPlaying()
+//                        viewModel.deleteNextUps()
+//
+//                        viewModel.insertNowPlaying(nowPlaying)
+//
+//                        viewModel.insertNextUps(nextUpSongs)
 
-                        val nowPlaying = NowPlaying(
-                            null,
-                            item.songUri.toString(),
-                            item.songName, item.artistName,
-                            item.songCoverImageUri.toString(),
-                            item.duration, 0, false, false,"Album",albumName
-                        )
-
-                        viewModel.deleteNowPlaying()
+                        nowPlaying?.id?.let {
+                            updateNowPlaying(
+                                it, item.songUri.toString(),
+                                item.songName, item.artistName,
+                                item.songCoverImageUri.toString(),
+                                item.duration,  "Album", albumName, viewModel)
+                        }
                         viewModel.deleteNextUps()
-
-                        viewModel.insertNowPlaying(nowPlaying)
-
                         viewModel.insertNextUps(nextUpSongs)
 
                     }
@@ -228,9 +234,23 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController) {
     }
 
 
+
 }
 
+fun updateNowPlaying(
+    id: Int,
+    musicUri: String,
+    musicName: String,
+    artistName: String,
+    albumArt: String,
+    duration: Int,
+    playingFromType: String,
+    playingFromName: String,viewModel: MusicViewModel
+) {
 
+    viewModel.updateNowPlayingWithTypeAndName(id, musicUri, musicName, artistName, albumArt, duration, playingFromType, playingFromName)
+
+}
 
 @Preview(showBackground = true)
 @Composable

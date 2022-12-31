@@ -30,7 +30,7 @@ fun BottomNavGraph(navController: NavHostController, viewModel: MusicViewModel) 
 
             val album = navController.previousBackStackEntry?.savedStateHandle?.get<AlbumItem>("album")
 
-            AlbumDetailsScreen(album, navController)
+            AlbumDetailsScreen(album, navController,viewModel)
 
         }
         composable(route = BottomBarScreens.ArtistDetailsScreen.route) {

@@ -57,7 +57,6 @@ class MusicViewModel @Inject constructor(
     var isPlaying by mutableStateOf(false)
     var isPaused by mutableStateOf(false)
 
-    var canLoad by mutableStateOf(false)
     var currentDuration by mutableStateOf(0L)
     var currentPositionSlider by mutableStateOf(0F)
 
@@ -75,54 +74,26 @@ class MusicViewModel @Inject constructor(
 
         val mainActivityIntent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, 0)
+        var repeatType by mutableStateOf(0)
 
 
         mediaSession = MediaSessionCompat(context, "PlayerService")
         mediaSession.isActive = true
         mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setPlayer(player)
-        player.repeatMode = Player.REPEAT_MODE_ALL
         val navigator = object : TimelineQueueNavigator(mediaSession) {
 
             override fun getMediaDescription(
                 player: Player,
                 windowIndex: Int
             ): MediaDescriptionCompat {
-//                val now =
-//
-//                    NowPlaying(
-//                        null,
-//                        allNextUpList[windowIndex].songUri.toString(),
-//                        allNextUpList[windowIndex].songName,
-//                        allNextUpList[windowIndex].artistName,
-//                        allNextUpList[windowIndex].songCoverImageUri.toString(),
-//                        allNextUpList[windowIndex].duration,
-//                        0,
-//                        false,
-//                        false,
-//                        playingFromType,
-//                        playingFromName
-//                    )
-//
-//                Log.d(
-//                    TAG,
-//                    "onMediaItemTransition: 44 ${allNextUpList[player.currentMediaItemIndex].songName}"
-//                )
-//
-//                if (isPlaying) {
-//
-//                    if (now.musicName.isNotEmpty()) {
-//                        deleteNowPlaying()
-//                        insertNowPlaying(now)
-//                    }
-//                }
+
                 return MediaDescriptionCompat.Builder().build()
 
             }
         }
 
         mediaSessionConnector.setQueueNavigator(navigator)
-
 
         Log.d(TAG, "init: " + player)
         CoroutineScope(Dispatchers.IO).launch {
@@ -156,20 +127,27 @@ class MusicViewModel @Inject constructor(
 
             }
 
+
+        }
+
+        scope.launch {
             getNowPlaying().collectLatest {
-
-
-                if (it != null) {
-                    playingFromType = it.playingFromType
-                    playingFromName = it.playingFromName
-                    repeat = it.repeat
-                    shuffle = it.shuffle
-                    nowPlaying = it
-                    Log.d(TAG, "pppppppppppppp: " + it)
-                    player.repeatMode =
-                        if (it.repeat == 1) Player.REPEAT_MODE_OFF else if (it.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
-                }
+//
+//                playingFromType = it.playingFromType
+//                playingFromName = it.playingFromName
+//                repeat = it.repeat
+//                shuffle = it.shuffle
+//                repeatType = it.repeat
+                nowPlaying = it
+//                Log.d(TAG, "pppppppppppppp: " + it.id)
             }
+        }
+
+        if (repeatType != 0) {
+
+            player.repeatMode =
+                if (repeatType == 1) Player.REPEAT_MODE_OFF else if (repeatType == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
+
 
         }
 
@@ -178,37 +156,52 @@ class MusicViewModel @Inject constructor(
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
 
-                if (mediaItems.isNotEmpty()) {
-                    val now = NowPlaying(
-                        null,
-                        allNextUpList[player.currentMediaItemIndex].songUri.toString(),
-                        allNextUpList[player.currentMediaItemIndex].songName,
-                        allNextUpList[player.currentMediaItemIndex].artistName,
-                        allNextUpList[player.currentMediaItemIndex].songCoverImageUri.toString(),
-                        allNextUpList[player.currentMediaItemIndex].duration,
-                        0,
-                        repeat,
-                        shuffle,
-                        playingFromType,
-                        playingFromName
-
-                    )
+                try {
 
 
-                    Log.d(
-                        TAG,
-                        "onMediaItemTransition: 44 ${allNextUpList[player.currentMediaItemIndex].songName}"
-                    )
+                    if (mediaItems.isNotEmpty()) {
 
-                    if (isPlaying) {
+                        val id = nowPlaying?.id
 
-                        if (now.musicName.isNotEmpty()) {
-                            deleteNowPlaying()
-                            insertNowPlaying(now)
+                        val musicUri = allNextUpList[player.currentMediaItemIndex].songUri
+                        val musicName = allNextUpList[player.currentMediaItemIndex].songName
+                        val artistName = allNextUpList[player.currentMediaItemIndex].artistName
+                        val albumArt = allNextUpList[player.currentMediaItemIndex].songCoverImageUri
+                        val duration = allNextUpList[player.currentMediaItemIndex].duration
+
+                        Log.d(
+                            TAG,
+                            "onMediaItemTransition: 44 ${allNextUpList[player.currentMediaItemIndex].songName}"
+                        )
+
+                        if (isPlaying) {
+
+                            scope.launch {
+
+                                Log.d(TAG, "onMediaItemTransition id: $id")
+                                if (id != null) {
+                                    Log.d(TAG, "onMediaItemTransition id2: $id")
+
+
+                                    updateNowPlaying(
+                                        id,
+                                        musicUri,
+                                        musicName,
+                                        artistName,
+                                        albumArt,
+                                        duration,
+                                    )
+
+
+                                }
+
+                            }
+
                         }
                     }
-                }
+                }catch (e : Exception){
 
+                }
             }
 
             override fun onEvents(player: Player, events: Player.Events) {
@@ -306,7 +299,6 @@ class MusicViewModel @Inject constructor(
     }
 
     fun repeat(id: Int, repeat: Int) {
-        Log.d(TAG, "repeat: $repeat")
         scope.launch {
 
             var value = 0
@@ -325,8 +317,46 @@ class MusicViewModel @Inject constructor(
 
     }
 
-    fun  shuffle(id: Int, shuffle: Boolean){
+    fun shuffle(id: Int, shuffle: Boolean) {
+        scope.launch {
 
+            repository.updateShuffle(id, shuffle)
+
+        }
+    }
+
+    fun updateNowPlaying(
+        id: Int,
+        musicUri: String,
+        musicName: String,
+        artistName: String,
+        albumArt: String,
+        duration: Int,
+    ) {
+        repository.updateNowPlaying(id, musicUri, musicName, artistName, albumArt, duration)
+        Log.d(TAG, "onMediaItemTransition: update $id")
+    }
+
+    fun updateNowPlayingWithTypeAndName(
+        id: Int,
+        musicUri: String,
+        musicName: String,
+        artistName: String,
+        albumArt: String,
+        duration: Int,
+        playingFromType: String,
+        playingFromName: String,
+    ) {
+        repository.updateNowPlayingWithTypeAndName(
+            id,
+            musicUri,
+            musicName,
+            artistName,
+            albumArt,
+            duration,
+            playingFromType,
+            playingFromName
+        )
     }
 
     fun searchSongs(songName: String) {
