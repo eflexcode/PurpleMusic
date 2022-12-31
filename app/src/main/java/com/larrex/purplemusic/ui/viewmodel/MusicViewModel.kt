@@ -69,6 +69,7 @@ class MusicViewModel @Inject constructor(
     private lateinit var mediaSessionConnector: MediaSessionConnector
 
     val scope = CoroutineScope(Dispatchers.IO)
+    val scopeMain = CoroutineScope(Dispatchers.Main)
 
     init {
 
@@ -118,19 +119,18 @@ class MusicViewModel @Inject constructor(
                     mediaItems.add(MediaItem.fromUri(it.songUri.toUri()))
 
                 }.also {
+
 //                    nowPlaying?.musicUri?.let { MediaItem.fromUri(it.toUri()) }
 //                        ?.let { player.addMediaItem(it) }
-
 
                     player.addMediaItems(mediaItems)
                 }
 
             }
 
-
         }
 
-        scope.launch {
+        scopeMain.launch {
             getNowPlaying().collectLatest {
 //
 //                playingFromType = it.playingFromType
@@ -139,15 +139,19 @@ class MusicViewModel @Inject constructor(
 //                shuffle = it.shuffle
 //                repeatType = it.repeat
                 nowPlaying = it
-//                Log.d(TAG, "pppppppppppppp: " + it.id)
+                player.repeatMode =
+                    if (it.repeat == 1) Player.REPEAT_MODE_OFF else if (it.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
+
+                if (isPlaying)
+                player.shuffleModeEnabled = it.shuffle
+
             }
         }
 
-        if (repeatType != 0) {
+        if (nowPlaying != null) {
 
             player.repeatMode =
-                if (repeatType == 1) Player.REPEAT_MODE_OFF else if (repeatType == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
-
+                if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
 
         }
 
@@ -272,11 +276,10 @@ class MusicViewModel @Inject constructor(
 
     fun next() {
 
-
         if (player.hasNextMediaItem()) {
+            isPlaying = true
             player.seekToNext()
             player.play()
-            isPlaying = true
             upDateDuration()
         }
 
@@ -289,9 +292,9 @@ class MusicViewModel @Inject constructor(
     fun previous() {
 
         if (player.hasPreviousMediaItem()) {
+            isPlaying = true
             player.seekToPrevious()
             player.play()
-            isPlaying = true
             upDateDuration()
         }
 

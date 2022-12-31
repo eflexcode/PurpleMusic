@@ -72,6 +72,7 @@ fun NowPlayingScreen(navController: NavController) {
             id = R.drawable.ic_music_selected_small
         ), error = painterResource(id = R.drawable.ic_music_selected_small)
     )
+
     val arr = AudioAttributes.Builder()
         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
         .setUsage(C.USAGE_MEDIA)
@@ -296,8 +297,7 @@ fun NowPlayingScreen(navController: NavController) {
                                         it
                                     )
                                 }?.let { exoPlayer.addMediaItem(it) }
-//                                exoPlayer.playWhenReady = true
-//                                exoPlayer.prepare()
+
                                 viewModel.play(context)
                             },
                             modifier = Modifier.size(80.dp)
@@ -392,27 +392,22 @@ fun NowPlayingScreen(navController: NavController) {
 
                 MusicItem(onClicked = {
 
-                    val nowPlaying = nowPlaying?.let { it1 ->
-                        NowPlaying(
-                            null,
-                            item.songUri.toString(),
-                            item.songName,
-                            item.artistName,
-                            item.songCoverImageUri.toString(),
-                            item.duration,
-                            0,
-                            1,
-                            false,
-                            it1.playingFromType,
-                            it1.playingFromName
-                        )
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        if (nowPlaying != null) {
+                            nowPlaying!!.id?.let { it1 ->
+                                viewModel.updateNowPlaying(
+                                    it1, item.songUri.toString(),
+                                    item.songName, item.artistName,
+                                    item.songCoverImageUri.toString(),
+                                    item.duration)
+                            }
+
+                        }
                     }
 
-                    viewModel.deleteNowPlaying()
-                    if (nowPlaying != null) {
-                        viewModel.insertNowPlaying(nowPlaying)
-                        viewModel.play(context)
-                    }
+
+                    viewModel.play(context)
 
                 }, onLongClicked = {}, onUnselected = {}, songItem, true)
 
