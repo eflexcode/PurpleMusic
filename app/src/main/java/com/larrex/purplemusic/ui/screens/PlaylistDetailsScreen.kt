@@ -56,6 +56,8 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
     Log.d(TAG, "PlaylistDetailsScreen: $images")
 
+    val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
+
     val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
 
     for (song in songs) {
@@ -144,25 +146,15 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
                                 if (songs.size > 1) {
 
-                                    val nowPlaying = NowPlaying(
-                                        null,
-                                        songs[1].songUri.toString(),
-                                        songs[1].songName,
-                                        songs[1].artistName,
-                                        songs[1].songCoverImageUri.toString(),
-                                        songs[1].duration,
-                                        0,
-                                        1,
-                                        false,"Playlist",songs[0].playlistName
-                                    )
-
-                                    viewModel.deleteNowPlaying()
+                                    nowPlaying?.id?.let {
+                                        updateNowPlayingPlaylist(
+                                            it,songs[1].songUri,
+                                            songs[1].songName, songs[1].artistName,
+                                            songs[1].songCoverImageUri,
+                                            songs[1].duration,  "Playlist", songs[0].playlistName, viewModel)
+                                    }
                                     viewModel.deleteNextUps()
-
-                                    viewModel.insertNowPlaying(nowPlaying)
-
                                     viewModel.insertNextUps(nextUpSongs)
-
 
                                 }
                             }
@@ -193,22 +185,16 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
                     MusicItemPlaylist(onClicked = {
                         CoroutineScope(Dispatchers.IO).launch {
                             if (songs.size > 1) {
-                                val nowPlaying = NowPlaying(
-                                    null,
-                                    songs[1].songUri.toString(),
-                                    songs[1].songName,
-                                    songs[1].artistName,
-                                    songs[1].songCoverImageUri.toString(),
-                                    songs[1].duration, 0, 1, false,"Playlist",songs[0].playlistName
-                                )
 
-                                viewModel.deleteNowPlaying()
+                                nowPlaying?.id?.let {
+                                    updateNowPlayingPlaylist(
+                                        it, item.songUri.toString(),
+                                        item.songName, item.artistName,
+                                        item.songCoverImageUri.toString(),
+                                        item.duration,  "Playlist", songs[0].playlistName, viewModel)
+                                }
                                 viewModel.deleteNextUps()
-
-                                viewModel.insertNowPlaying(nowPlaying)
-
                                 viewModel.insertNextUps(nextUpSongs)
-
 
                             }
                         }
@@ -221,5 +207,19 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
         }
     }
 
+
+}
+fun updateNowPlayingPlaylist(
+    id: Int,
+    musicUri: String,
+    musicName: String,
+    artistName: String,
+    albumArt: String,
+    duration: Int,
+    playingFromType: String,
+    playingFromName: String,viewModel: MusicViewModel
+) {
+
+    viewModel.updateNowPlayingWithTypeAndName(id, musicUri, musicName, artistName, albumArt, duration, playingFromType, playingFromName)
 
 }

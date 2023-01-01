@@ -51,7 +51,7 @@ private const val TAG = "MusicScreen"
     ExperimentalAnimationApi::class, ExperimentalAnimationApi::class,
 )
 @Composable
-fun MusicScreen(navController: NavController) {
+fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
 
     val chipItems = listOf("Music", "Albums")
     var newText by remember { mutableStateOf(TextFieldValue("")) }
@@ -64,7 +64,7 @@ fun MusicScreen(navController: NavController) {
     var visibleState = remember { MutableTransitionState(false).apply { targetState = false } }
 
     var nowPlaying: NowPlaying? = null
-
+//    val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
     Box(
         modifier = Modifier
             .background(Util.BottomBarBackground)
@@ -190,14 +190,12 @@ fun MusicScreen(navController: NavController) {
                                 item.songCoverImageUri.toString(),
                                 item.duration,
                                 0,
-                                false,
+                                2,
                                 false, "Device", "All Songs"
                             )
 
-                            viewModel.deleteNowPlaying()
                             viewModel.deleteNextUps()
 
-                            viewModel.insertNowPlaying(nowPlaying!!)
 
                             musicItems.forEach { song ->
 

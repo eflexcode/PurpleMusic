@@ -55,6 +55,7 @@ class MusicViewModel @Inject constructor(
     var nowPlaying: NowPlaying? = null
 
     var isPlaying by mutableStateOf(false)
+    var isPrepared by mutableStateOf(false)
     var isPaused by mutableStateOf(false)
 
     var currentDuration by mutableStateOf(0L)
@@ -143,7 +144,7 @@ class MusicViewModel @Inject constructor(
                     if (it.repeat == 1) Player.REPEAT_MODE_OFF else if (it.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
 
                 if (isPlaying)
-                player.shuffleModeEnabled = it.shuffle
+                    player.shuffleModeEnabled = it.shuffle
 
             }
         }
@@ -154,6 +155,7 @@ class MusicViewModel @Inject constructor(
                 if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
 
         }
+
 
         val listener = object : Player.Listener {
 
@@ -186,7 +188,6 @@ class MusicViewModel @Inject constructor(
                                 if (id != null) {
                                     Log.d(TAG, "onMediaItemTransition id2: $id")
 
-
                                     updateNowPlaying(
                                         id,
                                         musicUri,
@@ -203,7 +204,7 @@ class MusicViewModel @Inject constructor(
 
                         }
                     }
-                }catch (e : Exception){
+                } catch (e: Exception) {
 
                 }
             }
@@ -235,9 +236,10 @@ class MusicViewModel @Inject constructor(
 
         player.addListener(listener)
 
+
     }
 
-    fun play(context: Context) {
+    fun play() {
 
         if (isPlaying) {
 
@@ -255,9 +257,8 @@ class MusicViewModel @Inject constructor(
         player.playWhenReady = true
         player.prepare()
         isPlaying = true
+        isPrepared = true
         currentDuration = player.currentPosition
-        Log.d(TAG, "play: " + player)
-        Log.d(TAG, "play: " + mediaItems.size)
         upDateDuration()
     }
 
@@ -277,24 +278,36 @@ class MusicViewModel @Inject constructor(
     fun next() {
 
         if (player.hasNextMediaItem()) {
-            isPlaying = true
             player.seekToNext()
-            player.play()
+            if (isPrepared) {
+                player.play()
+                isPlaying = true
+            }else {
+                play()
+                isPrepared = true
+            }
             upDateDuration()
         }
 
     }
 
     fun seekToPosition(position: Long) {
+
         player.seekTo(position)
     }
 
     fun previous() {
 
         if (player.hasPreviousMediaItem()) {
-            isPlaying = true
             player.seekToPrevious()
-            player.play()
+            if (isPrepared) {
+                player.play()
+                isPlaying = true
+            }else {
+                play()
+                isPrepared = true
+            }
+
             upDateDuration()
         }
 
@@ -326,6 +339,19 @@ class MusicViewModel @Inject constructor(
             repository.updateShuffle(id, shuffle)
 
         }
+    }
+
+    fun jumpToPosition(position: Int) {
+//        isPlaying = true
+        player.seekTo(position, 0)
+
+        if (isPrepared) {
+            player.play()
+        }else {
+            play()
+            isPrepared = true
+        }
+        upDateDuration()
     }
 
     fun updateNowPlaying(

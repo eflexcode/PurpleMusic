@@ -3,11 +3,18 @@ package com.larrex.purplemusic.ui.screens
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -73,16 +80,22 @@ fun NowPlayingScreen(navController: NavController) {
         ), error = painterResource(id = R.drawable.ic_music_selected_small)
     )
 
-    val arr = AudioAttributes.Builder()
-        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-        .setUsage(C.USAGE_MEDIA)
-        .build()
-    val context = LocalContext.current
+    val scrollState = rememberScrollState()
+    var animate by remember {
+        mutableStateOf(true)
+    }
 
-    val exoPlayer: ExoPlayer = ExoPlayer.Builder(context)
-        .setAudioAttributes(arr, true)
-        .setHandleAudioBecomingNoisy(true)
-        .build()
+//    do {
+//        LaunchedEffect(Unit) {
+//            scrollState.animateScrollTo(
+//                scrollState.maxValue,
+//                animationSpec = tween(10000, 200, easing = CubicBezierEasing(0f, 0f, 0f, 0f))
+//            )
+//            animate = !animate
+//            scrollState.scrollTo(0)
+//        }
+//    } while (animate)
+
 
     Box(
         modifier = Modifier
@@ -189,7 +202,7 @@ fun NowPlayingScreen(navController: NavController) {
                             textAlign = TextAlign.Center,
                             maxLines = 1,
                             color = Util.TextColor,
-                            overflow = TextOverflow.Ellipsis,
+                            overflow = TextOverflow.Companion.Ellipsis,
                             modifier = Modifier
                                 .padding(end = 35.dp, start = 35.dp, top = 25.dp)
                         )
@@ -267,7 +280,14 @@ fun NowPlayingScreen(navController: NavController) {
                     ) {
 
                         IconButton(
-                            onClick = { nowPlaying?.id?.let { viewModel.shuffle(it,!nowPlaying!!.shuffle) } },
+                            onClick = {
+                                nowPlaying?.id?.let {
+                                    viewModel.shuffle(
+                                        it,
+                                        !nowPlaying!!.shuffle
+                                    )
+                                }
+                            },
                             colors = if (nowPlaying?.shuffle == true) IconButtonDefaults.iconButtonColors(
                                 contentColor = Purple
                             ) else IconButtonDefaults.iconButtonColors(contentColor = Util.TextColor)
@@ -296,9 +316,9 @@ fun NowPlayingScreen(navController: NavController) {
                                     MediaItem.fromUri(
                                         it
                                     )
-                                }?.let { exoPlayer.addMediaItem(it) }
+                                }?.let { }
 
-                                viewModel.play(context)
+                                viewModel.play()
                             },
                             modifier = Modifier.size(80.dp)
                         ) {
@@ -327,7 +347,7 @@ fun NowPlayingScreen(navController: NavController) {
                         IconButton(onClick = {
 
                             if (nowPlaying != null)
-                                nowPlaying!!.id?.let { viewModel.repeat(it,nowPlaying?.repeat!!) }
+                                nowPlaying!!.id?.let { viewModel.repeat(it, nowPlaying?.repeat!!) }
 
                         }, modifier = Modifier) {
                             Icon(
@@ -335,7 +355,7 @@ fun NowPlayingScreen(navController: NavController) {
                                     id = R.drawable.repeat_all
                                 ),
                                 contentDescription = null,
-                                tint =  if (nowPlaying?.repeat == 1) Util.TextColor else Purple
+                                tint = if (nowPlaying?.repeat == 1) Util.TextColor else Purple
                             )
                         }
                     }
@@ -371,11 +391,11 @@ fun NowPlayingScreen(navController: NavController) {
                 }
             }
 
-            items(
+            itemsIndexed(
                 if (newText.text.trim().toString()
                         .isEmpty()
                 ) nextUps else viewModel.searchNextUpList
-            ) { item ->
+            ) { index, item ->
 
                 val songUri: Uri = Uri.parse(item.songUri)
                 val imageUri: Uri = Uri.parse(item.songCoverImageUri)
@@ -400,14 +420,15 @@ fun NowPlayingScreen(navController: NavController) {
                                     it1, item.songUri.toString(),
                                     item.songName, item.artistName,
                                     item.songCoverImageUri.toString(),
-                                    item.duration)
+                                    item.duration
+                                )
                             }
 
                         }
                     }
 
-
-                    viewModel.play(context)
+                    viewModel.jumpToPosition(index)
+//                    viewModel.play(context)
 
                 }, onLongClicked = {}, onUnselected = {}, songItem, true)
 
@@ -416,7 +437,17 @@ fun NowPlayingScreen(navController: NavController) {
         }
 
     }
+    LaunchedEffect(Unit) {
 
+        scrollState.animateScrollTo(
+            scrollState.maxValue,
+            animationSpec = tween(10000, 1000, easing = CubicBezierEasing(0f, 0f, 0f, 0f))
+        )
+
+//        scrollState.scrollTo(0)
+        animate = !animate
+        Log.d(TAG, "NowPlayingScreen: llllllll")
+    }
 }
 
 @Preview(showBackground = true)

@@ -48,7 +48,6 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController,viewM
         error = painterResource(id = R.drawable.ic_music_selected_small)
     )
 
-
     val albumName: String = albumItem?.albumName ?: ""
 
     val songsInAlbum by viewModel.getAllSongsFromAlbum(albumName)
@@ -194,22 +193,6 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController,viewM
                 MusicItem(onClicked = {
 
                     CoroutineScope(Dispatchers.IO).launch {
-//
-//                        val nowPlaying = NowPlaying(
-//                            null,
-//                            item.songUri.toString(),
-//                            item.songName, item.artistName,
-//                            item.songCoverImageUri.toString(),
-//                            item.duration, 0, 1, false, "Album", albumName
-//                        )
-//
-//                        viewModel.deleteNowPlaying()
-//                        viewModel.deleteNextUps()
-//
-//                        viewModel.insertNowPlaying(nowPlaying)
-//
-//                        viewModel.insertNextUps(nextUpSongs)
-
                         nowPlaying?.id?.let {
                             updateNowPlaying(
                                 it, item.songUri.toString(),
