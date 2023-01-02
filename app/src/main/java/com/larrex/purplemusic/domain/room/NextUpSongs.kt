@@ -13,5 +13,5 @@ data class  NextUpSongs(
     val artistName: String,
     val songCoverImageUri: String,
     val size: Int,
-    val duration: Int
+    val duration: Float
 )

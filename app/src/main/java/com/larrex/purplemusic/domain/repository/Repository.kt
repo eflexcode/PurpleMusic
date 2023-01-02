@@ -56,7 +56,7 @@ interface Repository {
         musicName: String,
         artistName: String,
         albumArt: String,
-        duration: Int,
+        duration: Float,
     )
 
     fun updateNowPlayingWithTypeAndName(
@@ -65,7 +65,7 @@ interface Repository {
         musicName: String,
         artistName: String,
         albumArt: String,
-        duration: Int,
+        duration: Float,
         playingFromType: String,
         playingFromName: String,
     )

@@ -15,7 +15,7 @@ fun BottomNavGraph(navController: NavHostController, viewModel: MusicViewModel) 
     NavHost(navController = navController, startDestination = BottomBarScreens.MusicScreen.route) {
 
         composable(route = BottomBarScreens.MusicScreen.route) {
-            MusicScreen(navController)
+            MusicScreen(navController,viewModel)
         }
         composable(route = BottomBarScreens.FavouriteScreen.route) {
             FavouriteScreen(viewModel,navController)

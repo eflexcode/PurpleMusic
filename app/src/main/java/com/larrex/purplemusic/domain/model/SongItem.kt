@@ -8,5 +8,5 @@ data class SongItem(
     val artistName: String,
     val songCoverImageUri: Uri,
     val size: Int,
-    val duration: Int
+    val duration: Float
 )

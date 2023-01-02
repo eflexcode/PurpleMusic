@@ -72,7 +72,7 @@ class RepositoryImpl @Inject constructor(
                 while (cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
                     val albumId = cursor.getLong(albumIdColumn)
-                    val duration = cursor.getInt(durationColumn)
+                    val duration = cursor.getInt(durationColumn).toFloat()
                     val size = cursor.getInt(sizeColumn)
                     val name = cursor.getString(nameColumn) + " "
                     val title = cursor.getString(titleColumn) + " "
@@ -306,7 +306,7 @@ class RepositoryImpl @Inject constructor(
                 while (cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
                     val albumId = cursor.getLong(albumIdColumn)
-                    val duration = cursor.getInt(durationColumn)
+                    val duration = cursor.getInt(durationColumn).toFloat()
                     val size = cursor.getInt(sizeColumn)
                     val name = cursor.getString(nameColumn)
                     val title = cursor.getString(titleColumn)
@@ -468,7 +468,7 @@ class RepositoryImpl @Inject constructor(
         musicName: String,
         artistName: String,
         albumArt: String,
-        duration: Int
+        duration: Float
     ) {
         database.dao().updateNowPlaying(id, musicUri, musicName, artistName, albumArt, duration)
         Log.d(TAG, "updateNowPlaying: $id")
@@ -480,7 +480,7 @@ class RepositoryImpl @Inject constructor(
         musicName: String,
         artistName: String,
         albumArt: String,
-        duration: Int,
+        duration: Float,
         playingFromType: String,
         playingFromName: String
     ) {

@@ -41,7 +41,7 @@ interface PurpleDao {
         musicName: String,
         artistName: String,
         albumArt: String,
-        duration: Int,
+        duration: Float,
     )
 
     @Query("UPDATE NowPlaying SET musicUri=:musicUri,musicName=:musicName,artistName=:artistName,albumArt=:albumArt,duration=:duration,playingFromType=:playingFromType,playingFromName=:playingFromName WHERE id = :id")
@@ -51,7 +51,7 @@ interface PurpleDao {
         musicName: String,
         artistName: String,
         albumArt: String,
-        duration: Int,
+        duration: Float,
         playingFromType: String,
         playingFromName: String,
     )

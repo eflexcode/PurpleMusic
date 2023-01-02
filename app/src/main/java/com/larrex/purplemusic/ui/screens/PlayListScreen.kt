@@ -49,7 +49,7 @@ fun FavouriteScreen(viewModel: MusicViewModel, navController: NavController) {
                 albumName = "",
                 artistName = "",
                 playlistItem = true,
-                duration = 0,
+                duration = 0f,
                 size = 0,
                 playlistName = name
             )

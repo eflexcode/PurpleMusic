@@ -16,7 +16,7 @@ data class Playlist(
     val albumName: String,
     val songCoverImageUri: String,
     val size: Int,
-    val duration: Int,
+    val duration: Float,
     val playlistItem: Boolean,
     val playlistId: Long,
     val playlistName: String

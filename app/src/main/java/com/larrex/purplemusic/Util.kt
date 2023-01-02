@@ -99,19 +99,23 @@ class Util {
 
         }
 
-        fun formatTime(duration: String): String {
+        fun formatTime(duration: Float?): String {
 
-            return if (duration != "null") {
+            return if (duration != 0f) {
 
-                val mDuration = duration.toLong()
+                val mDuration = duration?.toInt()
+
+                val mDuration2 = duration?.toLong()
 
                 var timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
 
-                if (mDuration >= 3600000L) {
-                    timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                if (mDuration != null) {
+                    if (mDuration >= 3600000L) {
+                        timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    }
                 }
 
-                timeFormat.format(Date(mDuration - TimeZone.getDefault().rawOffset))
+                timeFormat.format(Date(mDuration2?.minus(TimeZone.getDefault().rawOffset) ?: 0))
 
             } else {
 

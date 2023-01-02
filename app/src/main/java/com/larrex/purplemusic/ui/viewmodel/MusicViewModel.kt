@@ -121,9 +121,6 @@ class MusicViewModel @Inject constructor(
 
                 }.also {
 
-//                    nowPlaying?.musicUri?.let { MediaItem.fromUri(it.toUri()) }
-//                        ?.let { player.addMediaItem(it) }
-
                     player.addMediaItems(mediaItems)
                 }
 
@@ -133,13 +130,9 @@ class MusicViewModel @Inject constructor(
 
         scopeMain.launch {
             getNowPlaying().collectLatest {
-//
-//                playingFromType = it.playingFromType
-//                playingFromName = it.playingFromName
-//                repeat = it.repeat
-//                shuffle = it.shuffle
-//                repeatType = it.repeat
+
                 nowPlaying = it
+                if (it != null)
                 player.repeatMode =
                     if (it.repeat == 1) Player.REPEAT_MODE_OFF else if (it.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
 
@@ -148,13 +141,13 @@ class MusicViewModel @Inject constructor(
 
             }
         }
-
-        if (nowPlaying != null) {
-
-            player.repeatMode =
-                if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
-
-        }
+//
+//        if (nowPlaying != null) {
+//
+//            player.repeatMode =
+//                if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
+//
+//        }
 
 
         val listener = object : Player.Listener {
@@ -173,7 +166,7 @@ class MusicViewModel @Inject constructor(
                         val musicName = allNextUpList[player.currentMediaItemIndex].songName
                         val artistName = allNextUpList[player.currentMediaItemIndex].artistName
                         val albumArt = allNextUpList[player.currentMediaItemIndex].songCoverImageUri
-                        val duration = allNextUpList[player.currentMediaItemIndex].duration
+                        val duration = allNextUpList[player.currentMediaItemIndex].duration.toFloat()
 
                         Log.d(
                             TAG,
@@ -205,7 +198,7 @@ class MusicViewModel @Inject constructor(
                         }
                     }
                 } catch (e: Exception) {
-
+play()
                 }
             }
 
@@ -247,10 +240,10 @@ class MusicViewModel @Inject constructor(
             player.pause()
             isPlaying = false
 
-            if (isPaused) {
-                player.play()
-                isPaused = false
-            }
+//            if (isPaused) {
+//                player.play()
+//                isPaused = false
+//            }
 
             return
         }
@@ -360,7 +353,7 @@ class MusicViewModel @Inject constructor(
         musicName: String,
         artistName: String,
         albumArt: String,
-        duration: Int,
+        duration: Float,
     ) {
         repository.updateNowPlaying(id, musicUri, musicName, artistName, albumArt, duration)
         Log.d(TAG, "onMediaItemTransition: update $id")
@@ -372,7 +365,7 @@ class MusicViewModel @Inject constructor(
         musicName: String,
         artistName: String,
         albumArt: String,
-        duration: Int,
+        duration: Float,
         playingFromType: String,
         playingFromName: String,
     ) {

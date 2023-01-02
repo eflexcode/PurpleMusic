@@ -12,7 +12,7 @@ data class NowPlaying(
     var musicName: String,
     var artistName: String,
     var albumArt: String,
-    var duration: Int,
+    var duration: Float,
     var currentDuration : Int,
     var repeat: Int,
     var shuffle: Boolean,

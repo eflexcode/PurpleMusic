@@ -52,6 +52,7 @@ import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Float.NaN
 
 
 private const val TAG = "NowPlayingScreen"
@@ -225,8 +226,11 @@ fun NowPlayingScreen(navController: NavController) {
 
                     if (nowPlaying != null) {
 
+                        var duration = nowPlaying!!.duration
+
+                        if (nowPlaying!!.duration != null)
                         Slider(
-                            value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration.toFloat()) * 100F),
+                            value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration) * 100F),
                             onValueChange = {
 
                                 viewModel.seekToPosition(((it.toLong() * nowPlaying!!.duration.toLong()) / 100L))
@@ -249,7 +253,7 @@ fun NowPlayingScreen(navController: NavController) {
                     ) {
 
                         Text(
-                            text = Util.formatTime(viewModel.currentDuration.toString()),
+                            text = Util.formatTime(viewModel.currentDuration.toFloat()),
                             fontSize = 12.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,
@@ -260,7 +264,7 @@ fun NowPlayingScreen(navController: NavController) {
                         )
 
                         Text(
-                            text = Util.formatTime(nowPlaying?.duration.toString()),
+                            text =  Util.formatTime(nowPlaying?.duration) ,
                             fontSize = 12.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,

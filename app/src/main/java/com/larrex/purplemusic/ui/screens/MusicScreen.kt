@@ -51,7 +51,7 @@ private const val TAG = "MusicScreen"
     ExperimentalAnimationApi::class, ExperimentalAnimationApi::class,
 )
 @Composable
-fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
+fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
 
     val chipItems = listOf("Music", "Albums")
     var newText by remember { mutableStateOf(TextFieldValue("")) }
@@ -64,7 +64,7 @@ fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
     var visibleState = remember { MutableTransitionState(false).apply { targetState = false } }
 
     var nowPlaying: NowPlaying? = null
-//    val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
+    val nowPlaying2 by viewModel.getNowPlaying().collectAsState(null)
     Box(
         modifier = Modifier
             .background(Util.BottomBarBackground)
@@ -89,7 +89,6 @@ fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         }
-
 
 
         val storagePermission = rememberMultiplePermissionsState(permissionList)
@@ -182,20 +181,44 @@ fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
 
                         CoroutineScope(Dispatchers.IO).launch {
 
-                            nowPlaying = NowPlaying(
-                                null,
-                                item.songUri.toString(),
-                                item.songName,
-                                item.artistName,
-                                item.songCoverImageUri.toString(),
-                                item.duration,
-                                0,
-                                2,
-                                false, "Device", "All Songs"
-                            )
+//                            nowPlaying = NowPlaying(
+//                                null,
+//                                item.songUri.toString(),
+//                                item.songName,
+//                                item.artistName,
+//                                item.songCoverImageUri.toString(),
+//                                item.duration,
+//                                0,
+//                                2,
+//                                false, "Device", "All Songs"
+//                            )
 
+                            if (nowPlaying2 == null) {
+                                nowPlaying = NowPlaying(
+                                    null,
+                                    item.songUri.toString(),
+                                    item.songName,
+                                    item.artistName,
+                                    item.songCoverImageUri.toString(),
+                                    item.duration,
+                                    0,
+                                    2,
+                                    false, "Device", "All Songs"
+                                )
+                                viewModel.insertNowPlaying(nowPlaying!!)
+                            } else {
+
+                                nowPlaying2?.id?.let {
+                                    updateNowPlayingMusic(
+                                        it, item.songUri.toString(),
+                                        item.songName,
+                                        item.artistName,
+                                        item.songCoverImageUri.toString(),
+                                        item.duration, "Device", "All Songs", viewModel
+                                    )
+                                }
+                            }
                             viewModel.deleteNextUps()
-
 
                             musicItems.forEach { song ->
 
@@ -242,14 +265,14 @@ fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
 
                             nowPlaying = NowPlaying(
                                 null,
-                                nextUpSongs[0].songUri.toString(),
-                                nextUpSongs[0].songName,
-                                nextUpSongs[0].artistName,
-                                nextUpSongs[0].songCoverImageUri.toString(),
-                                nextUpSongs[0].duration,
+                                item.songUri.toString(),
+                                item.songName,
+                                item.artistName,
+                                item.songCoverImageUri.toString(),
+                                item.duration,
                                 0,
-                                false,
-                                false,"Device","Marked Songs"
+                                2,
+                                false, "Device", "All Songs"
                             )
 
                             //add playlist
@@ -295,9 +318,10 @@ fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
                                         nextUpSongs[0].songCoverImageUri.toString(),
                                         nextUpSongs[0].duration,
                                         0,
-                                        false,
-                                        false,"Device","Marked Songs"
+                                        1,
+                                        false, "Device", "Marked Songs"
                                     )
+
 
                                 }
 
@@ -307,7 +331,7 @@ fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
                         }
 
 
-                    }, item,false)
+                    }, item, false)
 
                 }
 
@@ -354,10 +378,21 @@ fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
 
                         CoroutineScope(Dispatchers.IO).launch {
 
-                            viewModel.deleteNowPlaying()
-                            viewModel.deleteNextUps()
+                            nowPlaying2?.id?.let {
+                                nowPlaying?.let { it1 ->
+                                    updateNowPlayingMusic(
+                                        it, nowPlaying?.musicUri.toString(),
+                                        it1.musicName,
+                                        nowPlaying!!.artistName,
+                                        nowPlaying!!.albumArt.toString(),
+                                        nowPlaying!!.duration,
+                                        nowPlaying!!.playingFromType,
+                                        nowPlaying!!.playingFromName, viewModel
+                                    )
+                                }
+                            }
 
-                            nowPlaying?.let { viewModel.insertNowPlaying(it) }
+                            viewModel.deleteNextUps()
                             viewModel.insertNextUps(nextUpSongs)
 
 
@@ -372,11 +407,35 @@ fun MusicScreen(navController: NavController,viewModel: MusicViewModel) {
     }
 }
 
+fun updateNowPlayingMusic(
+    id: Int,
+    musicUri: String,
+    musicName: String,
+    artistName: String,
+    albumArt: String,
+    duration: Float,
+    playingFromType: String,
+    playingFromName: String, viewModel: MusicViewModel
+) {
+
+    viewModel.updateNowPlayingWithTypeAndName(
+        id,
+        musicUri,
+        musicName,
+        artistName,
+        albumArt,
+        duration,
+        playingFromType,
+        playingFromName
+    )
+
+}
+
 @Preview(showBackground = true, widthDp = 600, heightDp = 800)
 @Composable
 fun Font() {
 
     var navController: NavController = rememberNavController()
 
-    MusicScreen(navController)
+//    MusicScreen(navController)
 }

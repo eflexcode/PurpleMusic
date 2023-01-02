@@ -117,7 +117,7 @@ fun MusicItem(
             )
 
             Text(
-                text = if (nowPlaying) Util.formatTime(songItem.duration.toString())+" • "+ songItem.artistName else songItem.artistName,
+                text = if (nowPlaying) Util.formatTime(songItem.duration)+" • "+ songItem.artistName else songItem.artistName,
                 fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
