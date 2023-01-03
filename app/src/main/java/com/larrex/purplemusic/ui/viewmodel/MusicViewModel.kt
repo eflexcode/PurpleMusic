@@ -39,8 +39,8 @@ private const val TAG = "MusicViewModel"
 @HiltViewModel
 class MusicViewModel @Inject constructor(
     private var repository: Repository,
-    private var player: ExoPlayer,
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
+    private var player: ExoPlayer
 ) : ViewModel() {
 
     val searchSongsList = mutableStateListOf<SongItem>()
@@ -96,7 +96,7 @@ class MusicViewModel @Inject constructor(
         }
 
         mediaSessionConnector.setQueueNavigator(navigator)
-
+//
         Log.d(TAG, "init: " + player)
         CoroutineScope(Dispatchers.IO).launch {
 
@@ -141,13 +141,13 @@ class MusicViewModel @Inject constructor(
 
             }
         }
-//
-//        if (nowPlaying != null) {
-//
-//            player.repeatMode =
-//                if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
-//
-//        }
+
+        if (nowPlaying != null) {
+
+            player.repeatMode =
+                if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
+
+        }
 
 
         val listener = object : Player.Listener {
@@ -256,7 +256,7 @@ play()
     }
 
     private fun upDateDuration() {
-
+//
         currentDuration = player.currentPosition
 
         if (isPlaying)
@@ -335,7 +335,7 @@ play()
     }
 
     fun jumpToPosition(position: Int) {
-//        isPlaying = true
+        isPlaying = true
         player.seekTo(position, 0)
 
         if (isPrepared) {

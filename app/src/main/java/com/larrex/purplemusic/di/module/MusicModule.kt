@@ -30,7 +30,7 @@ object MusicModule {
 
     }
 
-    @Singleton
+   @Singleton
     @Provides
     fun providesAtt(): AudioAttributes {
         return AudioAttributes.Builder()
@@ -51,6 +51,7 @@ object MusicModule {
             .setHandleAudioBecomingNoisy(true)
             .build()
     }
+
 
 
 //    @Singleton

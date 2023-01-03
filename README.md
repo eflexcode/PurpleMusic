@@ -1,6 +1,5 @@
 # Purple music
 ## Built by Eze larry ifeanyi
-this project is not yet finished
 <p float="left">
  <img src="/image/image1.png" width="250" /> 
   <img src="/image/image2.png" width="250" /> 

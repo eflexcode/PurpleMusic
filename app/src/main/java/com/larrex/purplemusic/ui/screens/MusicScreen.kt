@@ -72,8 +72,6 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
             .padding(bottom = 137.dp), contentAlignment = Alignment.Center
     ) {
 
-        val viewModel = hiltViewModel<MusicViewModel>()
-
         val readState =
             rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -126,7 +124,8 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
             val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
 
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(0.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
             ) {
 
@@ -177,21 +176,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
 
                     MusicItem(onClicked = {
 
-//                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
-
                         CoroutineScope(Dispatchers.IO).launch {
-
-//                            nowPlaying = NowPlaying(
-//                                null,
-//                                item.songUri.toString(),
-//                                item.songName,
-//                                item.artistName,
-//                                item.songCoverImageUri.toString(),
-//                                item.duration,
-//                                0,
-//                                2,
-//                                false, "Device", "All Songs"
-//                            )
 
                             if (nowPlaying2 == null) {
                                 nowPlaying = NowPlaying(

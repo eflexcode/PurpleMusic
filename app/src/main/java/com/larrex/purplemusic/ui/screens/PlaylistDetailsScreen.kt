@@ -215,7 +215,7 @@ fun updateNowPlayingPlaylist(
     musicName: String,
     artistName: String,
     albumArt: String,
-    duration: Int,
+    duration: Float,
     playingFromType: String,
     playingFromName: String,viewModel: MusicViewModel
 ) {

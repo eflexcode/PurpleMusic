@@ -19,14 +19,13 @@ import dagger.hilt.android.scopes.ServiceScoped
 @InstallIn(ServiceComponent::class)
 object ExoServiceModule {
 
-//    @ServiceScoped
-//    @Provides
-//    fun providesAtt() = AudioAttributes.Builder()
-//        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-//        .setUsage(C.USAGE_MEDIA)
-//        .build()
-//
-//    @ServiceScoped
+    @ServiceScoped
+    @Provides
+    fun providesAtt() = AudioAttributes.Builder()
+        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+        .setUsage(C.USAGE_MEDIA)
+        .build()
+
 //    @Provides
 //    fun providesExoPlayer(@ApplicationContext context: Context,audioAttributes: AudioAttributes)  = SimpleExoPlayer
 //        .Builder(context).apply {
@@ -35,6 +34,20 @@ object ExoServiceModule {
 //
 //        }
 //        .build()
+
+
+//    @ServiceScoped
+//    @Provides
+//    fun providesExoPlayer(
+//        @ApplicationContext context: Context,
+//        audioAttributes: AudioAttributes
+//    ): ExoPlayer {
+//
+//        return ExoPlayer.Builder(context)
+//            .setAudioAttributes(audioAttributes, true)
+//            .setHandleAudioBecomingNoisy(true)
+//            .build()
+//    }
 //
 //    @ServiceScoped
 //    @Provides

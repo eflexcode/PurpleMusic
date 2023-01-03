@@ -39,10 +39,8 @@ class MyPlayerNotificationManager(
 
         playerNotificationManager.setMediaSessionToken(session)
         playerNotificationManager.setSmallIcon(R.drawable.ic_artist)
-        playerNotificationManager.setUseNextAction(true)
         playerNotificationManager.setUsePlayPauseActions(true)
         playerNotificationManager.setUsePreviousAction(true)
-        playerNotificationManager.setUseNextAction(true)
         playerNotificationManager.setUseNextAction(true)
 
     }
