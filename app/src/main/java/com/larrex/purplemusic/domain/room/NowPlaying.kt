@@ -12,12 +12,13 @@ data class NowPlaying(
     var musicName: String,
     var artistName: String,
     var albumArt: String,
-    var duration: Float,
+    var duration: Long,
     var currentDuration : Int,
     var repeat: Int,
     var shuffle: Boolean,
     var playingFromType: String,
     var playingFromName: String,
+    var isPlaying: Boolean
 ){
 
 }

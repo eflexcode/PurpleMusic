@@ -175,7 +175,6 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                 ) { item ->
 
                     MusicItem(onClicked = {
-
                         CoroutineScope(Dispatchers.IO).launch {
 
                             if (nowPlaying2 == null) {
@@ -185,10 +184,10 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                                     item.songName,
                                     item.artistName,
                                     item.songCoverImageUri.toString(),
-                                    item.duration,
+                                    item.duration.toLong(),
                                     0,
                                     2,
-                                    false, "Device", "All Songs"
+                                    false, "Device", "All Songs",true
                                 )
                                 viewModel.insertNowPlaying(nowPlaying!!)
                             } else {
@@ -227,6 +226,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
 
 
                         }
+                        viewModel.play()
 
                     }, onLongClicked = {
 
@@ -254,10 +254,10 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                                 item.songName,
                                 item.artistName,
                                 item.songCoverImageUri.toString(),
-                                item.duration,
+                                item.duration.toLong(),
                                 0,
                                 2,
-                                false, "Device", "All Songs"
+                                false, "Device", "All Songs",true
                             )
 
                             //add playlist
@@ -301,10 +301,10 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                                         nextUpSongs[0].songName,
                                         nextUpSongs[0].artistName,
                                         nextUpSongs[0].songCoverImageUri.toString(),
-                                        nextUpSongs[0].duration,
+                                        nextUpSongs[0].duration.toLong(),
                                         0,
                                         1,
-                                        false, "Device", "Marked Songs"
+                                        false, "Device", "Marked Songs",true
                                     )
 
 
@@ -370,7 +370,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                                         it1.musicName,
                                         nowPlaying!!.artistName,
                                         nowPlaying!!.albumArt.toString(),
-                                        nowPlaying!!.duration,
+                                        nowPlaying!!.duration.toFloat(),
                                         nowPlaying!!.playingFromType,
                                         nowPlaying!!.playingFromName, viewModel
                                     )

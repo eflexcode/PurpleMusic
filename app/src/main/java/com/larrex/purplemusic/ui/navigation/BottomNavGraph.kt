@@ -1,6 +1,5 @@
 package com.larrex.purplemusic.ui.navigation
 
-import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
@@ -21,10 +20,10 @@ fun BottomNavGraph(navController: NavHostController, viewModel: MusicViewModel) 
             FavouriteScreen(viewModel,navController)
         }
         composable(route = BottomBarScreens.AlbumScreen.route) {
-            AlbumScreen(navController)
+            AlbumScreen(navController,viewModel)
         }
         composable(route = BottomBarScreens.ArtistScreen.route) {
-            ArtistScreen(navController)
+            ArtistScreen(navController,viewModel)
         }
         composable(route = BottomBarScreens.AlbumDetailsScreen.route) {
 
@@ -37,11 +36,11 @@ fun BottomNavGraph(navController: NavHostController, viewModel: MusicViewModel) 
 
             val name = navController.previousBackStackEntry?.savedStateHandle?.get<String>("artistName")
 
-            ArtistScreenDetails(navController,name)
+            ArtistScreenDetails(navController,name,viewModel)
 
         }
         composable(BottomBarScreens.NowPlayingScreen.route){
-            NowPlayingScreen(navController)
+            NowPlayingScreen(navController,viewModel)
         }
         composable(BottomBarScreens.PlaylistDetailsScreen.route){
 

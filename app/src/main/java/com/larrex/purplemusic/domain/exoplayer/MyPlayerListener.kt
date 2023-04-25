@@ -16,7 +16,7 @@ class MyPlayerListener(val playerService: PlayerService,) : NotificationListener
         playerService.apply {
 
             stopForeground(true)
-            isPlaying = false
+//            isPlaying = false
             stopSelf()
 
         }
@@ -31,17 +31,17 @@ class MyPlayerListener(val playerService: PlayerService,) : NotificationListener
         super.onNotificationPosted(notificationId, notification, ongoing)
 
         playerService.apply {
-            if (ongoing && !isPlaying) {
-
-                ContextCompat.startForegroundService(
-                    this,
-                    Intent(applicationContext, this::class.java)
-                )
-
-                startForeground(Notification_ID, notification)
-
-                isPlaying = true
-            }
+//            if (ongoing && !isPlaying) {
+//
+//                ContextCompat.startForegroundService(
+//                    this,
+//                    Intent(applicationContext, this::class.java)
+//                )
+//
+//                startForeground(Notification_ID, notification)
+//
+////                isPlaying = true
+//            }
         }
     }
 }

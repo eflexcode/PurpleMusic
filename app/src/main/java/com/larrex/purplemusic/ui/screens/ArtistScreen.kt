@@ -29,9 +29,9 @@ private const val TAG = "ArtistScreen"
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun ArtistScreen(navController: NavController) {
+fun ArtistScreen(navController: NavController, viewModel: MusicViewModel) {
 
-    val viewModel = hiltViewModel<MusicViewModel>()
+//    val viewModel = hiltViewModel<MusicViewModel>()
 
     val artists by viewModel.getAllArtist().collectAsState(initial = emptyList())
     val permissionList = if (Build.VERSION.SDK_INT >= 33) {

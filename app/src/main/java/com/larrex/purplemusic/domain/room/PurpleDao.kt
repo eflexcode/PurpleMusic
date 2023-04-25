@@ -23,6 +23,9 @@ interface PurpleDao {
     @Query("UPDATE NowPlaying SET shuffle=:shuffle WHERE id = :id")
     fun updateNowPlayingShuffle(id: Int, shuffle: Boolean)
 
+    @Query("UPDATE NowPlaying SET isPlaying=:isPlaying WHERE id = :id")
+    fun updateNowPlayingIsPlaying(id: Int, isPlaying: Boolean)
+
 //    var musicUri: String,
 //    var musicName: String,
 //    var artistName: String,

@@ -1,18 +1,13 @@
 package com.larrex.purplemusic.ui.screens
 
 import android.net.Uri
-import android.os.Handler
 import android.util.Log
 import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,28 +31,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.audio.AudioAttributes
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.model.SongItem
-import com.larrex.purplemusic.domain.room.NowPlaying
 import com.larrex.purplemusic.ui.screens.component.MusicItem
 import com.larrex.purplemusic.ui.theme.Purple
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Float.NaN
 
 
 private const val TAG = "NowPlayingScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NowPlayingScreen(navController: NavController) {
+fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
 
     var sliderValue by remember {
         mutableStateOf(60f)
@@ -69,7 +57,7 @@ fun NowPlayingScreen(navController: NavController) {
         mutableStateOf(TextFieldValue(""))
     }
 
-    val viewModel = hiltViewModel<MusicViewModel>()
+//    val viewModel = hiltViewModel<MusicViewModel>()
 
     val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
 
@@ -264,7 +252,7 @@ fun NowPlayingScreen(navController: NavController) {
                         )
 
                         Text(
-                            text =  Util.formatTime(nowPlaying?.duration) ,
+                            text =  Util.formatTime(nowPlaying?.duration?.toFloat()) ,
                             fontSize = 12.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,
@@ -460,6 +448,6 @@ fun Pre() {
 
     val navController = rememberNavController()
 
-    NowPlayingScreen(navController)
+//    NowPlayingScreen(navController, viewModel)
 
 }

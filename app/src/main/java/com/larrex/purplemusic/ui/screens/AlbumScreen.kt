@@ -39,7 +39,7 @@ import com.larrex.purplemusic.domain.model.AlbumItem
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AlbumScreen(navController: NavController) {
+fun AlbumScreen(navController: NavController,viewModel:MusicViewModel) {
 
     var newText by remember { mutableStateOf(TextFieldValue("")) }
 
@@ -50,7 +50,7 @@ fun AlbumScreen(navController: NavController) {
             .padding(bottom = 137.dp)
     ) {
 
-        val viewModel = hiltViewModel<MusicViewModel>()
+//        val viewModel = hiltViewModel<MusicViewModel>()
 
         val permissionList = if (Build.VERSION.SDK_INT >= 33) {
             listOf(

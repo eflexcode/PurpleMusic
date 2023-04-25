@@ -441,9 +441,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     override fun deleteNextUps() {
-
         database.dao().deleteNextUps()
-
     }
 
     override fun deleteSingleItemFromAPlaylist(id: Int) {
@@ -487,5 +485,8 @@ class RepositoryImpl @Inject constructor(
        database.dao().updateNowPlayingWithTypeAndName(id, musicUri, musicName, artistName, albumArt, duration, playingFromType, playingFromName)
     }
 
+    override fun updateNowPlayingIsPlaying(id: Int, isPlaying: Boolean) {
+        database.dao().updateNowPlayingIsPlaying(id, isPlaying)
+    }
 
 }

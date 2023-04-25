@@ -1,22 +1,21 @@
 package com.larrex.purplemusic.ui.viewmodel
 
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
-import androidx.compose.runtime.*
-import androidx.core.net.toUri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.larrex.purplemusic.MainActivity
+import com.larrex.purplemusic.domain.exoplayer.service.PlayerService
 import com.larrex.purplemusic.domain.model.AlbumItem
 import com.larrex.purplemusic.domain.model.ArtistItemModel
 import com.larrex.purplemusic.domain.model.SongItem
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 private const val TAG = "MusicViewModel"
 
@@ -40,7 +38,6 @@ private const val TAG = "MusicViewModel"
 class MusicViewModel @Inject constructor(
     private var repository: Repository,
     @ApplicationContext context: Context,
-    private var player: ExoPlayer
 ) : ViewModel() {
 
     val searchSongsList = mutableStateListOf<SongItem>()
@@ -48,9 +45,9 @@ class MusicViewModel @Inject constructor(
 
     val searchNextUpList = mutableStateListOf<NextUpSongs>()
     var allNextUpList: List<NextUpSongs> = ArrayList<NextUpSongs>()
-
-    val mediaItems: MutableList<MediaItem> =
-        ArrayList<MediaItem>()
+//
+//    val mediaItems: MutableList<MediaItem> =
+//        ArrayList<MediaItem>()
 
     var nowPlaying: NowPlaying? = null
 
@@ -75,14 +72,13 @@ class MusicViewModel @Inject constructor(
     init {
 
         val mainActivityIntent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, 0)
+//        val pendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, 0)
         var repeatType by mutableStateOf(0)
-
 
         mediaSession = MediaSessionCompat(context, "PlayerService")
         mediaSession.isActive = true
         mediaSessionConnector = MediaSessionConnector(mediaSession)
-        mediaSessionConnector.setPlayer(player)
+//        mediaSessionConnector.setPlayer(player)
         val navigator = object : TimelineQueueNavigator(mediaSession) {
 
             override fun getMediaDescription(
@@ -96,168 +92,170 @@ class MusicViewModel @Inject constructor(
         }
 
         mediaSessionConnector.setQueueNavigator(navigator)
-//
-        Log.d(TAG, "init: " + player)
+
         CoroutineScope(Dispatchers.IO).launch {
 
-            getAllSongs().collectLatest {
-                allSongsList = it
-            }
+//            getAllSongs().collectLatest {
+//                allSongsList = it
+//            }
 
             getNextUps().collectLatest {
                 allNextUpList = it
             }
 
         }
-
-        CoroutineScope(Dispatchers.Main).launch {
-
-            getNextUps().collectLatest {
-                player.clearMediaItems()
-                mediaItems.clear()
-                it.forEach {
-
-                    mediaItems.add(MediaItem.fromUri(it.songUri.toUri()))
-
-                }.also {
-
-                    player.addMediaItems(mediaItems)
-                }
-
-            }
-
-        }
+//
+//        CoroutineScope(Dispatchers.Main).launch {
+//
+//            getNextUps().collectLatest {
+//                player.clearMediaItems()
+//                mediaItems.clear()
+//                it.forEach {
+//
+//                    mediaItems.add(MediaItem.fromUri(it.songUri.toUri()))
+//
+//                }.also {
+//
+//                    player.addMediaItems(mediaItems)
+//                }
+//
+//            }
+//
+//        }
 
         scopeMain.launch {
             getNowPlaying().collectLatest {
 
                 nowPlaying = it
-                if (it != null)
-                player.repeatMode =
-                    if (it.repeat == 1) Player.REPEAT_MODE_OFF else if (it.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
-
-                if (isPlaying)
-                    player.shuffleModeEnabled = it.shuffle
+                isPlaying = it.isPlaying
+//                if (it != null)
+//                    player.repeatMode =
+//                        if (it.repeat == 1) Player.REPEAT_MODE_OFF else if (it.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
+//
+//                if (isPlaying)
+//                    player.shuffleModeEnabled = it.shuffle
 
             }
         }
-
-        if (nowPlaying != null) {
-
-            player.repeatMode =
-                if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
-
-        }
-
-
-        val listener = object : Player.Listener {
-
-            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                super.onMediaItemTransition(mediaItem, reason)
-
-                try {
-
-
-                    if (mediaItems.isNotEmpty()) {
-
-                        val id = nowPlaying?.id
-
-                        val musicUri = allNextUpList[player.currentMediaItemIndex].songUri
-                        val musicName = allNextUpList[player.currentMediaItemIndex].songName
-                        val artistName = allNextUpList[player.currentMediaItemIndex].artistName
-                        val albumArt = allNextUpList[player.currentMediaItemIndex].songCoverImageUri
-                        val duration = allNextUpList[player.currentMediaItemIndex].duration.toFloat()
-
-                        Log.d(
-                            TAG,
-                            "onMediaItemTransition: 44 ${allNextUpList[player.currentMediaItemIndex].songName}"
-                        )
-
-                        if (isPlaying) {
-
-                            scope.launch {
-
-                                Log.d(TAG, "onMediaItemTransition id: $id")
-                                if (id != null) {
-                                    Log.d(TAG, "onMediaItemTransition id2: $id")
-
-                                    updateNowPlaying(
-                                        id,
-                                        musicUri,
-                                        musicName,
-                                        artistName,
-                                        albumArt,
-                                        duration,
-                                    )
-
-
-                                }
-
-                            }
-
-                        }
-                    }
-                } catch (e: Exception) {
-play()
-                }
-            }
-
-            override fun onEvents(player: Player, events: Player.Events) {
-                super.onEvents(player, events)
-
-            }
-
-            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-                super.onTimelineChanged(timeline, reason)
-            }
-
-            override fun onPositionDiscontinuity(
-                oldPosition: Player.PositionInfo,
-                newPosition: Player.PositionInfo,
-                reason: Int
-            ) {
-                super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-            }
-
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                super.onPlayerStateChanged(playWhenReady, playbackState)
-
-            }
-
-
-        }
-
-        player.addListener(listener)
-
+//
+//        if (nowPlaying != null) {
+//
+//            player.repeatMode =
+//                if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
+//
+//        }
+//
+//
+//        val listener = object : Player.Listener {
+//
+//            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+//                super.onMediaItemTransition(mediaItem, reason)
+//
+//                try {
+//
+//                    if (mediaItems.isNotEmpty()) {
+//
+//                        val id = nowPlaying?.id
+//
+//                        val musicUri = allNextUpList[player.currentMediaItemIndex].songUri
+//                        val musicName = allNextUpList[player.currentMediaItemIndex].songName
+//                        val artistName = allNextUpList[player.currentMediaItemIndex].artistName
+//                        val albumArt = allNextUpList[player.currentMediaItemIndex].songCoverImageUri
+//                        val duration =
+//                            allNextUpList[player.currentMediaItemIndex].duration.toFloat()
+//
+//                        Log.d(
+//                            TAG,
+//                            "onMediaItemTransition: 44 ${allNextUpList[player.currentMediaItemIndex].songName}"
+//                        )
+//
+//                        if (isPlaying) {
+//
+//                            scope.launch {
+//
+//                                Log.d(TAG, "onMediaItemTransition id: $id")
+//                                if (id != null) {
+//                                    Log.d(TAG, "onMediaItemTransition id2: $id")
+//
+//                                    updateNowPlaying(
+//                                        id,
+//                                        musicUri,
+//                                        musicName,
+//                                        artistName,
+//                                        albumArt,
+//                                        duration,
+//                                    )
+//
+//
+//                                }
+//
+//                            }
+//
+//                        }
+//                    }
+//                } catch (e: Exception) {
+//                    play()
+//                }
+//            }
+//
+//            override fun onEvents(player: Player, events: Player.Events) {
+//                super.onEvents(player, events)
+//
+//            }
+//
+//            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+//                super.onTimelineChanged(timeline, reason)
+//            }
+//
+//            override fun onPositionDiscontinuity(
+//                oldPosition: Player.PositionInfo,
+//                newPosition: Player.PositionInfo,
+//                reason: Int
+//            ) {
+//                super.onPositionDiscontinuity(oldPosition, newPosition, reason)
+//            }
+//
+//            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+//                super.onPlayerStateChanged(playWhenReady, playbackState)
+//
+//            }
+//
+//
+//        }
+//
+//        player.addListener(listener)
+//
 
     }
 
     fun play() {
 
-        if (isPlaying) {
+//        if (isPlaying) {
+//
+//
+//            player.pause()
+//            isPlaying = false
+//
+////            if (isPaused) {
+////                player.play()
+////                isPaused = false
+////            }
+//
+//            return
+//        }
+//        player.playWhenReady = true
+//        player.prepare()
+//        isPlaying = true
+//        isPrepared = true
+//        currentDuration = player.currentPosition
+//        upDateDuration()
 
-
-            player.pause()
-            isPlaying = false
-
-//            if (isPaused) {
-//                player.play()
-//                isPaused = false
-//            }
-
-            return
-        }
-        player.playWhenReady = true
-        player.prepare()
-        isPlaying = true
-        isPrepared = true
-        currentDuration = player.currentPosition
-        upDateDuration()
+        PlayerService.playerServiceInstance?.play()
     }
 
     private fun upDateDuration() {
 //
-        currentDuration = player.currentPosition
+//        currentDuration = player.currentPosition
 
         if (isPlaying)
 
@@ -270,40 +268,40 @@ play()
 
     fun next() {
 
-        if (player.hasNextMediaItem()) {
-            player.seekToNext()
-            if (isPrepared) {
-                player.play()
-                isPlaying = true
-            }else {
-                play()
-                isPrepared = true
-            }
-            upDateDuration()
-        }
-
+//        if (player.hasNextMediaItem()) {
+//            player.seekToNext()
+//            if (isPrepared) {
+//                player.play()
+//                isPlaying = true
+//            } else {
+//                play()
+//                isPrepared = true
+//            }
+//            upDateDuration()
+//        }
+        PlayerService.playerServiceInstance?.next()
     }
 
     fun seekToPosition(position: Long) {
 
-        player.seekTo(position)
+//        player.seekTo(position)
     }
 
     fun previous() {
 
-        if (player.hasPreviousMediaItem()) {
-            player.seekToPrevious()
-            if (isPrepared) {
-                player.play()
-                isPlaying = true
-            }else {
-                play()
-                isPrepared = true
-            }
-
-            upDateDuration()
-        }
-
+//        if (player.hasPreviousMediaItem()) {
+//            player.seekToPrevious()
+//            if (isPrepared) {
+//                player.play()
+//                isPlaying = true
+//            } else {
+//                play()
+//                isPrepared = true
+//            }
+//
+//            upDateDuration()
+//        }
+        PlayerService.playerServiceInstance?.previous()
 
     }
 
@@ -335,16 +333,16 @@ play()
     }
 
     fun jumpToPosition(position: Int) {
-        isPlaying = true
-        player.seekTo(position, 0)
-
-        if (isPrepared) {
-            player.play()
-        }else {
-            play()
-            isPrepared = true
-        }
-        upDateDuration()
+//        isPlaying = true
+//        player.seekTo(position, 0)
+//
+//        if (isPrepared) {
+//            player.play()
+//        } else {
+//            play()
+//            isPrepared = true
+//        }
+//        upDateDuration()
     }
 
     fun updateNowPlaying(

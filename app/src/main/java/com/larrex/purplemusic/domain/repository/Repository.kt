@@ -69,4 +69,6 @@ interface Repository {
         playingFromType: String,
         playingFromName: String,
     )
+
+    fun updateNowPlayingIsPlaying(id: Int, isPlaying: Boolean)
 }

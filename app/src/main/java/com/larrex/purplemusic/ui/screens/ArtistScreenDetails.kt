@@ -2,11 +2,9 @@ package com.larrex.purplemusic.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -30,9 +28,13 @@ import com.larrex.purplemusic.ui.screens.component.AlbumItem
 import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
 @Composable
-fun ArtistScreenDetails(navController: NavController, artistName: String?) {
+fun ArtistScreenDetails(
+    navController: NavController,
+    artistName: String?,
+    viewModel: MusicViewModel
+) {
 
-    val viewModel = hiltViewModel<MusicViewModel>()
+//    val viewModel = hiltViewModel<MusicViewModel>()
     var name: String = ""
     if (artistName != null) {
         name = artistName
