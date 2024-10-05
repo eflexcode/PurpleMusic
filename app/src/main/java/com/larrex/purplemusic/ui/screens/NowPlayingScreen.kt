@@ -217,12 +217,13 @@ fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
                         var duration = nowPlaying!!.duration
 
                         if (nowPlaying!!.duration != null)
+
                         Slider(
                             value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration) * 100F),
                             onValueChange = {
 
                                 viewModel.seekToPosition(((it.toLong() * nowPlaying!!.duration.toLong()) / 100L))
-
+//duration
                             },
                             modifier = Modifier
                                 .padding(start = 30.dp, end = 30.dp),
@@ -310,7 +311,13 @@ fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
                                     )
                                 }?.let { }
 
-                                viewModel.play()
+                                if (viewModel.isPlaying){
+                                    viewModel.play()
+                                }else{
+                                    viewModel.pause()
+                                }
+
+
                             },
                             modifier = Modifier.size(80.dp)
                         ) {
@@ -420,7 +427,7 @@ fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
                     }
 
                     viewModel.jumpToPosition(index)
-//                    viewModel.play(context)
+                    viewModel.play()
 
                 }, onLongClicked = {}, onUnselected = {}, songItem, true)
 

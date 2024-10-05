@@ -126,8 +126,11 @@ class MusicViewModel @Inject constructor(
         scopeMain.launch {
             getNowPlaying().collectLatest {
 
-                nowPlaying = it
-                isPlaying = it.isPlaying
+                if (it != null) {
+
+                    nowPlaying = it
+                    isPlaying = it.isPlaying
+                }
 //                if (it != null)
 //                    player.repeatMode =
 //                        if (it.repeat == 1) Player.REPEAT_MODE_OFF else if (it.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
@@ -245,23 +248,28 @@ class MusicViewModel @Inject constructor(
 //        }
 //        player.playWhenReady = true
 //        player.prepare()
-//        isPlaying = true
+        isPlaying = true
 //        isPrepared = true
-//        currentDuration = player.currentPosition
-//        upDateDuration()
+        currentDuration = PlayerService.playerServiceInstance?.player?.currentPosition!!
+        upDateDuration()
 
         PlayerService.playerServiceInstance?.play()
     }
 
+    fun pause() {
+        isPlaying = false
+        PlayerService.playerServiceInstance?.pause()
+    }
+
     private fun upDateDuration() {
 //
-//        currentDuration = player.currentPosition
+        currentDuration = PlayerService.playerServiceInstance?.player?.currentPosition!!
 
-        if (isPlaying)
+//        if (isPlaying)
 
-            Handler().postDelayed({
-                upDateDuration()
-            }, 1000)
+        Handler().postDelayed({
+            upDateDuration()
+        }, 1000)
 
 
     }
@@ -275,11 +283,12 @@ class MusicViewModel @Inject constructor(
 //                isPlaying = true
 //            } else {
 //                play()
-//                isPrepared = true
+        isPrepared = true
 //            }
 //            upDateDuration()
 //        }
         PlayerService.playerServiceInstance?.next()
+        isPlaying = true
     }
 
     fun seekToPosition(position: Long) {
@@ -302,7 +311,7 @@ class MusicViewModel @Inject constructor(
 //            upDateDuration()
 //        }
         PlayerService.playerServiceInstance?.previous()
-
+        isPlaying = true
     }
 
     fun repeat(id: Int, repeat: Int) {
@@ -333,16 +342,17 @@ class MusicViewModel @Inject constructor(
     }
 
     fun jumpToPosition(position: Int) {
-//        isPlaying = true
-//        player.seekTo(position, 0)
-//
-//        if (isPrepared) {
-//            player.play()
-//        } else {
-//            play()
-//            isPrepared = true
-//        }
-//        upDateDuration()
+        isPlaying = true
+        PlayerService.playerServiceInstance?.player?.seekTo(position, 0)!!
+
+        if (isPrepared) {
+            PlayerService.playerServiceInstance?.player?.play()!!
+
+        } else {
+            play()
+            isPrepared = true
+        }
+        upDateDuration()
     }
 
     fun updateNowPlaying(

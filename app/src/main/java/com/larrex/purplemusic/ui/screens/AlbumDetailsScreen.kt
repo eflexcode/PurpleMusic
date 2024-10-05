@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,7 +42,11 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController,viewModel: MusicViewModel) {
+fun AlbumDetailsScreen(
+    albumItem: AlbumItem?,
+    navController: NavController,
+    viewModel: MusicViewModel
+) {
 
     val painter = rememberAsyncImagePainter(
         model = albumItem?.albumCoverImageUri,
@@ -84,7 +89,11 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController,viewM
             item {
                 //back button
                 IconButton(
-                    onClick = { navController.popBackStack() }, modifier = Modifier
+                    onClick = {
+
+//                        LaunchedEffect(Unit) { }
+                        navController.popBackStack()
+                    }, modifier = Modifier
                         .padding(top = 10.dp, end = 5.dp, start = 5.dp, bottom = 0.dp)
                         .size(50.dp)
                 ) {
@@ -159,10 +168,11 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController,viewM
 
                                 nowPlaying?.id?.let {
                                     updateNowPlaying(
-                                        it,songsInAlbum[0].songUri.toString(),
+                                        it, songsInAlbum[0].songUri.toString(),
                                         songsInAlbum[0].songName, songsInAlbum[0].artistName,
                                         songsInAlbum[0].songCoverImageUri.toString(),
-                                        songsInAlbum[0].duration,  "Album", albumName, viewModel)
+                                        songsInAlbum[0].duration, "Album", albumName, viewModel
+                                    )
                                 }
                                 viewModel.deleteNextUps()
                                 viewModel.insertNextUps(nextUpSongs)
@@ -198,7 +208,8 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController,viewM
                                 it, item.songUri.toString(),
                                 item.songName, item.artistName,
                                 item.songCoverImageUri.toString(),
-                                item.duration,  "Album", albumName, viewModel)
+                                item.duration, "Album", albumName, viewModel
+                            )
                         }
                         viewModel.deleteNextUps()
                         viewModel.insertNextUps(nextUpSongs)
@@ -217,7 +228,6 @@ fun AlbumDetailsScreen(albumItem: AlbumItem?, navController: NavController,viewM
     }
 
 
-
 }
 
 fun updateNowPlaying(
@@ -228,10 +238,19 @@ fun updateNowPlaying(
     albumArt: String,
     duration: Float,
     playingFromType: String,
-    playingFromName: String,viewModel: MusicViewModel
+    playingFromName: String, viewModel: MusicViewModel
 ) {
 
-    viewModel.updateNowPlayingWithTypeAndName(id, musicUri, musicName, artistName, albumArt, duration, playingFromType, playingFromName)
+    viewModel.updateNowPlayingWithTypeAndName(
+        id,
+        musicUri,
+        musicName,
+        artistName,
+        albumArt,
+        duration,
+        playingFromType,
+        playingFromName
+    )
 
 }
 
