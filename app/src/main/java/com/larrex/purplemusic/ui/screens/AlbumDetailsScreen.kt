@@ -176,8 +176,9 @@ fun AlbumDetailsScreen(
                                 }
                                 viewModel.deleteNextUps()
                                 viewModel.insertNextUps(nextUpSongs)
-                            }
 
+                            }
+                            viewModel.play()
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                         },
@@ -215,6 +216,7 @@ fun AlbumDetailsScreen(
                         viewModel.insertNextUps(nextUpSongs)
 
                     }
+                    viewModel.play()
 //                    navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                 }, songItem = item, onLongClicked = {

@@ -218,21 +218,21 @@ fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
 
                         if (nowPlaying!!.duration != null)
 
-                        Slider(
-                            value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration) * 100F),
-                            onValueChange = {
+                            Slider(
+                                value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration) * 100F),
+                                onValueChange = {
 
-                                viewModel.seekToPosition(((it.toLong() * nowPlaying!!.duration.toLong()) / 100L))
+                                    viewModel.seekToPosition(((it.toLong() * nowPlaying!!.duration.toLong()) / 100L))
 //duration
-                            },
-                            modifier = Modifier
-                                .padding(start = 30.dp, end = 30.dp),
-                            valueRange = 1f..100f,
-                            colors = SliderDefaults.colors(
-                                thumbColor = Purple,
-                                activeTickColor = Purple
+                                },
+                                modifier = Modifier
+                                    .padding(start = 30.dp, end = 30.dp),
+                                valueRange = 1f..100f,
+                                colors = SliderDefaults.colors(
+                                    thumbColor = Purple,
+                                    activeTickColor = Purple
+                                )
                             )
-                        )
 
                     }
                     Row(
@@ -253,7 +253,7 @@ fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
                         )
 
                         Text(
-                            text =  Util.formatTime(nowPlaying?.duration?.toFloat()) ,
+                            text = Util.formatTime(nowPlaying?.duration?.toFloat()),
                             fontSize = 12.sp,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.Normal,
@@ -311,12 +311,7 @@ fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
                                     )
                                 }?.let { }
 
-                                if (viewModel.isPlaying){
-                                    viewModel.play()
-                                }else{
-                                    viewModel.pause()
-                                }
-
+                                viewModel.playOrPause()
 
                             },
                             modifier = Modifier.size(80.dp)

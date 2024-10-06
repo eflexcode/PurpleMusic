@@ -158,6 +158,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
                                 }
                             }
+                            viewModel.play()
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                         },
@@ -198,6 +199,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
                             }
                         }
+                        viewModel.play()
                         navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                     }, songItem = item,viewModel)

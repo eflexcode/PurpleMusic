@@ -129,7 +129,7 @@ class MusicViewModel @Inject constructor(
                 if (it != null) {
 
                     nowPlaying = it
-                    isPlaying = it.isPlaying
+//                    isPlaying = it.isPlaying
                 }
 //                if (it != null)
 //                    player.repeatMode =
@@ -259,6 +259,27 @@ class MusicViewModel @Inject constructor(
     fun pause() {
         isPlaying = false
         PlayerService.playerServiceInstance?.pause()
+    }
+
+    fun playOrPause(){
+        if (isPlaying) {
+//
+
+            PlayerService.playerServiceInstance?.pause()
+            isPlaying = false
+
+            if (isPaused) {
+                PlayerService.playerServiceInstance?.play()
+                isPaused = false
+            }
+
+            return
+        }
+//        player.playWhenReady = true
+//        player.prepare()
+            isPlaying = true
+        isPrepared = true
+        PlayerService.playerServiceInstance?.play()
     }
 
     private fun upDateDuration() {
