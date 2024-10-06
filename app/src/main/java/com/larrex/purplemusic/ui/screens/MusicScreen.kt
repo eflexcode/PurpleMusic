@@ -123,53 +123,58 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
 
             val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
 
-            LazyColumn(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(60.dp),
+                contentAlignment = Alignment.TopCenter
             ) {
+                if (musicItems.isNotEmpty()) {
+                    TextField(value = newText,
+                        onValueChange = { text ->
+                            newText = text
+                            viewModel.searchSongs(newText.text)
+                        },
+                        modifier = Modifier
+                            .padding(
+                                top = 5.dp, end = 20.dp, start = 20.dp, bottom = 5.dp
+                            )
+                            .fillMaxWidth(),
+                        colors = TextFieldDefaults.textFieldColors(
+                            contentColorFor(backgroundColor = Color.Transparent),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            containerColor = Util.searchBarBackground,
+                            placeholderColor = Color.Gray,
+                        ),
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        placeholder = { Text(text = "Search music", color = Color.Gray) },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_search),
+                                contentDescription = null, modifier = Modifier.size(20.dp),
+                            )
+                        }
 
-                item {
-
-                    if (musicItems.isNotEmpty()) {
-                        TextField(value = newText,
-                            onValueChange = { text ->
-                                newText = text
-                                viewModel.searchSongs(newText.text)
-                            },
-                            modifier = Modifier
-                                .padding(
-                                    top = 5.dp, end = 20.dp, start = 20.dp, bottom = 5.dp
-                                )
-                                .fillMaxWidth(),
-                            colors = TextFieldDefaults.textFieldColors(
-                                contentColorFor(backgroundColor = Color.Transparent),
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                containerColor = Util.searchBarBackground,
-                                placeholderColor = Color.Gray,
-                            ),
-                            singleLine = true,
-                            shape = RoundedCornerShape(10.dp),
-                            placeholder = { Text(text = "Search music", color = Color.Gray) },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_search),
-                                    contentDescription = null, modifier = Modifier.size(20.dp),
-                                )
-                            }
-
-                        )
+                    )
 
 
-                    } else {
-                        CircularProgressIndicator()
-                    }
-
+                } else {
+                    CircularProgressIndicator()
                 }
 
+            }
+
+            LazyColumn(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 61.dp)
+            ) {
                 items(
-                    if (newText.text.trim().toString()
+                    if (newText.text.trim()
                             .isEmpty()
                     ) musicItems else viewModel.searchSongsList
                 ) { item ->
@@ -187,7 +192,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                                     item.duration.toLong(),
                                     0,
                                     2,
-                                    false, "Device", "All Songs",true
+                                    false, "Device", "All Songs", true
                                 )
                                 viewModel.insertNowPlaying(nowPlaying!!)
                             } else {
@@ -257,7 +262,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                                 item.duration.toLong(),
                                 0,
                                 2,
-                                false, "Device", "All Songs",true
+                                false, "Device", "All Songs", true
                             )
 
                             //add playlist
@@ -304,7 +309,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                                         nextUpSongs[0].duration.toLong(),
                                         0,
                                         1,
-                                        false, "Device", "Marked Songs",true
+                                        false, "Device", "Marked Songs", true
                                     )
 
 

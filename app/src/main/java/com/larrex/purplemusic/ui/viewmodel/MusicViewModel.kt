@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 private const val TAG = "MusicViewModel"
@@ -40,7 +41,7 @@ class MusicViewModel @Inject constructor(
     @ApplicationContext context: Context,
 ) : ViewModel() {
 
-    val searchSongsList = mutableStateListOf<SongItem>()
+    var searchSongsList = mutableStateListOf<SongItem>()
     var allSongsList: List<SongItem> = ArrayList<SongItem>()
 
     val searchNextUpList = mutableStateListOf<NextUpSongs>()
@@ -95,9 +96,9 @@ class MusicViewModel @Inject constructor(
 
         CoroutineScope(Dispatchers.IO).launch {
 
-//            getAllSongs().collectLatest {
-//                allSongsList = it
-//            }
+            getAllSongs().collectLatest {
+                allSongsList = it
+            }
 
             getNextUps().collectLatest {
                 allNextUpList = it
@@ -233,23 +234,6 @@ class MusicViewModel @Inject constructor(
 
     fun play() {
 
-//        if (isPlaying) {
-//
-//
-//            player.pause()
-//            isPlaying = false
-//
-////            if (isPaused) {
-////                player.play()
-////                isPaused = false
-////            }
-//
-//            return
-//        }
-//        player.playWhenReady = true
-//        player.prepare()
-        isPlaying = true
-//        isPrepared = true
         currentDuration = PlayerService.playerServiceInstance?.player?.currentPosition!!
         upDateDuration()
 
@@ -263,7 +247,6 @@ class MusicViewModel @Inject constructor(
 
     fun playOrPause() {
         if (isPlaying) {
-//
 
             PlayerService.playerServiceInstance?.pause()
             isPlaying = false
@@ -297,40 +280,19 @@ class MusicViewModel @Inject constructor(
 
     fun next() {
 
-//        if (player.hasNextMediaItem()) {
-//            player.seekToNext()
-//            if (isPrepared) {
-//                player.play()
-//                isPlaying = true
-//            } else {
-//                play()
+
         isPrepared = true
-//            }
-//            upDateDuration()
-//        }
+
         PlayerService.playerServiceInstance?.next()
         isPlaying = true
     }
 
     fun seekToPosition(position: Long) {
 
-//        player.seekTo(position)
+        PlayerService.playerServiceInstance?.player?.seekTo(position)
     }
 
     fun previous() {
-
-//        if (player.hasPreviousMediaItem()) {
-//            player.seekToPrevious()
-//            if (isPrepared) {
-//                player.play()
-//                isPlaying = true
-//            } else {
-//                play()
-//                isPrepared = true
-//            }
-//
-//            upDateDuration()
-//        }
         PlayerService.playerServiceInstance?.previous()
         isPlaying = true
     }
@@ -416,8 +378,9 @@ class MusicViewModel @Inject constructor(
 
         allSongsList.forEach {
 
-            if (it.songName.toLowerCase().contains(songName.toLowerCase())) {
+            if (it.songName.lowercase(Locale.ROOT).contains(songName.toLowerCase(Locale.ROOT))) {
                 searchSongsList.add(it)
+                println(it.songName+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
             }
 
         }
