@@ -261,7 +261,7 @@ class MusicViewModel @Inject constructor(
         PlayerService.playerServiceInstance?.pause()
     }
 
-    fun playOrPause(){
+    fun playOrPause() {
         if (isPlaying) {
 //
 
@@ -275,15 +275,15 @@ class MusicViewModel @Inject constructor(
 
             return
         }
-//        player.playWhenReady = true
-//        player.prepare()
-            isPlaying = true
+
+        isPlaying = true
         isPrepared = true
         PlayerService.playerServiceInstance?.play()
+        upDateDuration()
     }
 
     private fun upDateDuration() {
-//
+
         currentDuration = PlayerService.playerServiceInstance?.player?.currentPosition!!
 
 //        if (isPlaying)

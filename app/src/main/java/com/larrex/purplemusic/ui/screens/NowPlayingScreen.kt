@@ -216,25 +216,23 @@ fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
 
                         var duration = nowPlaying!!.duration
 
-                        if (nowPlaying!!.duration != null)
+                        Slider(
+                            value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration) * 100F),
+                            onValueChange = {
 
-                            Slider(
-                                value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration) * 100F),
-                                onValueChange = {
+                                viewModel.seekToPosition(((it.toLong() * nowPlaying!!.duration.toLong()) / 100L))
 
-                                    viewModel.seekToPosition(((it.toLong() * nowPlaying!!.duration.toLong()) / 100L))
-//duration
-                                },
-                                modifier = Modifier
-                                    .padding(start = 30.dp, end = 30.dp),
-                                valueRange = 1f..100f,
-                                colors = SliderDefaults.colors(
-                                    thumbColor = Purple,
-                                    activeTickColor = Purple
-                                )
+                            },
+                            modifier = Modifier
+                                .padding(start = 30.dp, end = 30.dp),
+                            valueRange = 1f..100f,
+                            colors = SliderDefaults.colors(
+                                thumbColor = Purple,
+                                activeTickColor = Purple
                             )
-
+                        )
                     }
+
                     Row(
                         modifier = Modifier
                             .padding(start = 37.dp, end = 37.dp)

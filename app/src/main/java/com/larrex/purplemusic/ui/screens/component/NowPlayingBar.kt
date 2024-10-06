@@ -21,12 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.google.android.exoplayer2.MediaItem
 import com.larrex.purplemusic.R
 import com.larrex.purplemusic.Util
 import com.larrex.purplemusic.domain.room.NowPlaying
+import com.larrex.purplemusic.ui.viewmodel.MusicViewModel
 
 @Composable
-fun NowPlayingBar(nowPlaying: NowPlaying?, onClicked: () -> Unit) {
+fun NowPlayingBar(nowPlaying: NowPlaying?, viewModel: MusicViewModel, onClicked: () -> Unit) {
 
     var sliderValue by remember {
         mutableStateOf(60f)
@@ -97,19 +99,29 @@ fun NowPlayingBar(nowPlaying: NowPlaying?, onClicked: () -> Unit) {
 
                 Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
 
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { viewModel.previous() }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_round_skip_backward),
+                            painter = painterResource(id =  R.drawable.ic_round_skip_backward),
                             contentDescription = null
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+
+                        nowPlaying?.musicUri?.let {
+                            MediaItem.fromUri(
+                                it
+                            )
+                        }?.let { }
+
+                        viewModel.playOrPause()
+
+                    }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_round_play),
+                            painter = painterResource(id = if (!viewModel.isPlaying)  R.drawable.ic_round_play else R.drawable.ic_round_pause),
                             contentDescription = null
                         )
                     }
-                    IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
+                    IconButton(onClick = { viewModel.next() }, modifier = Modifier) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_round_skip_forward),
                             contentDescription = null
@@ -119,22 +131,6 @@ fun NowPlayingBar(nowPlaying: NowPlaying?, onClicked: () -> Unit) {
                 }
 
             }
-
-//            Slider(
-//                value = sliderValue,
-//                onValueChange = { sliderValue = it },
-//                modifier = Modifier
-//                    .padding(start = 0.dp, end = 0.dp)
-//                    .height(5.dp),
-//                valueRange = 0f..100f,
-//                colors = SliderDefaults.colors(
-//                    thumbColor = Color.Transparent,
-//                    activeTickColor = Purple,
-//                    disabledThumbColor = Color.Transparent
-//                ),
-//                enabled = true
-//            )
-
         }
 
     }

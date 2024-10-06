@@ -76,7 +76,7 @@ fun MainUi(application: Application, mainActivity: MainActivity) {
     val viewModel = hiltViewModel<MusicViewModel>()
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-        Scaffold(bottomBar = { CreateBNV(navController = navController) }) {
+        Scaffold(bottomBar = { CreateBNV(navController = navController,viewModel) }) {
 
             BottomNavGraph(navController = navController, viewModel)
 
@@ -86,7 +86,7 @@ fun MainUi(application: Application, mainActivity: MainActivity) {
 }
 
 @Composable
-fun CreateBNV(navController: NavHostController) {
+fun CreateBNV(navController: NavHostController, viewModel: MusicViewModel) {
 
     val navItems = listOf(
         BottomBarScreens.MusicScreen,
@@ -114,7 +114,7 @@ fun CreateBNV(navController: NavHostController) {
 
     val isNavBarVisible = currentDestination2?.route != BottomBarScreens.NowPlayingScreen.route
 
-    val viewModel = hiltViewModel<MusicViewModel>()
+//    val viewModel = hiltViewModel<MusicViewModel>()
     val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
 
     AnimatedVisibility(
@@ -134,19 +134,20 @@ fun CreateBNV(navController: NavHostController) {
                         .background(searchBarBackground)
                         .height(2.dp)
                 )
-                Box(
-                    modifier = Modifier
-                        .background(Purple, RoundedCornerShape(100))
-                        .height(2.dp)
-                        .fillMaxWidth(0.3f)
-                )
-
+                if (nowPlaying != null) {
+                    Box(
+                        modifier = Modifier
+                            .background(Purple, RoundedCornerShape(100))
+                            .height(2.dp)
+                            .fillMaxWidth((viewModel.currentDuration.toFloat() / nowPlaying!!.duration) * 1F)
+                    )
+                }
             }
             Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                 shape = RoundedCornerShape(0.dp)
             ) {
-                NowPlayingBar(nowPlaying) {
+                NowPlayingBar(nowPlaying,viewModel) {
 
                     navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
