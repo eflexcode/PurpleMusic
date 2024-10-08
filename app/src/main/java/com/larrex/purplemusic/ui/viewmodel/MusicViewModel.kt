@@ -236,7 +236,8 @@ class MusicViewModel @Inject constructor(
 
         currentDuration = PlayerService.playerServiceInstance?.player?.currentPosition!!
         upDateDuration()
-
+        isPlaying = true
+        isPrepared = true
         PlayerService.playerServiceInstance?.play()
     }
 
@@ -288,8 +289,10 @@ class MusicViewModel @Inject constructor(
     }
 
     fun seekToPosition(position: Long) {
+        Handler().postDelayed({
+            PlayerService.playerServiceInstance?.player?.seekTo(position)
+        }, 100)
 
-        PlayerService.playerServiceInstance?.player?.seekTo(position)
     }
 
     fun previous() {
@@ -325,17 +328,7 @@ class MusicViewModel @Inject constructor(
     }
 
     fun jumpToPosition(position: Int) {
-        isPlaying = true
-        PlayerService.playerServiceInstance?.player?.seekTo(position, 0)!!
-
-        if (isPrepared) {
-            PlayerService.playerServiceInstance?.player?.play()!!
-
-        } else {
-            play()
-            isPrepared = true
-        }
-        upDateDuration()
+        PlayerService.playerServiceInstance?.player?.seekToDefaultPosition(position)
     }
 
     fun updateNowPlaying(
@@ -380,7 +373,6 @@ class MusicViewModel @Inject constructor(
 
             if (it.songName.lowercase(Locale.ROOT).contains(songName.toLowerCase(Locale.ROOT))) {
                 searchSongsList.add(it)
-                println(it.songName+",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
             }
 
         }

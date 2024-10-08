@@ -1,6 +1,7 @@
 package com.larrex.purplemusic.ui.screens
 
 import android.net.Uri
+import android.os.Handler
 import android.util.Log
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.tween
@@ -219,9 +220,7 @@ fun NowPlayingScreen(navController: NavController, viewModel: MusicViewModel) {
                         Slider(
                             value = ((viewModel.currentDuration.toFloat() / nowPlaying!!.duration) * 100F),
                             onValueChange = {
-
                                 viewModel.seekToPosition(((it.toLong() * nowPlaying!!.duration.toLong()) / 100L))
-
                             },
                             modifier = Modifier
                                 .padding(start = 30.dp, end = 30.dp),

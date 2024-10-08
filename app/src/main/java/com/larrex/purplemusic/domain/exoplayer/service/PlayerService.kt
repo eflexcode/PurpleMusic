@@ -103,6 +103,7 @@ class PlayerService : Service() {
 
         }
 
+        //get latest next ups
         CoroutineScope(Dispatchers.Main).launch {
 
             repository.getNextUps().collectLatest {
@@ -115,6 +116,7 @@ class PlayerService : Service() {
                 }.also {
 
                     player.addMediaItems(mediaItems)
+//                    player.seekToDefaultPosition(9)
 
                 }
 
@@ -122,13 +124,12 @@ class PlayerService : Service() {
 
         }
 
-
         val listener = object : Player.Listener {
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
 
-                try {
+//                try {
 
                     if (mediaItems.isNotEmpty()) {
 
@@ -141,7 +142,7 @@ class PlayerService : Service() {
                         val duration =
                             allNextUpList[player.currentMediaItemIndex].duration.toFloat()
 
-                        if (isPlaying) {
+//                        if (isPlaying) {
 
                             scope.launch {
 
@@ -161,11 +162,11 @@ class PlayerService : Service() {
 
                             }
 
-                        }
+//                        }
                     }
-                } catch (e: Exception) {
-                    play()
-                }
+//                } catch (e: Exception) {
+//                    play()
+//                }
             }
 
             override fun onEvents(player: Player, events: Player.Events) {
@@ -223,23 +224,11 @@ class PlayerService : Service() {
 
     }
 
-    private fun upDateDuration() {
-//
-//        currentDuration = player.currentPosition
-
-        if (isPlaying)
-
-            Handler().postDelayed({
-                upDateDuration()
-            }, 1000)
-
-        player.seekTo(player.currentPosition)
-    }
-
     fun seekToPosition(position: Long) {
 
         player.seekTo(position)
     }
+
     fun next() {
 
         if (player.hasNextMediaItem()) {
@@ -249,7 +238,6 @@ class PlayerService : Service() {
             play()
 
         }
-        upDateDuration()
     }
 
     fun previous() {
@@ -261,7 +249,6 @@ class PlayerService : Service() {
             play()
         }
 
-        upDateDuration()
     }
 
     fun repeat(id: Int, repeat: Int) {

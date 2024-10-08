@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -173,11 +174,11 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                     .fillMaxSize()
                     .padding(top = 61.dp)
             ) {
-                items(
+                itemsIndexed(
                     if (newText.text.trim()
                             .isEmpty()
                     ) musicItems else viewModel.searchSongsList
-                ) { item ->
+                ) { index, item ->
 
                     MusicItem(onClicked = {
                         CoroutineScope(Dispatchers.IO).launch {
@@ -207,6 +208,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                                     )
                                 }
                             }
+
                             viewModel.deleteNextUps()
 
                             musicItems.forEach { song ->
@@ -227,11 +229,14 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
 
                                 viewModel.insertNextUps(nextUpSongs)
 
+
                             }
 
 
                         }
-                        viewModel.play()
+//                        viewModel.play()
+//                        viewModel.jumpToPosition(index)
+
 
                     }, onLongClicked = {
 
