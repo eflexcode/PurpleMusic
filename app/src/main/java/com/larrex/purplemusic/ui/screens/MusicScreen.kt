@@ -12,7 +12,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -25,7 +24,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -66,6 +64,8 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
 
     var nowPlaying: NowPlaying? = null
     val nowPlaying2 by viewModel.getNowPlaying().collectAsState(null)
+
+
     Box(
         modifier = Modifier
             .background(Util.BottomBarBackground)
@@ -123,6 +123,22 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
         } else {
 
             val musicItems by viewModel.getAllSongs().collectAsState(initial = emptyList())
+
+            musicItems.forEach { song ->
+
+                nextUpSongs.add(
+                    NextUpSongs(
+                        null,
+                        song.songUri.toString(),
+                        song.songName,
+                        song.artistName,
+                        song.songCoverImageUri.toString(),
+                        song.size,
+                        song.duration
+                    )
+                )
+
+            }
 
             Box(
                 modifier = Modifier
@@ -210,32 +226,34 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                             }
 
                             viewModel.deleteNextUps()
-
-                            musicItems.forEach { song ->
-
-                                nextUpSongs.add(
-                                    NextUpSongs(
-                                        null,
-                                        song.songUri.toString(),
-                                        song.songName,
-                                        song.artistName,
-                                        song.songCoverImageUri.toString(),
-                                        song.size,
-                                        song.duration
-                                    )
-                                )
-
-                            }.apply {
-
-                                viewModel.insertNextUps(nextUpSongs)
-
-
-                            }
+                            viewModel.insertNextUps(nextUpSongs)
+//                            musicItems.forEach { song ->
+//
+//                                nextUpSongs.add(
+//                                    NextUpSongs(
+//                                        null,
+//                                        song.songUri.toString(),
+//                                        song.songName,
+//                                        song.artistName,
+//                                        song.songCoverImageUri.toString(),
+//                                        song.size,
+//                                        song.duration
+//                                    )
+//                                )
+//
+//                            }.apply {
+//
+//                                viewModel.insertNextUps(nextUpSongs)
+//
+//
+//                            }
 
 
                         }
-//                        viewModel.play()
-//                        viewModel.jumpToPosition(index)
+                        viewModel.changePlayList(musicItems)
+                        viewModel.jumpToPosition(index)
+                        viewModel.play()
+
 
 
                     }, onLongClicked = {

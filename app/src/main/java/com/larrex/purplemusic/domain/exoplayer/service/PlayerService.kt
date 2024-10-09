@@ -106,21 +106,23 @@ class PlayerService : Service() {
         //get latest next ups
         CoroutineScope(Dispatchers.Main).launch {
 
-            repository.getNextUps().collectLatest {
-                player.clearMediaItems()
-                mediaItems.clear()
-                it.forEach {
-
-                    mediaItems.add(MediaItem.fromUri(it.songUri.toUri()))
-
-                }.also {
-
-                    player.addMediaItems(mediaItems)
-//                    player.seekToDefaultPosition(9)
-
-                }
-
-            }
+//            repository.getNextUps().collectLatest {
+//                player.clearMediaItems()
+//                mediaItems.clear()
+//                System.out.println("media item addddddddddddddddd ")
+//
+//                it.forEach {
+//
+//                    mediaItems.add(MediaItem.fromUri(it.songUri.toUri()))
+//
+//                }.also {
+//
+//                    player.addMediaItems(mediaItems)
+////                    player.seekToDefaultPosition(9)
+//
+//                }
+//
+//            }
 
         }
 
@@ -130,19 +132,20 @@ class PlayerService : Service() {
                 super.onMediaItemTransition(mediaItem, reason)
 
 //                try {
-
+System.out.println("Reasaonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn "+reason)
                     if (mediaItems.isNotEmpty()) {
 
-                        val id = nowPlaying?.id
 
-                        val musicUri = allNextUpList[player.currentMediaItemIndex].songUri
-                        val musicName = allNextUpList[player.currentMediaItemIndex].songName
-                        val artistName = allNextUpList[player.currentMediaItemIndex].artistName
-                        val albumArt = allNextUpList[player.currentMediaItemIndex].songCoverImageUri
-                        val duration =
-                            allNextUpList[player.currentMediaItemIndex].duration.toFloat()
+                        if (isPlaying) {
 
-//                        if (isPlaying) {
+                            val id = nowPlaying?.id
+
+                            val musicUri = allNextUpList[player.currentMediaItemIndex].songUri
+                            val musicName = allNextUpList[player.currentMediaItemIndex].songName
+                            val artistName = allNextUpList[player.currentMediaItemIndex].artistName
+                            val albumArt = allNextUpList[player.currentMediaItemIndex].songCoverImageUri
+                            val duration =
+                                allNextUpList[player.currentMediaItemIndex].duration.toFloat()
 
                             scope.launch {
 
@@ -157,12 +160,11 @@ class PlayerService : Service() {
                                         duration,
                                     )
 
-
                                 }
 
                             }
 
-//                        }
+                        }
                     }
 //                } catch (e: Exception) {
 //                    play()
@@ -197,6 +199,12 @@ class PlayerService : Service() {
         player.addListener(listener)
         return START_NOT_STICKY
 
+    }
+
+
+    fun changePlayList(mediaItems : ArrayList<MediaItem>){
+        player.clearMediaItems()
+        player.addMediaItems(mediaItems)
     }
 
     fun play() {

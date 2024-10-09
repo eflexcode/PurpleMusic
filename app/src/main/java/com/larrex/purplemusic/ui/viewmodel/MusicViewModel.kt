@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.larrex.purplemusic.MainActivity
@@ -241,6 +242,15 @@ class MusicViewModel @Inject constructor(
         PlayerService.playerServiceInstance?.play()
     }
 
+    fun prepare() {
+
+        currentDuration = PlayerService.playerServiceInstance?.player?.currentPosition!!
+        upDateDuration()
+        isPlaying = true
+        isPrepared = true
+//        PlayerService.playerServiceInstance?.play()
+    }
+
     fun pause() {
         isPlaying = false
         PlayerService.playerServiceInstance?.pause()
@@ -329,6 +339,23 @@ class MusicViewModel @Inject constructor(
 
     fun jumpToPosition(position: Int) {
         PlayerService.playerServiceInstance?.player?.seekToDefaultPosition(position)
+    }
+
+    fun changePlayList(songsItems: List<SongItem>) {
+
+        var mediaItems = ArrayList<MediaItem>()
+
+        songsItems.forEach {
+
+            mediaItems.add(MediaItem.fromUri(it.songUri))
+
+        }.also {
+
+            PlayerService.playerServiceInstance?.changePlayList(mediaItems)
+
+        }
+
+
     }
 
     fun updateNowPlaying(
