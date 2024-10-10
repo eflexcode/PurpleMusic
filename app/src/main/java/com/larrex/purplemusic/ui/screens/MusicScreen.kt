@@ -197,6 +197,9 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                 ) { index, item ->
 
                     MusicItem(onClicked = {
+
+                        viewModel.changePlayList(musicItems,nextUpSongs)
+
                         CoroutineScope(Dispatchers.IO).launch {
 
                             if (nowPlaying2 == null) {
@@ -227,6 +230,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
 
                             viewModel.deleteNextUps()
                             viewModel.insertNextUps(nextUpSongs)
+
 //                            musicItems.forEach { song ->
 //
 //                                nextUpSongs.add(
@@ -250,7 +254,6 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
 
 
                         }
-                        viewModel.changePlayList(musicItems)
                         viewModel.jumpToPosition(index)
                         viewModel.play()
 

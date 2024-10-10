@@ -41,6 +41,7 @@ class PlayerService : Service() {
 
     val mediaItems: MutableList<MediaItem> = ArrayList<MediaItem>()
     var allNextUpList: List<NextUpSongs> = ArrayList<NextUpSongs>()
+    var allNextUpList2: List<NextUpSongs> = ArrayList<NextUpSongs>()
     var allSongsList: List<SongItem> = ArrayList<SongItem>()
 
 //    val viewModel = ViewModelProvider(ge).get(MusicViewModel::class.java)
@@ -132,40 +133,44 @@ class PlayerService : Service() {
                 super.onMediaItemTransition(mediaItem, reason)
 
 //                try {
-System.out.println("Reasaonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn "+reason)
-                    if (mediaItems.isNotEmpty()) {
+                System.out.println("Reasaonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn " + reason)
+                if (allNextUpList2.isNotEmpty()) {
 
 
-                        if (isPlaying) {
+//                        if (isPlaying) {
+//                    if (player.mediaItemCount > 0) {
 
-                            val id = nowPlaying?.id
+                    val id = nowPlaying?.id
 
-                            val musicUri = allNextUpList[player.currentMediaItemIndex].songUri
-                            val musicName = allNextUpList[player.currentMediaItemIndex].songName
-                            val artistName = allNextUpList[player.currentMediaItemIndex].artistName
-                            val albumArt = allNextUpList[player.currentMediaItemIndex].songCoverImageUri
-                            val duration =
-                                allNextUpList[player.currentMediaItemIndex].duration.toFloat()
+                    val musicUri = allNextUpList2[player.currentMediaItemIndex].songUri
+                    val musicName = allNextUpList2[player.currentMediaItemIndex].songName
+                    val artistName = allNextUpList2[player.currentMediaItemIndex].artistName
+                    val albumArt =
+                        allNextUpList2[player.currentMediaItemIndex].songCoverImageUri
+                    val duration =
+                        allNextUpList2[player.currentMediaItemIndex].duration.toFloat()
 
-                            scope.launch {
+                    System.out.println("indexxxxxxxxxxxxxxxxxxx "+player.currentMediaItemIndex)
+                    scope.launch {
 
-                                if (id != null) {
+                        if (id != null) {
 
-                                    updateNowPlaying(
-                                        id,
-                                        musicUri,
-                                        musicName,
-                                        artistName,
-                                        albumArt,
-                                        duration,
-                                    )
-
-                                }
-
-                            }
+                            updateNowPlaying(
+                                id,
+                                musicUri,
+                                musicName,
+                                artistName,
+                                albumArt,
+                                duration,
+                            )
 
                         }
+
                     }
+
+                }
+//                }
+//                    }
 //                } catch (e: Exception) {
 //                    play()
 //                }
@@ -202,15 +207,17 @@ System.out.println("Reasaonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn "+reason)
     }
 
 
-    fun changePlayList(mediaItems : ArrayList<MediaItem>){
+    fun changePlayList(mediaItems: ArrayList<MediaItem>, allNextUpList: List<NextUpSongs>) {
         player.clearMediaItems()
+        allNextUpList2 = allNextUpList
+
+
         player.addMediaItems(mediaItems)
     }
 
     fun play() {
 
         scope.launch {
-
 
 
 //                updateIsPlaying(nowPlaying?.id, false)
@@ -224,11 +231,11 @@ System.out.println("Reasaonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn "+reason)
         }
     }
 
-    fun pause(){
+    fun pause() {
         player.pause()
     }
 
-    fun loadSongs(){
+    fun loadSongs() {
 
     }
 
