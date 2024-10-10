@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -57,6 +58,8 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
     Log.d(TAG, "PlaylistDetailsScreen: $images")
 
     val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
+    var nowPlaying2: NowPlaying? = null
+
 
     val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
 
@@ -146,18 +149,41 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
                                 if (songs.size > 1) {
 
-                                    nowPlaying?.id?.let {
-                                        updateNowPlayingPlaylist(
-                                            it,songs[1].songUri,
-                                            songs[1].songName, songs[1].artistName,
-                                            songs[1].songCoverImageUri,
-                                            songs[1].duration,  "Playlist", songs[0].playlistName, viewModel)
+                                    if (nowPlaying == null) {
+                                        nowPlaying2 = NowPlaying(
+                                            null,
+                                            songs[1].songUri.toString(),
+                                            songs[1].songName,
+                                            songs[1].artistName,
+                                            songs[1].songCoverImageUri.toString(),
+                                            songs[1].duration.toLong(),
+                                            0,
+                                            2,
+                                            false, "Playlist", songs[0].playlistName, true
+                                        )
+                                        viewModel.insertNowPlaying(nowPlaying2!!)
+                                    } else {
+
+                                        nowPlaying?.id?.let {
+                                            updateNowPlayingPlaylist(
+                                                it,
+                                                songs[1].songUri,
+                                                songs[1].songName,
+                                                songs[1].artistName,
+                                                songs[1].songCoverImageUri,
+                                                songs[1].duration,
+                                                "Playlist",
+                                                songs[0].playlistName,
+                                                viewModel
+                                            )
+                                        }
                                     }
                                     viewModel.deleteNextUps()
                                     viewModel.insertNextUps(nextUpSongs)
 
                                 }
                             }
+                            viewModel.changePlayListFromPlaylist(songs, nextUpSongs)
                             viewModel.play()
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
@@ -179,30 +205,52 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
             }
 
-            items(songs) { item ->
+            itemsIndexed(songs) { index,item ->
 
                 if (!item.playlistItem)
 
                     MusicItemPlaylist(onClicked = {
                         CoroutineScope(Dispatchers.IO).launch {
                             if (songs.size > 1) {
-
-                                nowPlaying?.id?.let {
-                                    updateNowPlayingPlaylist(
-                                        it, item.songUri.toString(),
-                                        item.songName, item.artistName,
+                                if (nowPlaying == null) {
+                                    nowPlaying2 = NowPlaying(
+                                        null,
+                                        item.songUri.toString(),
+                                        item.songName,
+                                        item.artistName,
                                         item.songCoverImageUri.toString(),
-                                        item.duration,  "Playlist", songs[0].playlistName, viewModel)
+                                        item.duration.toLong(),
+                                        0,
+                                        2,
+                                        false, "Playlist", songs[0].playlistName, true
+                                    )
+                                    viewModel.insertNowPlaying(nowPlaying2!!)
+                                } else {
+                                    nowPlaying?.id?.let {
+                                        updateNowPlayingPlaylist(
+                                            it,
+                                            item.songUri.toString(),
+                                            item.songName,
+                                            item.artistName,
+                                            item.songCoverImageUri.toString(),
+                                            item.duration,
+                                            "Playlist",
+                                            songs[0].playlistName,
+                                            viewModel
+                                        )
+                                    }
                                 }
                                 viewModel.deleteNextUps()
                                 viewModel.insertNextUps(nextUpSongs)
 
                             }
                         }
+                        viewModel.changePlayListFromPlaylist(songs, nextUpSongs)
+                        viewModel.jumpToPosition(index)
                         viewModel.play()
-                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+//                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
-                    }, songItem = item,viewModel)
+                    }, songItem = item, viewModel)
 
             }
 
@@ -211,6 +259,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
 
 }
+
 fun updateNowPlayingPlaylist(
     id: Int,
     musicUri: String,
@@ -219,9 +268,18 @@ fun updateNowPlayingPlaylist(
     albumArt: String,
     duration: Float,
     playingFromType: String,
-    playingFromName: String,viewModel: MusicViewModel
+    playingFromName: String, viewModel: MusicViewModel
 ) {
 
-    viewModel.updateNowPlayingWithTypeAndName(id, musicUri, musicName, artistName, albumArt, duration, playingFromType, playingFromName)
+    viewModel.updateNowPlayingWithTypeAndName(
+        id,
+        musicUri,
+        musicName,
+        artistName,
+        albumArt,
+        duration,
+        playingFromType,
+        playingFromName
+    )
 
 }

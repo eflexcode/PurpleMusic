@@ -341,7 +341,7 @@ class MusicViewModel @Inject constructor(
         PlayerService.playerServiceInstance?.player?.seekToDefaultPosition(position)
     }
 
-    fun changePlayList(songsItems: List<SongItem>,allNextUpList: List<NextUpSongs>) {
+    fun changePlayList(songsItems: List<SongItem>, allNextUpList: List<NextUpSongs>) {
 
         var mediaItems = ArrayList<MediaItem>()
 
@@ -351,7 +351,24 @@ class MusicViewModel @Inject constructor(
 
         }.also {
 
-            PlayerService.playerServiceInstance?.changePlayList(mediaItems,allNextUpList)
+            PlayerService.playerServiceInstance?.changePlayList(mediaItems, allNextUpList)
+
+        }
+
+
+    }
+
+    fun changePlayListFromPlaylist(playlistItems: List<Playlist>, allNextUpList: List<NextUpSongs>) {
+
+        var mediaItems = ArrayList<MediaItem>()
+
+        playlistItems.forEach {
+
+            mediaItems.add(MediaItem.fromUri(it.songUri))
+
+        }.also {
+
+            PlayerService.playerServiceInstance?.changePlayList(mediaItems, allNextUpList)
 
         }
 

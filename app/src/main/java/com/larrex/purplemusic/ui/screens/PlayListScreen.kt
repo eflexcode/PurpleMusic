@@ -53,10 +53,14 @@ fun FavouriteScreen(viewModel: MusicViewModel, navController: NavController) {
                 size = 0,
                 playlistName = name
             )
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.insertPlaylist(mPlaylist)
-            }
 
+            if(name != "") {
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.insertPlaylist(mPlaylist)
+                }
+
+            }
 
         }
 
