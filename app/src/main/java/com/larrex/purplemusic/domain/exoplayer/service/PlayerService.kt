@@ -100,6 +100,7 @@ class PlayerService : Service() {
 
             repository.getNextUps().collectLatest {
                 allNextUpList = it
+//                println("nextup sizeeeeeeeeeee "+it.size)
             }
 
         }
@@ -133,7 +134,7 @@ class PlayerService : Service() {
                 super.onMediaItemTransition(mediaItem, reason)
 
 //                try {
-                System.out.println("Reasaonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn " + reason)
+//                System.out.println("Reasaonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn " + reason)
                 if (allNextUpList2.isNotEmpty()) {
 
 
@@ -150,7 +151,7 @@ class PlayerService : Service() {
                     val duration =
                         allNextUpList2[player.currentMediaItemIndex].duration.toFloat()
 
-                    System.out.println("indexxxxxxxxxxxxxxxxxxx "+player.currentMediaItemIndex)
+//                    println("current exop indexxxxxxxxxxxxxxxxxxx "+player.currentMediaItemIndex)
                     scope.launch {
 
                         if (id != null) {

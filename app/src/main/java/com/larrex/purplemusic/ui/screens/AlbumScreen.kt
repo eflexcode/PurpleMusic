@@ -54,8 +54,8 @@ fun AlbumScreen(navController: NavController,viewModel:MusicViewModel) {
 
         val permissionList = if (Build.VERSION.SDK_INT >= 33) {
             listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_MEDIA_AUDIO,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.POST_NOTIFICATIONS
             )
         } else {

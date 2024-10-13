@@ -358,8 +358,12 @@ class MusicViewModel @Inject constructor(
 
     }
 
-    fun changePlayListFromPlaylist(playlistItems: List<Playlist>, allNextUpList: List<NextUpSongs>) {
+    fun changePlayListFromPlaylist(
+        playlistItems: ArrayList<Playlist>,
+        allNextUpList: List<NextUpSongs>
+    ) {
 
+//        playlistItems.removeAt(0)
         var mediaItems = ArrayList<MediaItem>()
 
         playlistItems.forEach {
@@ -368,8 +372,9 @@ class MusicViewModel @Inject constructor(
 
         }.also {
 
+            mediaItems.removeAt(0)
             PlayerService.playerServiceInstance?.changePlayList(mediaItems, allNextUpList)
-
+            println("media sizeeeeeeeeeeeeeeeeeeeeeeee "+mediaItems.size)
         }
 
 

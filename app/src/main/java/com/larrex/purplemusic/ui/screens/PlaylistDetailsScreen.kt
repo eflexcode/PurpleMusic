@@ -65,7 +65,6 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
     for (song in songs) {
         if (!song.playlistItem)
-
             nextUpSongs.add(
                 NextUpSongs(
                     null,
@@ -147,7 +146,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
                             CoroutineScope(Dispatchers.IO).launch {
 
-                                if (songs.size > 1) {
+//                                if (songs.size > 1) {
 
                                     if (nowPlaying == null) {
                                         nowPlaying2 = NowPlaying(
@@ -179,11 +178,13 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
                                         }
                                     }
                                     viewModel.deleteNextUps()
+//                                    nextUpSongs.removeAt(0)
                                     viewModel.insertNextUps(nextUpSongs)
 
-                                }
+//                                }
                             }
-                            viewModel.changePlayListFromPlaylist(songs, nextUpSongs)
+//                            nextUpSongs.removeAt(0)
+                            viewModel.changePlayListFromPlaylist(ArrayList(songs), nextUpSongs)
                             viewModel.play()
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
@@ -211,7 +212,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 
                     MusicItemPlaylist(onClicked = {
                         CoroutineScope(Dispatchers.IO).launch {
-                            if (songs.size > 1) {
+//                            if (songs.size > 1) {
                                 if (nowPlaying == null) {
                                     nowPlaying2 = NowPlaying(
                                         null,
@@ -241,12 +242,15 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
                                     }
                                 }
                                 viewModel.deleteNextUps()
+//                                nextUpSongs.removeAt(0)
                                 viewModel.insertNextUps(nextUpSongs)
 
-                            }
+//                            }
                         }
-                        viewModel.changePlayListFromPlaylist(songs, nextUpSongs)
-                        viewModel.jumpToPosition(index)
+//                        println("indexxxxxxxxxxxxxxxxxxxxxxxx "+(index-1))
+//                        nextUpSongs.removeAt(0)
+                        viewModel.changePlayListFromPlaylist(ArrayList(songs), nextUpSongs)
+                        viewModel.jumpToPosition(index-1)
                         viewModel.play()
 //                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
