@@ -70,7 +70,7 @@ fun FavouriteScreen(viewModel: MusicViewModel, navController: NavController) {
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 137.dp), contentAlignment = Alignment.BottomEnd
+            .padding(bottom = if (viewModel.showNowPlayBar) 137.dp else 80.dp), contentAlignment = Alignment.BottomEnd
 
     ) {
 

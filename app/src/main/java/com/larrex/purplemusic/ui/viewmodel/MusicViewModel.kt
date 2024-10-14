@@ -56,6 +56,7 @@ class MusicViewModel @Inject constructor(
     var isPlaying by mutableStateOf(false)
     var isPrepared by mutableStateOf(false)
     var isPaused by mutableStateOf(false)
+    var showNowPlayBar by mutableStateOf(false)
 
     var currentDuration by mutableStateOf(0L)
     var currentPositionSlider by mutableStateOf(0F)
@@ -142,95 +143,6 @@ class MusicViewModel @Inject constructor(
 
             }
         }
-//
-//        if (nowPlaying != null) {
-//
-//            player.repeatMode =
-//                if (nowPlaying!!.repeat == 1) Player.REPEAT_MODE_OFF else if (nowPlaying!!.repeat == 2) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_ONE
-//
-//        }
-//
-//
-//        val listener = object : Player.Listener {
-//
-//            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-//                super.onMediaItemTransition(mediaItem, reason)
-//
-//                try {
-//
-//                    if (mediaItems.isNotEmpty()) {
-//
-//                        val id = nowPlaying?.id
-//
-//                        val musicUri = allNextUpList[player.currentMediaItemIndex].songUri
-//                        val musicName = allNextUpList[player.currentMediaItemIndex].songName
-//                        val artistName = allNextUpList[player.currentMediaItemIndex].artistName
-//                        val albumArt = allNextUpList[player.currentMediaItemIndex].songCoverImageUri
-//                        val duration =
-//                            allNextUpList[player.currentMediaItemIndex].duration.toFloat()
-//
-//                        Log.d(
-//                            TAG,
-//                            "onMediaItemTransition: 44 ${allNextUpList[player.currentMediaItemIndex].songName}"
-//                        )
-//
-//                        if (isPlaying) {
-//
-//                            scope.launch {
-//
-//                                Log.d(TAG, "onMediaItemTransition id: $id")
-//                                if (id != null) {
-//                                    Log.d(TAG, "onMediaItemTransition id2: $id")
-//
-//                                    updateNowPlaying(
-//                                        id,
-//                                        musicUri,
-//                                        musicName,
-//                                        artistName,
-//                                        albumArt,
-//                                        duration,
-//                                    )
-//
-//
-//                                }
-//
-//                            }
-//
-//                        }
-//                    }
-//                } catch (e: Exception) {
-//                    play()
-//                }
-//            }
-//
-//            override fun onEvents(player: Player, events: Player.Events) {
-//                super.onEvents(player, events)
-//
-//            }
-//
-//            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-//                super.onTimelineChanged(timeline, reason)
-//            }
-//
-//            override fun onPositionDiscontinuity(
-//                oldPosition: Player.PositionInfo,
-//                newPosition: Player.PositionInfo,
-//                reason: Int
-//            ) {
-//                super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-//            }
-//
-//            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-//                super.onPlayerStateChanged(playWhenReady, playbackState)
-//
-//            }
-//
-//
-//        }
-//
-//        player.addListener(listener)
-//
-
     }
 
     fun play() {

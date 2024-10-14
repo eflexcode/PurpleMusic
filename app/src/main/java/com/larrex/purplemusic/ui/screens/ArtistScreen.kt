@@ -54,7 +54,7 @@ fun ArtistScreen(navController: NavController, viewModel: MusicViewModel) {
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 137.dp), contentAlignment = Alignment.Center
+            .padding(bottom = if (viewModel.showNowPlayBar) 137.dp else 80.dp), contentAlignment = Alignment.Center
 
     ) {
     if (!storagePermission.allPermissionsGranted) {

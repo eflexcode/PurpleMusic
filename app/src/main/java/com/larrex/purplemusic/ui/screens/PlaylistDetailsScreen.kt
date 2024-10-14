@@ -60,7 +60,6 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
     val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
     var nowPlaying2: NowPlaying? = null
 
-
     val nextUpSongs: MutableList<NextUpSongs> = ArrayList<NextUpSongs>()
 
     for (song in songs) {
@@ -187,6 +186,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
                             viewModel.changePlayListFromPlaylist(ArrayList(songs), nextUpSongs)
                             viewModel.play()
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+                            viewModel.showNowPlayBar = true
 
                         },
                         modifier = Modifier
@@ -251,6 +251,7 @@ fun PlaylistDetailsScreen(navController: NavController, viewModel: MusicViewMode
 //                        nextUpSongs.removeAt(0)
                         viewModel.changePlayListFromPlaylist(ArrayList(songs), nextUpSongs)
                         viewModel.jumpToPosition(index-1)
+                        viewModel.showNowPlayBar = true
                         viewModel.play()
 //                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 

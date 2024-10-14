@@ -76,7 +76,7 @@ fun MainUi(application: Application, mainActivity: MainActivity) {
     val viewModel = hiltViewModel<MusicViewModel>()
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-        Scaffold(bottomBar = { CreateBNV(navController = navController,viewModel) }) {
+        Scaffold(bottomBar = { CreateBNV(navController = navController, viewModel) }) {
 
             BottomNavGraph(navController = navController, viewModel)
 
@@ -116,6 +116,8 @@ fun CreateBNV(navController: NavHostController, viewModel: MusicViewModel) {
 
 //    val viewModel = hiltViewModel<MusicViewModel>()
     val nowPlaying by viewModel.getNowPlaying().collectAsState(null)
+    val showBar = viewModel.showNowPlayBar
+
 
     AnimatedVisibility(
         visible = isNavBarVisible,
@@ -143,15 +145,24 @@ fun CreateBNV(navController: NavHostController, viewModel: MusicViewModel) {
                     )
                 }
             }
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                shape = RoundedCornerShape(0.dp)
+
+            AnimatedVisibility(
+                visible = viewModel.showNowPlayBar,
+                enter = slideInVertically { it },
+                exit = slideOutVertically { it }
             ) {
-                NowPlayingBar(nowPlaying,viewModel) {
 
-                    navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                    shape = RoundedCornerShape(0.dp)
+                ) {
+                    NowPlayingBar(nowPlaying, viewModel) {
 
+                        navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+
+                    }
                 }
+
             }
 
             NavigationBar(containerColor = Util.BottomBarBackground, tonalElevation = 40.dp) {

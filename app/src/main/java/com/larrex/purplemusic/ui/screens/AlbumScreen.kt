@@ -47,7 +47,7 @@ fun AlbumScreen(navController: NavController,viewModel:MusicViewModel) {
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 137.dp)
+            .padding(bottom = if (viewModel.showNowPlayBar) 137.dp else 80.dp)
     ) {
 
 //        val viewModel = hiltViewModel<MusicViewModel>()

@@ -79,7 +79,7 @@ fun AlbumDetailsScreen(
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 137.dp)
+            .padding(bottom = if (viewModel.showNowPlayBar) 137.dp else 80.dp)
     ) {
 
         LazyColumn(
@@ -93,7 +93,6 @@ fun AlbumDetailsScreen(
                 IconButton(
                     onClick = {
 
-//                        LaunchedEffect(Unit) { }
                         navController.popBackStack()
                     }, modifier = Modifier
                         .padding(top = 10.dp, end = 5.dp, start = 5.dp, bottom = 0.dp)
@@ -198,6 +197,7 @@ fun AlbumDetailsScreen(
                             viewModel.changePlayList(songsInAlbum, nextUpSongs)
                             viewModel.play()
                             navController.navigate(BottomBarScreens.NowPlayingScreen.route)
+                            viewModel.showNowPlayBar = true
 
                         },
                         modifier = Modifier
@@ -256,6 +256,7 @@ fun AlbumDetailsScreen(
                     viewModel.changePlayList(songsInAlbum, nextUpSongs)
                     viewModel.jumpToPosition(index)
                     viewModel.play()
+                    viewModel.showNowPlayBar = true
 //                    navController.navigate(BottomBarScreens.NowPlayingScreen.route)
 
                 }, songItem = item, onLongClicked = {

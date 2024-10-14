@@ -47,7 +47,7 @@ fun ArtistScreenDetails(
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 137.dp)
+            .padding(bottom = if (viewModel.showNowPlayBar) 137.dp else 80.dp)
     ) {
 
         Column() {

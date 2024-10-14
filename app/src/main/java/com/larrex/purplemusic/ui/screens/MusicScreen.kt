@@ -65,12 +65,12 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
     var nowPlaying: NowPlaying? = null
     val nowPlaying2 by viewModel.getNowPlaying().collectAsState(null)
 
-
+// default padding 137.dp
     Box(
         modifier = Modifier
             .background(Util.BottomBarBackground)
             .fillMaxSize()
-            .padding(bottom = 137.dp), contentAlignment = Alignment.Center
+            .padding(bottom = if (viewModel.showNowPlayBar) 137.dp else 80.dp), contentAlignment = Alignment.Center
     ) {
 
         val readState =
@@ -256,7 +256,7 @@ fun MusicScreen(navController: NavController, viewModel: MusicViewModel) {
                         }
                         viewModel.jumpToPosition(index)
                         viewModel.play()
-
+                        viewModel.showNowPlayBar = true
 
 
                     }, onLongClicked = {
