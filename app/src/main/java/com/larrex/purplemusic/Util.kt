@@ -124,7 +124,7 @@ class Util {
         }
 
         const val CHANNEL_NAME = "Playing_Music_Channel"
-        const val Notification_ID = 0xb126
+        const val Notification_ID = 126
         const val CHANNEL_ID = "Now playing channel"
         const val MEDIA_ID = "root_id"
 

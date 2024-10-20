@@ -8,20 +8,20 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class MyHiltApplication : Application(){
-//    override fun onCreate() {
-//        super.onCreate()
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val notificationChannel = NotificationChannel(
-//                Util.CHANNEL_NAME,
-//                Util.CHANNEL_ID,
-//                NotificationManager.IMPORTANCE_DEFAULT
-//            )
-//
-//            val manager =  getSystemService(NotificationManager::class.java)
-//            manager.createNotificationChannel(notificationChannel)
-//
-//        }
-//    }
+    override fun onCreate() {
+        super.onCreate()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                Util.CHANNEL_NAME,
+                Util.CHANNEL_ID,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+
+            val manager =  getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(notificationChannel)
+
+        }
+    }
 }
 
 

@@ -1,16 +1,27 @@
 package com.larrex.purplemusic.domain.exoplayer.service
 
 //import com.larrex.purplemusic.domain.exoplayer.Util.Companion.MEDIA_ID
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.os.Handler
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.IBinder
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
-import androidx.core.net.toUri
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Timeline
+import com.larrex.purplemusic.R
+import com.larrex.purplemusic.Util.Companion.CHANNEL_ID
+import com.larrex.purplemusic.Util.Companion.CHANNEL_NAME
+import com.larrex.purplemusic.Util.Companion.Notification_ID
 import com.larrex.purplemusic.domain.model.SongItem
 import com.larrex.purplemusic.domain.repository.Repository
 import com.larrex.purplemusic.domain.room.NextUpSongs
@@ -66,6 +77,10 @@ class PlayerService : Service() {
         super.onDestroy()
     }
 
+    private val prev: String = "Prev"
+    private val playPause: String = "playPause"
+    val next: String = "next"
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         scope.launch {
 
@@ -111,7 +126,6 @@ class PlayerService : Service() {
 //            repository.getNextUps().collectLatest {
 //                player.clearMediaItems()
 //                mediaItems.clear()
-//                System.out.println("media item addddddddddddddddd ")
 //
 //                it.forEach {
 //
@@ -133,48 +147,49 @@ class PlayerService : Service() {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
 
-//                try {
-//                System.out.println("Reasaonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn " + reason)
-                if (allNextUpList2.isNotEmpty()) {
+                try {
+                    if (allNextUpList2.isNotEmpty()) {
 
 
 //                        if (isPlaying) {
 //                    if (player.mediaItemCount > 0) {
 
-                    val id = nowPlaying?.id
+                        val id = nowPlaying?.id
 
-                    val musicUri = allNextUpList2[player.currentMediaItemIndex].songUri
-                    val musicName = allNextUpList2[player.currentMediaItemIndex].songName
-                    val artistName = allNextUpList2[player.currentMediaItemIndex].artistName
-                    val albumArt =
-                        allNextUpList2[player.currentMediaItemIndex].songCoverImageUri
-                    val duration =
-                        allNextUpList2[player.currentMediaItemIndex].duration.toFloat()
+                        val musicUri = allNextUpList2[player.currentMediaItemIndex].songUri
+                        val musicName = allNextUpList2[player.currentMediaItemIndex].songName
+                        val artistName = allNextUpList2[player.currentMediaItemIndex].artistName
+                        val albumArt =
+                            allNextUpList2[player.currentMediaItemIndex].songCoverImageUri
+                        val duration =
+                            allNextUpList2[player.currentMediaItemIndex].duration.toFloat()
 
 //                    println("current exop indexxxxxxxxxxxxxxxxxxx "+player.currentMediaItemIndex)
-                    scope.launch {
+                        scope.launch {
 
-                        if (id != null) {
+                            if (id != null) {
 
-                            updateNowPlaying(
-                                id,
-                                musicUri,
-                                musicName,
-                                artistName,
-                                albumArt,
-                                duration,
-                            )
+                                updateNowPlaying(
+                                    id,
+                                    musicUri,
+                                    musicName,
+                                    artistName,
+                                    albumArt,
+                                    duration,
+                                )
+
+                            }
 
                         }
 
-                    }
+                        sendNotification(musicUri, musicName, artistName, albumArt, duration)
 
-                }
+                    }
 //                }
 //                    }
-//                } catch (e: Exception) {
-//                    play()
-//                }
+                } catch (e: Exception) {
+                    play()
+                }
             }
 
             override fun onEvents(player: Player, events: Player.Events) {
@@ -204,6 +219,93 @@ class PlayerService : Service() {
 
         player.addListener(listener)
         return START_NOT_STICKY
+
+    }
+
+
+    fun sendNotification(
+        musicUri: String,
+        musicName: String,
+        artistName: String,
+        albumArt: String,
+        duration: Float
+    ) {
+
+        val mediaSession = MediaSessionCompat(this,"music")
+//        mediaSession.setPlayer(player)
+
+        val style = androidx.media.app.NotificationCompat.MediaStyle()
+            .setShowActionsInCompactView(0,1,2)
+            .setMediaSession(mediaSession.sessionToken)
+
+        val notification = NotificationCompat.Builder(this, CHANNEL_NAME)
+            .setStyle(style)
+            .setContentTitle(musicName)
+            .setContentText(artistName)
+            .addAction(R.drawable.ic_round_skip_backward, "prev", prevPendingIntent())
+            .addAction( if (!player.isPlaying) R.drawable.ic_round_play else R.drawable.ic_round_pause, "play_pause", playPausePendingIntent())
+            .addAction(R.drawable.ic_round_skip_forward, "next", nextPendingIntent())
+            .setSmallIcon(R.drawable.ic_music_selected)
+            .setLargeIcon(BitmapFactory.decodeFile(albumArt))
+            .build()
+
+        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.TIRAMISU){
+
+            if (ContextCompat.checkSelfPermission(this,POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED){
+                startForeground(Notification_ID,notification)
+            }
+
+        }else{
+
+            startForeground(Notification_ID,notification)
+
+        }
+
+
+    }
+
+    fun prevPendingIntent(): PendingIntent {
+
+        val intent = Intent(this, PlayerService::class.java).apply {
+            action = prev
+        }
+
+        return PendingIntent.getService(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+    }
+
+    fun playPausePendingIntent(): PendingIntent {
+
+        val intent = Intent(this, PlayerService::class.java).apply {
+            action = playPause
+        }
+
+        return PendingIntent.getService(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+    }
+
+    fun nextPendingIntent(): PendingIntent {
+
+        val intent = Intent(this, PlayerService::class.java).apply {
+            action = next
+        }
+
+        return PendingIntent.getService(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
     }
 
