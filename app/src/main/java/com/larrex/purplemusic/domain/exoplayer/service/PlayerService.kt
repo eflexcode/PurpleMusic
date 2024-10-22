@@ -8,8 +8,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaMetadata
+import android.media.session.MediaSession
 import android.os.Build
 import android.os.IBinder
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -231,33 +234,65 @@ class PlayerService : Service() {
         duration: Float
     ) {
 
-        val mediaSession = MediaSessionCompat(this,"music")
-//        mediaSession.setPlayer(player)
+        val mediaSession = MediaSessionCompat(this, "PlayerService")
+        mediaSession.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
+                return super.onMediaButtonEvent(mediaButtonEvent)
+            }
+        })
+
+        mediaSession.setFlags(
+            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
+        )
+
+        val metadataBuilder = MediaMetadataCompat.Builder().apply {
+
+            putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, musicName)
+            putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, artistName)
+            putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, albumArt)
+
+            putString(MediaMetadata.METADATA_KEY_TITLE, musicName)
+            putString(MediaMetadata.METADATA_KEY_ARTIST, artistName)
+            putLong(MediaMetadata.METADATA_KEY_DURATION, duration.toLong())
+            putBitmap(MediaMetadata.METADATA_KEY_ART, BitmapFactory.decodeFile(albumArt))
+
+        }
+
+        mediaSession.setMetadata(metadataBuilder.build())
 
         val style = androidx.media.app.NotificationCompat.MediaStyle()
-            .setShowActionsInCompactView(0,1,2)
+            .setShowActionsInCompactView(0, 1, 2)
             .setMediaSession(mediaSession.sessionToken)
+
 
         val notification = NotificationCompat.Builder(this, CHANNEL_NAME)
             .setStyle(style)
             .setContentTitle(musicName)
             .setContentText(artistName)
             .addAction(R.drawable.ic_round_skip_backward, "prev", prevPendingIntent())
-            .addAction( if (!player.isPlaying) R.drawable.ic_round_play else R.drawable.ic_round_pause, "play_pause", playPausePendingIntent())
+            .addAction(
+                if (!player.isPlaying) R.drawable.ic_round_play else R.drawable.ic_round_pause,
+                "play_pause",
+                playPausePendingIntent()
+            )
             .addAction(R.drawable.ic_round_skip_forward, "next", nextPendingIntent())
             .setSmallIcon(R.drawable.ic_music_selected)
             .setLargeIcon(BitmapFactory.decodeFile(albumArt))
             .build()
 
-        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.TIRAMISU){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
 
-            if (ContextCompat.checkSelfPermission(this,POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED){
-                startForeground(Notification_ID,notification)
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                startForeground(Notification_ID, notification)
             }
 
-        }else{
+        } else {
 
-            startForeground(Notification_ID,notification)
+            startForeground(Notification_ID, notification)
 
         }
 
