@@ -14,7 +14,7 @@ class MyHiltApplication : Application(){
             val notificationChannel = NotificationChannel(
                 Util.CHANNEL_NAME,
                 Util.CHANNEL_ID,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_LOW
             )
 
             val manager =  getSystemService(NotificationManager::class.java)

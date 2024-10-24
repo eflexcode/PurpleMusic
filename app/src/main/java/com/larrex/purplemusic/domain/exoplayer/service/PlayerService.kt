@@ -6,15 +6,19 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadata
-import android.media.session.MediaSession
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.ACTION_PLAY_PAUSE
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.ExoPlayer
@@ -22,7 +26,6 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Timeline
 import com.larrex.purplemusic.R
-import com.larrex.purplemusic.Util.Companion.CHANNEL_ID
 import com.larrex.purplemusic.Util.Companion.CHANNEL_NAME
 import com.larrex.purplemusic.Util.Companion.Notification_ID
 import com.larrex.purplemusic.domain.model.SongItem
@@ -57,6 +60,7 @@ class PlayerService : Service() {
     var allNextUpList: List<NextUpSongs> = ArrayList<NextUpSongs>()
     var allNextUpList2: List<NextUpSongs> = ArrayList<NextUpSongs>()
     var allSongsList: List<SongItem> = ArrayList<SongItem>()
+    var currentDuration by mutableStateOf(0L)
 
 //    val viewModel = ViewModelProvider(ge).get(MusicViewModel::class.java)
 
@@ -235,6 +239,7 @@ class PlayerService : Service() {
     ) {
 
         val mediaSession = MediaSessionCompat(this, "PlayerService")
+
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
             override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
                 return super.onMediaButtonEvent(mediaButtonEvent)
@@ -260,10 +265,19 @@ class PlayerService : Service() {
 
         mediaSession.setMetadata(metadataBuilder.build())
 
+        mediaSession.setPlaybackState(PlaybackStateCompat.Builder()
+
+            .setState(if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
+                player.currentPosition,
+                1f)
+            .setActions(ACTION_PLAY_PAUSE)
+            .addCustomAction(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS.toString(),resources.getResourceName(R.drawable.ic_round_skip_backward),R.drawable.ic_round_skip_backward)
+            .addCustomAction(PlaybackStateCompat.ACTION_SKIP_TO_NEXT.toString(),resources.getResourceName(R.drawable.ic_round_skip_forward),R.drawable.ic_round_skip_forward)
+            .build())
+
         val style = androidx.media.app.NotificationCompat.MediaStyle()
             .setShowActionsInCompactView(0, 1, 2)
             .setMediaSession(mediaSession.sessionToken)
-
 
         val notification = NotificationCompat.Builder(this, CHANNEL_NAME)
             .setStyle(style)
@@ -361,6 +375,7 @@ class PlayerService : Service() {
 //                updateIsPlaying(nowPlaying?.id, false)
 
 
+            isPlaying =true
             player.playWhenReady = true
             player.prepare()
             updateIsPlaying(nowPlaying?.id, true)
@@ -371,9 +386,19 @@ class PlayerService : Service() {
 
     fun pause() {
         player.pause()
+        isPlaying = false
     }
 
-    fun loadSongs() {
+    private fun upDateDuration() {
+
+        currentDuration = PlayerService.playerServiceInstance?.player?.currentPosition!!
+
+//        if (isPlaying)
+
+        Handler().postDelayed({
+            upDateDuration()
+        }, 1000)
+
 
     }
 
@@ -391,6 +416,7 @@ class PlayerService : Service() {
             play()
 
         }
+        isPlaying =true
     }
 
     fun previous() {
@@ -401,7 +427,7 @@ class PlayerService : Service() {
         } else {
             play()
         }
-
+        isPlaying =true
     }
 
     fun repeat(id: Int, repeat: Int) {
