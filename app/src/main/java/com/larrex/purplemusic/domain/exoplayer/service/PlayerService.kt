@@ -241,6 +241,27 @@ class PlayerService : Service() {
         val mediaSession = MediaSessionCompat(this, "PlayerService")
 
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onPlay() {
+               play()
+            }
+
+            override fun onPause() {
+               pause()
+            }
+
+            override fun onSkipToNext() {
+               next()
+                print("notificationnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
+            }
+
+            override fun onSkipToPrevious() {
+              previous()
+            }
+
+            override fun onSeekTo(pos: Long) {
+                seekToPosition(pos)
+            }
+
             override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
                 return super.onMediaButtonEvent(mediaButtonEvent)
             }
