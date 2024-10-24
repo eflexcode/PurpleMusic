@@ -265,14 +265,17 @@ class PlayerService : Service() {
 
         mediaSession.setMetadata(metadataBuilder.build())
 
+        val stateActions = PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SEEK_TO
+
         mediaSession.setPlaybackState(PlaybackStateCompat.Builder()
 
             .setState(if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
                 player.currentPosition,
                 1f)
-            .setActions(ACTION_PLAY_PAUSE)
-            .addCustomAction(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS.toString(),resources.getResourceName(R.drawable.ic_round_skip_backward),R.drawable.ic_round_skip_backward)
-            .addCustomAction(PlaybackStateCompat.ACTION_SKIP_TO_NEXT.toString(),resources.getResourceName(R.drawable.ic_round_skip_forward),R.drawable.ic_round_skip_forward)
+            .setActions(stateActions)
+//            .addCustomAction(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS.toString(),resources.getResourceName(R.drawable.ic_round_skip_backward),R.drawable.ic_round_skip_backward)
+//            .addCustomAction(PlaybackStateCompat.ACTION_SKIP_TO_NEXT.toString(),resources.getResourceName(R.drawable.ic_round_skip_forward),R.drawable.ic_round_skip_forward)
+
             .build())
 
         val style = androidx.media.app.NotificationCompat.MediaStyle()
@@ -280,6 +283,7 @@ class PlayerService : Service() {
             .setMediaSession(mediaSession.sessionToken)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_NAME)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setStyle(style)
             .setContentTitle(musicName)
             .setContentText(artistName)
